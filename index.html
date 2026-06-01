@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSOY Premium Hampers</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+background:#faf8f5;
+color:#333;
+}
+
+header{
+height:100vh;
+background:url("/wallpapers/main19.jpg") center center/cover no-repeat;
+position:relative;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
+}
+
+header::before{
+content:"";
+position:absolute;
+inset:0;
+background:rgba(0,0,0,0.55);
+}
+
+.hero{
+position:relative;
+z-index:2;
+color:white;
+max-width:800px;
+}
+
+.hero h1{
+font-size:4rem;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:1.3rem;
+line-height:1.6;
+margin-bottom:30px;
+}
+
+.btn{
+display:inline-block;
+padding:14px 30px;
+background:orange;
+color:white;
+text-decoration:none;
+border-radius:50px;
+font-weight:bold;
+}
+
+section{
+padding:80px 20px;
+max-width:1200px;
+margin:auto;
+}
+
+.section-title{
+text-align:center;
+font-size:2.5rem;
+margin-bottom:50px;
+}
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+}
+
+.card{
+background:white;
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+}
+
+.card img{
+width:100%;
+height:280px;
+object-fit:cover;
+}
+
+.card-content{
+padding:20px;
+}
+
+.card-content h3{
+margin-bottom:10px;
+}
+
+.card-content p{
+color:#666;
+line-height:1.6;
+}
+
+.about{
+text-align:center;
+max-width:900px;
+margin:auto;
+}
+
+.about p{
+line-height:1.9;
+font-size:1.1rem;
+}
+
+.gallery{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+}
+
+.gallery img{
+width:100%;
+height:250px;
+object-fit:cover;
+border-radius:15px;
+}
+
+.contact{
+text-align:center;
+}
+
+.whatsapp{
+display:inline-block;
+padding:15px 35px;
+background:#25D366;
+color:white;
+text-decoration:none;
+border-radius:50px;
+font-size:18px;
+font-weight:bold;
+margin-top:20px;
+}
+
+.social{
+margin-top:30px;
+}
+
+.social a{
+text-decoration:none;
+margin:0 10px;
+font-size:18px;
+color:#333;
+font-weight:bold;
+}
+
+footer{
+background:#111;
+color:white;
+text-align:center;
+padding:25px;
+margin-top:50px;
+}
+
+@media(max-width:768px){
+
+.hero h1{
+font-size:2.5rem;
+}
+
+.hero p{
+font-size:1rem;
+}
+
+.section-title{
+font-size:2rem;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="hero">
+<h1>SSOY Premium Hampers</h1>
+
+<p>
+Luxury Candles • Premium Perfumes • Gift Hampers • Handcrafted Elegance
+</p>
+
+<a href="#products" class="btn">Explore Collection</a>
+
+</div>
+
+</header>
+
+<section id="products">
+
+<h2 class="section-title">Our Premium Collection</h2>
+
+<div class="products">
+
+<div class="card">
+<img src="/wallpapers/candle8.jpg" alt="">
+<div class="card-content">
+<h3>Luxury Soy Candle</h3>
+<p>Handcrafted premium soy candle with rich fragrance and elegant finish.</p>
+</div>
+</div>
+
+<div class="card">
+<img src="product2.jpg" alt="">
+<div class="card-content">
+<h3>Gift Hamper</h3>
+<p>Beautiful gift hamper designed for birthdays, weddings and special occasions.</p>
+</div>
+</div>
+
+<div class="card">
+<img src="product3.jpg" alt="">
+<div class="card-content">
+<h3>Premium Perfume</h3>
+<p>Long-lasting luxury fragrance crafted with premium ingredients.</p>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<section>
+
+<h2 class="section-title">About Us</h2>
+
+<div class="about">
+
+<p>
+Welcome to Ssoy Luxury Hampers.
+
+We specialize in handcrafted candles, luxury perfumes,
+gift hampers and premium handmade products.
+
+Every creation is carefully designed to deliver elegance,
+beauty and memorable experiences for every occasion.
+
+Whether you are looking for a thoughtful gift or luxury home fragrance,
+our products are crafted with passion and attention to detail.
+</p>
+
+</div>
+
+</section>
+
+<section>
+
+<h2 class="section-title">Gallery</h2>
+
+<div class="gallery">
+
+<img src="gallery1.jpg" alt="">
+<img src="gallery2.jpg" alt="">
+<img src="gallery3.jpg" alt="">
+<img src="gallery4.jpg" alt="">
+
+</div>
+
+</section>
+
+<section class="contact">
+
+<h2 class="section-title">Contact Us</h2>
+
+<p>
+For Orders, Bulk Orders & Custom Hampers
+</p>
+
+<a class="whatsapp"
+href="https://wa.me/918847259996"
+target="_blank">
+📞 Chat on WhatsApp
+</a>
+
+<div class="social">
+
+<a href="https://instagram.com/">Instagram</a>
+
+</div>
+
+</section>
+
+<footer>
+
+<p>
+© 2026 SSOY Luxury Hampers
+</p>
+
+<p>
+Handcrafted With Care & Elegance
+</p>
+
+</footer>
+
+</body>
+</html>
