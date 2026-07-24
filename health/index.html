@@ -1,1 +1,420 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niva Bupa Health Insurance Advisor</title>
+    <style>
+        /* Modern Design Tokens & Variables */
+        :root {
+            --primary: #0284c7;      /* Deep Trust Blue */
+            --primary-dark: #0369a1;
+            --accent: #ff6b00;       /* Niva Bupa Energy Orange */
+            --accent-hover: #e56000;
+            --bg-light: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Hero Section (Modern Cards Design) */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at top right, #e0f2fe 0%, #ffffff 70%);
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .advisor-badge {
+            background: #e0f2fe;
+            color: var(--primary-dark);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            max-width: 800px;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        /* Floating Cards Preview inside Hero */
+        .features-grid {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            max-width: 800px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .f-card {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            font-weight: 500;
+            color: var(--text-main);
+            border: 1px solid #f1f5f9;
+        }
+
+        .cta-btn {
+            padding: 18px 40px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            box-shadow: 0 10px 20px -5px rgba(255, 107, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px -5px rgba(255, 107, 0, 0.6);
+        }
+
+        /* FLOATING HOME BUTTON STYLE */.floating-home-btn{
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            background: #0284c7;
+            color: #fff;
+            font-size: 1px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(2,132,199,.35);
+            z-index: 9999;
+            transition: .3s;
+            position: fixed;
+    }
+
+.floating-home-btn:hover{
+    transform: scale(1.08);
+    background:#0369a1;
+}
+
+@media(max-width:768px){
+    .floating-home-btn{
+        width:55px;
+        height:55px;
+        bottom:15px;
+        right:15px;
+        font-size:24px;
+    }
+}
+        
+
+        /* Learning/Book Section Wrapper */
+        #learning-section {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .book-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        /* Sticky Glassmorphism Header Inside Book */
+        .book-header {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            z-index: 100;
+        }
+
+        .search-wrapper {
+            display: flex;
+            gap: 12px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-wrapper input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f8fafc;
+        }
+
+        .search-wrapper input:focus {
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .search-wrapper button {
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-wrapper button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* The Content Area with Perfect Wrap */
+        .book-body {
+            padding: 40px;
+            background: #fafafa;
+        }
+
+        .book-body pre {
+            white-space: pre-wrap;       
+            word-wrap: break-word;      
+            word-break: break-word;
+            max-width: 100%;            
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: #334155;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        /* Modern Highlight Glow */
+        .highlight {
+            background: linear-gradient(120deg, #fef08a 0%, #fef08a 100%);
+            color: #854d0e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(234, 179, 8, 0.2);
+        }
+
+        .close-area {
+            padding: 30px;
+            text-align: center;
+            background: #f1f5f9;
+        }
+
+        .close-btn {
+            padding: 12px 30px;
+            background: #94a3b8;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #64748b;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive UI Optimization */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.1rem; }
+            .hero p { font-size: 1.1rem; }
+            .features-grid { flex-direction: column; width: 100%; }
+            .f-card { text-align: center; }
+            .search-wrapper { flex-direction: column; }
+            .search-wrapper button { width: 100%; }
+            .book-body { padding: 20px; }
+            .book-container { border-radius: 14px; }
+            .floating-home-btn { bottom: 10px; right: 20px; width: 55px; height: 55px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO DESIGN SECTION -->
+    <header class="hero" id="home">
+        <div class="advisor-badge">Verified Health Consultant</div>
+        <h1>Niva Bupa <span>Health Insurance</span> Advisor</h1>
+        <p>Aapke aur aapke parivaar ki suraksha hamari zimmedari. Payein sahi aur transparent medical plans bina kisi jhanjhat ke.</p>
+        
+        <div class="features-grid">
+            <div class="f-card">👩‍💼 Sarita Nandan</div>
+            <div class="f-card">🛡️ Secure Your Family</div>
+            <div class="f-card">🤝 Trusted Guidance</div>
+        </div>
+
+        <button onclick="openBook()" class="cta-btn">Learning Manual</button>
+    </header>
+
+    <!-- FLOATING HOME BUTTON (Initial State Hidden) -->
+    <button id="floatingHome" onclick="closeBook()" class="floating-home-btn hidden">
+        <i></i>
+        <span>H</span>
+    </button>
+
+    <!-- MODERN BOOK VIEWER SECTION -->
+    <section id="learning-section" class="hidden">
+        <div class="book-container">
+            
+            <!-- Sticky Search Header -->
+            <div class="book-header">
+                <div class="search-wrapper">
+                    <input type="text" id="bookSearchInput" placeholder="Search(e.g., Claim,Premium)...">
+                    <button onclick="executeSearch()">Search</button>
+                </div>
+            </div>
+
+            <!-- PDF Text Area Wrapper -->
+            <div class="book-body" id="bookDataContainer">                
+                <pre><b>यह कोर्स केवल "पॉलिसी याद करने" का नहीं होगा, बल्कि आपको यह भी सिखाएगा</b></pre>
+                <pre>कंपनी कैसे काम करती है।</pre>
+                <pre>Health Insurance की पूरी Industry.</pre>
+                <pre>Client से कैसे बात करनी है.</pre>
+                <pre>Policy कैसे Explain करनी है.</pre>
+                <pre>Objection कैसे Handle करने हैं.</pre>
+                <pre>Claim कैसे होता है.</pre>
+                <pre>IRDAI Rules.</pre>
+                <pre>Sales Psychology.</pre>
+                <pre>Real-life Examples.</pre>                
+                <pre></pre>
+                <pre><b><mark> Chater 1 </mark></b></pre>
+                <pre><b>Niva Bupa Company History</b></pre>
+                <p>भारत में पहले Health Insurance ज़्यादातर Life Insurance कंपनियाँ बेचती थीं।
+                उस समय लोगों के पास विकल्प कम थे।
+                फिर कुछ कंपनियाँ केवल Health Insurance पर फोकस करने लगीं।
+                इन्हीं में से एक है Niva Bupa Health Insurance</p><br>
+                <p>Company की शुरुआत
+                    साल 2008
+                    Company का नाम था
+                    Max Bupa Health Insurance
+                    दो बड़ी कंपनियों ने मिलकर इसे शुरू किया।</p><br>
+
+                    <p>1. Max India एक भारतीय कंपनी। Healthcare में काम करती थी।</p><br>
+                    <p>2. Bupa यूके (United Kingdom) की बहुत बड़ी Healthcare Company.</p>
+                    Bupa का मतलब है
+                    British United Provident Association
+                    Bupa दुनिया के कई देशों में Health Insurance और Hospitals चलाती है।</p>
+            </div>
+            <!-- Bottom Area -->
+            <div class="close-area">
+                <button onclick="closeBook()" class="close-btn"> Close</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- DYNAMIC LOGIC FOR SEARCH, SCROLL & FLOATING BUTTON -->
+    <script>
+        let cachedOriginalHTML = "";
+
+        function openBook() {
+            const container = document.getElementById('learning-section');
+            const floatBtn = document.getElementById('floatingHome');
+            
+            container.classList.remove('hidden');
+            floatBtn.classList.remove('hidden'); // Show floating home button
+            
+            if (!cachedOriginalHTML) {
+                cachedOriginalHTML = document.getElementById('bookDataContainer').innerHTML;
+            }
+            
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function closeBook() {
+            document.getElementById('learning-section').classList.add('hidden');
+            document.getElementById('floatingHome').classList.add('hidden'); // Hide floating home button
+            document.getElementById('home').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function executeSearch() {
+            const rawInput = document.getElementById('bookSearchInput').value.trim();
+            const targetDiv = document.getElementById('bookDataContainer');
+            
+            if (rawInput === "") {
+                targetDiv.innerHTML = cachedOriginalHTML;
+                return;
+            }
+
+            targetDiv.innerHTML = cachedOriginalHTML;
+
+            const safeQuery = rawInput.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const matchRegex = new RegExp(`(${safeQuery})`, 'gi');
+
+            if (!matchRegex.test(targetDiv.innerText)) {
+                alert("Kshama karein! Ye shabd is book mein nahi mila.");
+                return;
+            }
+
+            const updatedHTML = targetDiv.innerHTML.replace(matchRegex, `<span class="highlight">$1</span>`);
+            targetDiv.innerHTML = updatedHTML;
+
+            setTimeout(() => {
+                const targetMatch = document.querySelector('.highlight');
+                if (targetMatch) {
+                    targetMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 80);
+        }
+
+        // Support direct Trigger via Enter Keypress
+        document.getElementById('bookSearchInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                executeSearch();
+            }
+        });
+    </script>
+</body>
+</html>
