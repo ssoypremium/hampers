@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electronics & Components Hub</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #005587;
+      --accent: #ff5800;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --whatsapp: #25d366;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 110px; /* Space for Bottom Sticky Cart */
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Header */
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 20px 16px;
+      text-align: center;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 15px rgba(0, 85, 135, 0.15);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    /* Search Box */
+    .search-container {
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      margin: 16px 0;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #cbd5e1;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      outline: none;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Category Chips */
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      scrollbar-width: none;
+    }
+
+    .cat-chip {
+      background: #e2e8f0;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      color: #475569;
+    }
+
+    .cat-chip.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Product Grid / Cards */
+    .product-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .prod-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #f1f5f9;
+      flex-shrink: 0;
+    }
+
+    .prod-details {
+      flex-grow: 1;
+    }
+
+    .prod-category {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .prod-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 2px 0 8px 0;
+    }
+
+    /* Quantity Controls */
+    .action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .qty-btn-group {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 2px;
+    }
+
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: #fff;
+      border-radius: 6px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .qty-val {
+      padding: 0 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .add-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Fixed Bottom Cart Bar */
+    .bottom-cart-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      padding: 14px 16px;
+      box-shadow: 0 -6px 20px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .cart-info {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .cart-count {
+      color: var(--accent);
+    }
+
+    .btn-whatsapp-send {
+      background: var(--whatsapp);
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>⚡ Electronics & Spares</h1>
+    <p>TV Remotes, IC, Diode, Speakers, Adapters & Cables</p>
+  </header>
+
+  <div class="container">
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input 
+        type="text" 
+        id="searchInput" 
+        class="search-input" 
+        placeholder="Type to search (e.g. Remote, IC 4548, Adapter)..." 
+        onkeyup="filterProducts()"
+      >
+    </div>
+
+    <!-- Category Filters -->
+    <div class="categories" id="categoryChips">
+      <div class="cat-chip active" onclick="filterByCategory('ALL', this)">All Parts</div>
+      <div class="cat-chip" onclick="filterByCategory('Remote', this)">Remotes</div>
+      <div class="cat-chip" onclick="filterByCategory('Component', this)">IC / LED / Diode</div>
+      <div class="cat-chip" onclick="filterByCategory('Speaker', this)">Speakers</div>
+      <div class="cat-chip" onclick="filterByCategory('Cable', this)">Cables & Adapters</div>
+    </div>
+
+    <!-- Product List Container -->
+    <div id="productList">
+      <p style="text-align: center; color: #64748b; padding: 20px;">Loading Products...</p>
+    </div>
+
+  </div>
+
+  <!-- Bottom Floating Cart & WhatsApp Order Bar -->
+  <div class="bottom-cart-bar">
+    <div class="cart-info">
+      Selected Items: <span id="totalItems" class="cart-count">0</span>
+    </div>
+    <button class="btn-whatsapp-send" onclick="sendWhatsAppOrder()">
+      💬 Send Order
+    </button>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // 1. AAPKA GOOGLE SHEET JSON API LINK (Replace YOUR_SHEET_ID)
+    // -------------------------------------------------------------
+    const SHEET_ID = 'YOUR_SHEET_ID'; 
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+    // Static Fallback Data (Aapki testing ke liye)
+    let productsData = [
+      { category: "Remote", name: "LG Smart LCD/LED TV Remote", image: "https://images.unsplash.com/photo-1528395973428-115f53e6b12a?w=200" },
+      { category: "Component", name: "Transistor 2N3055 High Power", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200" },
+      { category: "Component", name: "4548 IC Microchip Dip-8", image: "https://images.unsplash.com/photo-1608564697071-ddf911d81370?w=200" },
+      { category: "Speaker", name: "4 Inch Woofer Speaker Binding Part", image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=200" },
+      { category: "Cable", name: "12V 2A Setup Box Power Adapter", image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200" }
+    ];
+
+    let cart = {}; // Stores items: { "LG Remote": 2, "IC 4548": 10 }
+    let currentCategory = "ALL";
+
+    // Fetch Data from Google Sheet
+    async function fetchSheetData() {
+      try {
+        const response = await fetch(SHEET_URL);
+        const text = await response.text();
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        
+        const rows = json.table.rows;
+        let fetchedProducts = [];
+
+        rows.forEach(row => {
+          if (row.c[0] && row.c[1]) {
+            fetchedProducts.push({
+              category: row.c[0]?.v || 'General',
+              name: row.c[1]?.v || '',
+              image: row.c[2]?.v || 'https://via.placeholder.com/80',
+            });
+          }
+        });
+
+        if(fetchedProducts.length > 0) {
+          productsData = fetchedProducts;
+        }
+        renderProducts(productsData);
+      } catch (err) {
+        console.log("Sheet not loaded yet, using default list", err);
+        renderProducts(productsData);
+      }
+    }
+
+    // Render Products to UI
+    function renderProducts(data) {
+      const listContainer = document.getElementById("productList");
+      listContainer.innerHTML = "";
+
+      if(data.length === 0) {
+        listContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #888;">No products found!</p>`;
+        return;
+      }
+
+      data.forEach((item, index) => {
+        const qty = cart[item.name] || 0;
+        
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" class="prod-img" onerror="this.src='https://via.placeholder.com/80?text=Parts'">
+          <div class="prod-details">
+            <span class="prod-category">${item.category}</span>
+            <div class="prod-title">${item.name}</div>
+            <div class="action-row">
+              <div class="qty-btn-group">
+                <button class="qty-btn" onclick="updateQty('${item.name}', -1)">-</button>
+                <span class="qty-val" id="qty-${index}">${qty}</span>
+                <button class="qty-btn" onclick="updateQty('${item.name}', 1)">+</button>
+              </div>
+            </div>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    // Update Quantity
+    function updateQty(productName, change) {
+      if (!cart[productName]) cart[productName] = 0;
+      cart[productName] += change;
+
+      if (cart[productName] <= 0) {
+        delete cart[productName];
+      }
+
+      updateCartUI();
+      filterProducts(); // Re-render to update counts
+    }
+
+    // Update Bottom Cart UI
+    function updateCartUI() {
+      let totalCount = 0;
+      for (let item in cart) {
+        totalCount += cart[item];
+      }
+      document.getElementById("totalItems").innerText = totalCount;
+    }
+
+    // Filter Logic (Search + Category)
+    function filterProducts() {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+
+      const filtered = productsData.filter(item => {
+        const matchesCategory = (currentCategory === "ALL") || item.category.toLowerCase().includes(currentCategory.toLowerCase());
+        const matchesSearch = item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query);
+        return matchesCategory && matchesSearch;
+      });
+
+      renderProducts(filtered);
+    }
+
+    // Category Filter Switch
+    function filterByCategory(category, element) {
+      currentCategory = category;
+      document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
+      element.classList.add('active');
+      filterProducts();
+    }
+
+    // Send WhatsApp Order
+    function sendWhatsAppOrder() {
+      const phone = "917986965860"; // Aapka WhatsApp Phone Number
+      let message = "Hello! I want to order the following electronic items:\n\n";
+      
+      let itemsList = "";
+      let count = 1;
+      for (let item in cart) {
+        itemsList += `${count}. ${item} - Quantity: ${cart[item]}\n`;
+        count++;
+      }
+
+      if (itemsList === "") {
+        alert("Kripya pehle cart mein items add karein!");
+        return;
+      }
+
+      message += itemsList + "\nPlease share the best price and deal for this order.";
+      const encodedMsg = encodeURIComponent(message);
+      window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+    }
+
+    // Initialize Page
+    fetchSheetData();
+  </script>
+
+</body>
+</html>
