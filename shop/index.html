@@ -182,17 +182,6 @@
       font-weight: 700;
     }
 
-    .add-btn {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
     /* Fixed Bottom Cart Bar */
     .bottom-cart-bar {
       position: fixed;
@@ -220,7 +209,7 @@
     .btn-whatsapp-send {
       background: var(--whatsapp);
       color: #fff;
-      text-decoration: none;
+      border: none;
       padding: 12px 20px;
       border-radius: 30px;
       font-weight: 800;
@@ -228,6 +217,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -247,18 +237,14 @@
         type="text" 
         id="searchInput" 
         class="search-input" 
-        placeholder="Type to search (e.g. Remote, IC 4548, Adapter)..." 
+        placeholder="Type to search..." 
         onkeyup="filterProducts()"
       >
     </div>
 
-    <!-- Category Filters -->
+    <!-- Category Filters (Sheet se Dynamic banenge) -->
     <div class="categories" id="categoryChips">
       <div class="cat-chip active" onclick="filterByCategory('ALL', this)">All Parts</div>
-      <div class="cat-chip" onclick="filterByCategory('Remote', this)">Remotes</div>
-      <div class="cat-chip" onclick="filterByCategory('Component', this)">IC / LED / Diode</div>
-      <div class="cat-chip" onclick="filterByCategory('Speaker', this)">Speakers</div>
-      <div class="cat-chip" onclick="filterByCategory('Cable', this)">Cables & Adapters</div>
     </div>
 
     <!-- Product List Container -->
@@ -279,22 +265,11 @@
   </div>
 
   <script>
-    // -------------------------------------------------------------
-    // 1. AAPKA GOOGLE SHEET JSON API LINK (Replace YOUR_SHEET_ID)
-    // -------------------------------------------------------------
-    const SHEET_ID = 'YOUR_SHEET_ID'; 
+    const SHEET_ID = '1ZMgmEselSsR0G5LVx7n1eQM_ABxOMb2dAcoo_6_8xaU'; 
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-    // Static Fallback Data (Aapki testing ke liye)
-    let productsData = [
-      { category: "Remote", name: "LG Smart LCD/LED TV Remote", image: "https://images.unsplash.com/photo-1528395973428-115f53e6b12a?w=200" },
-      { category: "Component", name: "Transistor 2N3055 High Power", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200" },
-      { category: "Component", name: "4548 IC Microchip Dip-8", image: "https://images.unsplash.com/photo-1608564697071-ddf911d81370?w=200" },
-      { category: "Speaker", name: "4 Inch Woofer Speaker Binding Part", image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=200" },
-      { category: "Cable", name: "12V 2A Setup Box Power Adapter", image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200" }
-    ];
-
-    let cart = {}; // Stores items: { "LG Remote": 2, "IC 4548": 10 }
+    let productsData = [];
+    let cart = {}; 
     let currentCategory = "ALL";
 
     // Fetch Data from Google Sheet
@@ -308,23 +283,42 @@
         let fetchedProducts = [];
 
         rows.forEach(row => {
-          if (row.c[0] && row.c[1]) {
-            fetchedProducts.push({
-              category: row.c[0]?.v || 'General',
-              name: row.c[1]?.v || '',
-              image: row.c[2]?.v || 'https://via.placeholder.com/80',
-            });
+          if (row.c && row.c[0] && row.c[1]) {
+            // Header Skip करने के लिए चेक (अगर पहली रो Category है)
+            if (row.c[0].v.toString().toLowerCase() !== 'category') {
+              fetchedProducts.push({
+                category: row.c[0]?.v || 'General',
+                name: row.c[1]?.v || '',
+                image: row.c[2]?.v || 'https://via.placeholder.com/80?text=No+Image',
+              });
+            }
           }
         });
 
-        if(fetchedProducts.length > 0) {
-          productsData = fetchedProducts;
-        }
+        productsData = fetchedProducts;
+        generateCategoryChips(); // Sheet से Category Buttons बनाना
         renderProducts(productsData);
       } catch (err) {
-        console.log("Sheet not loaded yet, using default list", err);
-        renderProducts(productsData);
+        console.error("Sheet loading error:", err);
+        document.getElementById("productList").innerHTML = `<p style="text-align:center; padding: 20px; color: red;">Google Sheet से डेटा नहीं मिल पा रहा है। शेयरिंग सेटिंग्स जांचें!</p>`;
       }
+    }
+
+    // Sheet की Categories से ऑटोमैटिक बटन बनाना
+    function generateCategoryChips() {
+      const chipsContainer = document.getElementById("categoryChips");
+      chipsContainer.innerHTML = `<div class="cat-chip active" onclick="filterByCategory('ALL', this)">All Parts</div>`;
+
+      // Unique Categories निकालना
+      const categories = [...new Set(productsData.map(item => item.category.trim()).filter(Boolean))];
+
+      categories.forEach(cat => {
+        const chip = document.createElement("div");
+        chip.className = "cat-chip";
+        chip.innerText = cat;
+        chip.onclick = () => filterByCategory(cat, chip);
+        chipsContainer.appendChild(chip);
+      });
     }
 
     // Render Products to UI
@@ -337,7 +331,7 @@
         return;
       }
 
-      data.forEach((item, index) => {
+      data.forEach((item) => {
         const qty = cart[item.name] || 0;
         
         const card = document.createElement("div");
@@ -349,9 +343,9 @@
             <div class="prod-title">${item.name}</div>
             <div class="action-row">
               <div class="qty-btn-group">
-                <button class="qty-btn" onclick="updateQty('${item.name}', -1)">-</button>
-                <span class="qty-val" id="qty-${index}">${qty}</span>
-                <button class="qty-btn" onclick="updateQty('${item.name}', 1)">+</button>
+                <button class="qty-btn" onclick="updateQty('${item.name.replace(/'/g, "\\'")}', -1)">-</button>
+                <span class="qty-val">${qty}</span>
+                <button class="qty-btn" onclick="updateQty('${item.name.replace(/'/g, "\\'")}', 1)">+</button>
               </div>
             </div>
           </div>
@@ -370,7 +364,7 @@
       }
 
       updateCartUI();
-      filterProducts(); // Re-render to update counts
+      filterProducts();
     }
 
     // Update Bottom Cart UI
@@ -387,7 +381,7 @@
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
 
       const filtered = productsData.filter(item => {
-        const matchesCategory = (currentCategory === "ALL") || item.category.toLowerCase().includes(currentCategory.toLowerCase());
+        const matchesCategory = (currentCategory === "ALL") || item.category.toLowerCase().trim() === currentCategory.toLowerCase().trim();
         const matchesSearch = item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query);
         return matchesCategory && matchesSearch;
       });
@@ -405,7 +399,7 @@
 
     // Send WhatsApp Order
     function sendWhatsAppOrder() {
-      const phone = "917986965860"; // Aapka WhatsApp Phone Number
+      const phone = "917986965860";
       let message = "Hello! I want to order the following electronic items:\n\n";
       
       let itemsList = "";
