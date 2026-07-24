@@ -49,7 +49,7 @@
       padding: 0 16px;
     }
 
-    /* Modern Top Header */
+    /* Header */
     header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: #fff;
@@ -140,15 +140,12 @@
       line-height: 1.4;
     }
 
-    /* Quick Highlight Sections */
+    /* Category Grid */
     .section-title {
       font-size: 0.95rem;
       font-weight: 800;
       color: var(--text-main);
       margin: 20px 0 12px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
 
     .category-grid {
@@ -275,11 +272,6 @@
       align-items: center;
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
-      transition: all 0.2s ease;
-    }
-
-    .product-card:hover {
-      box-shadow: var(--shadow-md);
     }
 
     .prod-img {
@@ -338,11 +330,6 @@
       cursor: pointer;
       color: var(--text-main);
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      transition: background 0.15s ease;
-    }
-
-    .qty-btn:active {
-      background: #e2e8f0;
     }
 
     .qty-val {
@@ -397,23 +384,12 @@
       gap: 8px;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-      transition: background 0.2s ease;
-    }
-
-    .btn-whatsapp-send:hover {
-      background: var(--whatsapp-hover);
     }
 
     .empty-state {
       text-align: center;
       padding: 30px 10px;
       color: var(--text-muted);
-    }
-
-    .empty-state i {
-      font-size: 2rem;
-      margin-bottom: 8px;
-      opacity: 0.5;
     }
   </style>
 </head>
@@ -508,6 +484,21 @@
     let cart = {}; 
     let currentCategory = "ALL";
 
+    // Helper function: Convert Google Drive Link to direct image viewable URL
+    function formatImageUrl(url) {
+      if (!url) return 'https://via.placeholder.com/80?text=Parts';
+      
+      // Check if it's a Google Drive URL
+      if (url.includes('drive.google.com')) {
+        let match = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+        if (match && match[1]) {
+          // Use Google Photos/Drive thumbnail API (Reliable for web images)
+          return `https://lh3.googleusercontent.com/d/${match[1]}=s300`;
+        }
+      }
+      return url;
+    }
+
     // Fetch Data from Google Sheet
     async function fetchSheetData() {
       try {
@@ -521,10 +512,11 @@
         rows.forEach(row => {
           if (row.c && row.c[0] && row.c[1]) {
             if (row.c[0].v.toString().toLowerCase() !== 'category') {
+              let rawImg = row.c[2]?.v || '';
               fetchedProducts.push({
                 category: row.c[0]?.v || 'General',
                 name: row.c[1]?.v || '',
-                image: row.c[2]?.v || 'https://via.placeholder.com/80?text=Parts',
+                image: formatImageUrl(rawImg),
               });
             }
           }
@@ -618,7 +610,7 @@
       document.getElementById("totalItems").innerText = totalCount;
     }
 
-    // Filter Logic (Search + Category)
+    // Filter Logic
     function filterProducts() {
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
 
@@ -655,7 +647,7 @@
       filterProducts();
     }
 
-    // WhatsApp Order Dispatch
+    // Send WhatsApp Order
     function sendWhatsAppOrder() {
       const phone = "918847259996";
       let message = "Hello Sachleen! I want to order the following electronic items:\n\n";
