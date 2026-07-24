@@ -3,21 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Electronics & Components Hub</title>
+  <title>Sachleen Electronics & Components Hub</title>
   
-  <!-- Google Fonts -->
+  <!-- Google Fonts & FontAwesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     :root {
-      --primary: #005587;
-      --accent: #ff5800;
+      --primary: #0f172a;
+      --primary-light: #1e293b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-orange: #ff5800;
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --text: #0f172a;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
       --whatsapp: #25d366;
+      --whatsapp-hover: #22bf5b;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
     }
 
     * {
@@ -29,107 +38,258 @@
 
     body {
       background-color: var(--bg);
-      color: var(--text);
-      padding-bottom: 110px; /* Space for Bottom Sticky Cart */
+      color: var(--text-main);
+      padding-bottom: 100px;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 520px;
       margin: 0 auto;
       padding: 0 16px;
     }
 
-    /* Header */
+    /* Modern Top Header */
     header {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: #fff;
-      padding: 20px 16px;
-      text-align: center;
-      border-radius: 0 0 20px 20px;
-      box-shadow: 0 4px 15px rgba(0, 85, 135, 0.15);
+      padding: 18px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 900;
+      box-shadow: var(--shadow-md);
     }
 
-    header h1 {
-      font-size: 1.5rem;
+    .header-content {
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
       font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    header p {
-      font-size: 0.85rem;
-      opacity: 0.9;
-      margin-top: 4px;
+    .brand-title i {
+      color: #f59e0b;
+    }
+
+    .brand-tagline {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      margin: 16px 0 20px 0;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+      border-radius: 20px;
+      padding: 24px 20px;
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 30px -10px rgba(49, 46, 129, 0.4);
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .hero-desc {
+      font-size: 0.82rem;
+      color: #c7d2fe;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    /* Quick Highlight Sections */
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 20px 0 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .category-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .category-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .category-card i {
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+
+    .category-card span {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-main);
     }
 
     /* Search Box */
     .search-container {
-      position: sticky;
-      top: 10px;
-      z-index: 100;
-      margin: 16px 0;
+      margin-bottom: 16px;
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.9rem;
     }
 
     .search-input {
       width: 100%;
-      padding: 14px 18px;
-      border: 2px solid #cbd5e1;
-      border-radius: 14px;
-      font-size: 0.95rem;
+      padding: 12px 16px 12px 42px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 0.9rem;
       outline: none;
       background: #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow-sm);
       transition: all 0.2s ease;
     }
 
     .search-input:focus {
-      border-color: var(--primary);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
-    /* Category Chips */
+    /* Category Chips Dynamic Filter */
+    .categories-wrapper {
+      margin-bottom: 16px;
+    }
+
     .categories {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding-bottom: 10px;
-      margin-bottom: 16px;
+      padding-bottom: 4px;
       scrollbar-width: none;
     }
 
+    .categories::-webkit-scrollbar {
+      display: none;
+    }
+
     .cat-chip {
-      background: #e2e8f0;
-      padding: 8px 16px;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      padding: 7px 16px;
       border-radius: 20px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
-      color: #475569;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
     }
 
     .cat-chip.active {
       background: var(--primary);
       color: #fff;
+      border-color: var(--primary);
     }
 
-    /* Product Grid / Cards */
+    /* Product Cards */
+    .product-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     .product-card {
       background: var(--card-bg);
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 12px;
-      margin-bottom: 12px;
       display: flex;
       gap: 12px;
       align-items: center;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .product-card:hover {
+      box-shadow: var(--shadow-md);
     }
 
     .prod-img {
-      width: 80px;
-      height: 80px;
+      width: 76px;
+      height: 76px;
       border-radius: 10px;
       object-fit: cover;
       background: #f1f5f9;
       flex-shrink: 0;
+      border: 1px solid var(--border-color);
     }
 
     .prod-details {
@@ -137,17 +297,19 @@
     }
 
     .prod-category {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 800;
-      color: var(--accent);
+      color: var(--accent-orange);
       text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .prod-title {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
-      color: var(--text);
+      color: var(--text-main);
       margin: 2px 0 8px 0;
+      line-height: 1.3;
     }
 
     /* Quantity Controls */
@@ -163,23 +325,30 @@
       background: #f1f5f9;
       border-radius: 8px;
       padding: 2px;
+      border: 1px solid var(--border-color);
     }
 
     .qty-btn {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border: none;
       background: #fff;
       border-radius: 6px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      color: var(--text-main);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: background 0.15s ease;
+    }
+
+    .qty-btn:active {
+      background: #e2e8f0;
     }
 
     .qty-val {
       padding: 0 10px;
-      font-size: 0.85rem;
-      font-weight: 700;
+      font-size: 0.82rem;
+      font-weight: 800;
     }
 
     /* Fixed Bottom Cart Bar */
@@ -189,79 +358,146 @@
       left: 0;
       right: 0;
       background: #ffffff;
-      padding: 14px 16px;
-      box-shadow: 0 -6px 20px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -8px 25px rgba(0,0,0,0.08);
       z-index: 1000;
     }
 
+    .cart-container {
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .cart-info {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 700;
+      color: var(--text-muted);
     }
 
     .cart-count {
-      color: var(--accent);
+      color: var(--accent-orange);
+      font-size: 1.1rem;
+      font-weight: 800;
     }
 
     .btn-whatsapp-send {
       background: var(--whatsapp);
       color: #fff;
       border: none;
-      padding: 12px 20px;
-      border-radius: 30px;
+      padding: 11px 22px;
+      border-radius: 25px;
       font-weight: 800;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       display: flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+      transition: background 0.2s ease;
+    }
+
+    .btn-whatsapp-send:hover {
+      background: var(--whatsapp-hover);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px 10px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      opacity: 0.5;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Top Sticky Header -->
   <header>
-    <h1>⚡ Sachleen Electronics</h1>
-    <p>TV Remotes, IC, Diode, Speakers, Adapters & Cables</p>
+    <div class="header-content">
+      <div>
+        <div class="brand-title"><i class="fa-solid fa-bolt"></i> Sachleen Electronics</div>
+        <div class="brand-tagline">TV Remotes, IC, Diode, Speakers & Components</div>
+      </div>
+    </div>
   </header>
 
   <div class="container">
     
+    <!-- Hero Banner Section -->
+    <div class="hero-banner">
+      <div class="hero-badge"><i class="fa-solid fa-microchip"></i> Premium Hardware</div>
+      <div class="hero-title">Arduino & Electronic Components Hub</div>
+      <div class="hero-desc">Explore sensors, modules, audio parts & DIY accessories at unbeatable prices.</div>
+    </div>
+
+    <!-- Category Shortcuts -->
+    <div class="section-title">
+      <span>Top Categories</span>
+    </div>
+    <div class="category-grid">
+      <div class="category-card" onclick="quickSelectCategory('Arduino')">
+        <i class="fa-solid fa-microchip"></i>
+        <span>Arduino & Sensors</span>
+      </div>
+      <div class="category-card" onclick="quickSelectCategory('Speaker')">
+        <i class="fa-solid fa-volume-high"></i>
+        <span>Speakers & Audio</span>
+      </div>
+      <div class="category-card" onclick="quickSelectCategory('ALL')">
+        <i class="fa-solid fa-plug"></i>
+        <span>Other Parts</span>
+      </div>
+    </div>
+
     <!-- Search Bar -->
     <div class="search-container">
-      <input 
-        type="text" 
-        id="searchInput" 
-        class="search-input" 
-        placeholder="Type to search..." 
-        onkeyup="filterProducts()"
-      >
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Search components, sensors, parts..." 
+          onkeyup="filterProducts()"
+        >
+      </div>
     </div>
 
-    <!-- Category Filters (Sheet se Dynamic banenge) -->
-    <div class="categories" id="categoryChips">
-      <div class="cat-chip active" onclick="filterByCategory('ALL', this)">All Parts</div>
+    <!-- Dynamic Category Filter Chips -->
+    <div class="categories-wrapper">
+      <div class="categories" id="categoryChips">
+        <div class="cat-chip active" onclick="filterByCategory('ALL', this)">All Parts</div>
+      </div>
     </div>
 
-    <!-- Product List Container -->
-    <div id="productList">
-      <p style="text-align: center; color: #64748b; padding: 20px;">Loading Products...</p>
+    <!-- Product List -->
+    <div class="product-list" id="productList">
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <p>Loading components...</p>
+      </div>
     </div>
 
   </div>
 
-  <!-- Bottom Floating Cart & WhatsApp Order Bar -->
+  <!-- Bottom Floating Cart Bar -->
   <div class="bottom-cart-bar">
-    <div class="cart-info">
-      Selected Items: <span id="totalItems" class="cart-count">0</span>
+    <div class="cart-container">
+      <div class="cart-info">
+        Selected Items: <span id="totalItems" class="cart-count">0</span>
+      </div>
+      <button class="btn-whatsapp-send" onclick="sendWhatsAppOrder()">
+        <i class="fa-brands fa-whatsapp"></i> Send Order
+      </button>
     </div>
-    <button class="btn-whatsapp-send" onclick="sendWhatsAppOrder()">
-      💬 Send Order
-    </button>
   </div>
 
   <script>
@@ -284,32 +520,34 @@
 
         rows.forEach(row => {
           if (row.c && row.c[0] && row.c[1]) {
-            // Header Skip करने के लिए चेक (अगर पहली रो Category है)
             if (row.c[0].v.toString().toLowerCase() !== 'category') {
               fetchedProducts.push({
                 category: row.c[0]?.v || 'General',
                 name: row.c[1]?.v || '',
-                image: row.c[2]?.v || 'https://via.placeholder.com/80?text=No+Image',
+                image: row.c[2]?.v || 'https://via.placeholder.com/80?text=Parts',
               });
             }
           }
         });
 
         productsData = fetchedProducts;
-        generateCategoryChips(); // Sheet से Category Buttons बनाना
+        generateCategoryChips();
         renderProducts(productsData);
       } catch (err) {
         console.error("Sheet loading error:", err);
-        document.getElementById("productList").innerHTML = `<p style="text-align:center; padding: 20px; color: red;">Google Sheet से डेटा नहीं मिल पा रहा है। शेयरिंग सेटिंग्स जांचें!</p>`;
+        document.getElementById("productList").innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
+            <p>Google Sheet loading error. Please check sharing settings!</p>
+          </div>`;
       }
     }
 
-    // Sheet की Categories से ऑटोमैटिक बटन बनाना
+    // Generate Dynamic Category Chips
     function generateCategoryChips() {
       const chipsContainer = document.getElementById("categoryChips");
       chipsContainer.innerHTML = `<div class="cat-chip active" onclick="filterByCategory('ALL', this)">All Parts</div>`;
 
-      // Unique Categories निकालना
       const categories = [...new Set(productsData.map(item => item.category.trim()).filter(Boolean))];
 
       categories.forEach(cat => {
@@ -321,13 +559,17 @@
       });
     }
 
-    // Render Products to UI
+    // Render Product Cards
     function renderProducts(data) {
       const listContainer = document.getElementById("productList");
       listContainer.innerHTML = "";
 
       if(data.length === 0) {
-        listContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #888;">No products found!</p>`;
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <p>No products found matching your filter.</p>
+          </div>`;
         return;
       }
 
@@ -367,7 +609,7 @@
       filterProducts();
     }
 
-    // Update Bottom Cart UI
+    // Update Cart Counter
     function updateCartUI() {
       let totalCount = 0;
       for (let item in cart) {
@@ -381,7 +623,7 @@
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
 
       const filtered = productsData.filter(item => {
-        const matchesCategory = (currentCategory === "ALL") || item.category.toLowerCase().trim() === currentCategory.toLowerCase().trim();
+        const matchesCategory = (currentCategory === "ALL") || item.category.toLowerCase().trim().includes(currentCategory.toLowerCase().trim());
         const matchesSearch = item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query);
         return matchesCategory && matchesSearch;
       });
@@ -389,15 +631,31 @@
       renderProducts(filtered);
     }
 
-    // Category Filter Switch
+    // Category Chip Switch
     function filterByCategory(category, element) {
       currentCategory = category;
       document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
-      element.classList.add('active');
+      if(element) element.classList.add('active');
       filterProducts();
     }
 
-    // Send WhatsApp Order
+    // Shortcut Grid Click Trigger
+    function quickSelectCategory(keyword) {
+      document.getElementById("searchInput").value = "";
+      currentCategory = keyword;
+      
+      const chips = document.querySelectorAll('.cat-chip');
+      chips.forEach(chip => {
+        if(chip.innerText.toLowerCase().includes(keyword.toLowerCase())) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+      filterProducts();
+    }
+
+    // WhatsApp Order Dispatch
     function sendWhatsAppOrder() {
       const phone = "918847259996";
       let message = "Hello Sachleen! I want to order the following electronic items:\n\n";
