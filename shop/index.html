@@ -141,6 +141,58 @@
       max-width: 650px;
     }
 
+    /* Top Categories Section (From Image) */
+    .top-categories-section {
+      margin: 24px 0;
+    }
+
+    .top-cat-heading {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .top-cat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .top-cat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .top-cat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+
+    .top-cat-icon {
+      font-size: 2rem;
+      color: var(--accent);
+    }
+
+    .top-cat-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
     /* Search Box */
     .search-container {
       margin: 20px 0;
@@ -383,6 +435,19 @@
       .hero-title {
         font-size: 1.35rem;
       }
+      .top-cat-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .top-cat-card {
+        padding: 14px 8px;
+      }
+      .top-cat-icon {
+        font-size: 1.5rem;
+      }
+      .top-cat-title {
+        font-size: 0.8rem;
+      }
       .category-accordion.open .category-content {
         grid-template-columns: 1fr;
       }
@@ -410,6 +475,25 @@
       <div class="hero-desc">Explore high-grade sensors, ICs, audio modules & DIY component kits at the best competitive prices.</div>
     </div>
 
+    <!-- Top Categories Section (Added as per Image) -->
+    <div class="top-categories-section">
+      <h2 class="top-cat-heading">Top Categories</h2>
+      <div class="top-cat-grid">
+        <div class="top-cat-card" onclick="scrollToCategory('Arduino')">
+          <i class="fa-solid fa-microchip top-cat-icon"></i>
+          <span class="top-cat-title">Arduino & Sensors</span>
+        </div>
+        <div class="top-cat-card" onclick="scrollToCategory('Speaker')">
+          <i class="fa-solid fa-volume-high top-cat-icon"></i>
+          <span class="top-cat-title">Speakers & Audio</span>
+        </div>
+        <div class="top-cat-card" onclick="scrollToCategory('Other')">
+          <i class="fa-solid fa-plug top-cat-icon"></i>
+          <span class="top-cat-title">Other Parts</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Search Bar -->
     <div class="search-container">
       <div class="search-wrapper">
@@ -418,7 +502,7 @@
           type="text" 
           id="searchInput" 
           class="search-input" 
-          placeholder="Search items across all categories..." 
+          placeholder="Search components, sensors, parts..." 
           onkeyup="filterProducts()"
         >
       </div>
@@ -535,7 +619,8 @@
         const items = grouped[category];
         
         const accordion = document.createElement("div");
-        accordion.className = `category-accordion ${isSearching ? 'open' : ''}`; // Auto open when searching
+        accordion.className = `category-accordion ${isSearching ? 'open' : ''}`;
+        accordion.setAttribute("id", `cat-${category.replace(/\s+/g, '-')}`);
         
         let itemsHTML = '';
         items.forEach(item => {
@@ -581,6 +666,26 @@
     function toggleAccordion(headerEl) {
       const parent = headerEl.parentElement;
       parent.classList.toggle("open");
+    }
+
+    // Scroll to Category from Top Category Cards
+    function scrollToCategory(keyword) {
+      const accordions = document.querySelectorAll('.category-accordion');
+      let found = false;
+
+      accordions.forEach(acc => {
+        const catName = acc.querySelector('.category-name').innerText.toLowerCase();
+        if (catName.includes(keyword.toLowerCase())) {
+          acc.classList.add('open');
+          acc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          found = true;
+        }
+      });
+
+      if (!found) {
+        document.getElementById("searchInput").value = keyword;
+        filterProducts();
+      }
     }
 
     // Update Quantity smoothly without refreshing the categories list
