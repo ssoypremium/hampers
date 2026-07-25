@@ -500,6 +500,11 @@
       }
     }
 
+    // Helper to safely encode product names for HTML data attributes
+    function encodeDataAttr(str) {
+      return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     // Render Grouped Accordion Categories
     function renderAccordionCategories(data) {
       const container = document.getElementById("categoryGroupList");
@@ -535,18 +540,18 @@
         let itemsHTML = '';
         items.forEach(item => {
           const qty = cart[item.name] || 0;
-          const safeName = item.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+          const encodedName = encodeDataAttr(item.name);
 
           itemsHTML += `
             <div class="product-card">
-              <img src="${item.image}" alt="${item.name}" class="prod-img" onerror="this.src='https://via.placeholder.com/80?text=Parts'">
+              <img src="${item.image}" alt="${encodedName}" class="prod-img" onerror="this.src='https://via.placeholder.com/80?text=Parts'">
               <div class="prod-details">
                 <div class="prod-title">${item.name}</div>
                 <div class="action-row">
                   <div class="qty-btn-group">
-                    <button class="qty-btn" onclick="updateQty('${safeName}', -1)">-</button>
-                    <span class="qty-val">${qty}</span>
-                    <button class="qty-btn" onclick="updateQty('${safeName}', 1)">+</button>
+                    <button class="qty-btn" onclick="updateQty(this, -1)">-</button>
+                    <span class="qty-val" data-product-name="${encodedName}">${qty}</span>
+                    <button class="qty-btn" onclick="updateQty(this, 1)">+</button>
                   </div>
                 </div>
               </div>
@@ -578,17 +583,22 @@
       parent.classList.toggle("open");
     }
 
-    // Update Quantity
-    function updateQty(productName, change) {
+    // Update Quantity smoothly without refreshing the categories list
+    function updateQty(buttonEl, change) {
+      const qtyValSpan = buttonEl.parentElement.querySelector('.qty-val');
+      const productName = qtyValSpan.getAttribute('data-product-name');
+
       if (!cart[productName]) cart[productName] = 0;
       cart[productName] += change;
 
       if (cart[productName] <= 0) {
         delete cart[productName];
+        qtyValSpan.innerText = 0;
+      } else {
+        qtyValSpan.innerText = cart[productName];
       }
 
       updateCartUI();
-      filterProducts();
     }
 
     // Update Cart Counter
