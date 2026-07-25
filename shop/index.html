@@ -39,12 +39,13 @@
     body {
       background-color: var(--bg);
       color: var(--text-main);
-      padding-bottom: 100px;
+      padding-bottom: 110px;
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Container for Responsive Desktop & Mobile */
     .container {
-      max-width: 520px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 0 16px;
     }
@@ -61,7 +62,7 @@
     }
 
     .header-content {
-      max-width: 520px;
+      max-width: 1100px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -69,7 +70,7 @@
     }
 
     .brand-title {
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       display: flex;
@@ -82,31 +83,32 @@
     }
 
     .brand-tagline {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       color: #94a3b8;
       font-weight: 500;
+      margin-top: 2px;
     }
 
-    /* Hero Banner */
+    /* Hero Banner (Enlarged) */
     .hero-banner {
-      margin: 16px 0 20px 0;
+      margin: 20px 0 24px 0;
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
       border-radius: 20px;
-      padding: 24px 20px;
+      padding: 36px 28px;
       color: #ffffff;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 12px 30px -10px rgba(49, 46, 129, 0.4);
+      box-shadow: 0 14px 32px -10px rgba(49, 46, 129, 0.4);
     }
 
     .hero-banner::before {
       content: '';
       position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, rgba(255,255,255,0) 70%);
+      top: -40%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, rgba(255,255,255,0) 70%);
       border-radius: 50%;
     }
 
@@ -116,50 +118,51 @@
       gap: 6px;
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(8px);
-      padding: 4px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
-      font-size: 0.72rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .hero-title {
-      font-size: 1.35rem;
+      font-size: 1.75rem;
       font-weight: 800;
       line-height: 1.25;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .hero-desc {
-      font-size: 0.82rem;
+      font-size: 0.95rem;
       color: #c7d2fe;
-      margin-bottom: 16px;
-      line-height: 1.4;
+      line-height: 1.5;
+      max-width: 650px;
     }
 
-    /* Category Grid */
+    /* Section Title */
     .section-title {
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 800;
       color: var(--text-main);
-      margin: 20px 0 12px 0;
+      margin: 24px 0 14px 0;
     }
 
+    /* Category Grid Responsive */
     .category-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
     }
 
     .category-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      padding: 12px 8px;
+      padding: 16px 12px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -172,21 +175,21 @@
     }
 
     .category-card i {
-      font-size: 1.3rem;
-      margin-bottom: 6px;
+      font-size: 1.5rem;
+      margin-bottom: 8px;
       color: var(--accent);
     }
 
     .category-card span {
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--text-main);
     }
 
     /* Search Box */
     .search-container {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .search-wrapper {
@@ -199,15 +202,15 @@
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.95rem;
     }
 
     .search-input {
       width: 100%;
-      padding: 12px 16px 12px 42px;
+      padding: 14px 16px 14px 44px;
       border: 1.5px solid var(--border-color);
       border-radius: 12px;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       outline: none;
       background: #fff;
       box-shadow: var(--shadow-sm);
@@ -219,29 +222,25 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
-    /* Category Chips Dynamic Filter */
+    /* Dynamic Filter Chips */
     .categories-wrapper {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .categories {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: none;
-    }
-
-    .categories::-webkit-scrollbar {
-      display: none;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
     }
 
     .cat-chip {
       background: #fff;
       border: 1px solid var(--border-color);
-      padding: 7px 16px;
+      padding: 8px 18px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
@@ -256,27 +255,27 @@
       border-color: var(--primary);
     }
 
-    /* Product Cards */
+    /* Product Grid for Responsive Layout */
     .product-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
     }
 
     .product-card {
       background: var(--card-bg);
       border-radius: 14px;
-      padding: 12px;
+      padding: 14px;
       display: flex;
-      gap: 12px;
+      gap: 14px;
       align-items: center;
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
     }
 
     .prod-img {
-      width: 76px;
-      height: 76px;
+      width: 80px;
+      height: 80px;
       border-radius: 10px;
       object-fit: cover;
       background: #f1f5f9;
@@ -289,7 +288,7 @@
     }
 
     .prod-category {
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       font-weight: 800;
       color: var(--accent-orange);
       text-transform: uppercase;
@@ -297,10 +296,10 @@
     }
 
     .prod-title {
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: var(--text-main);
-      margin: 2px 0 8px 0;
+      margin: 4px 0 10px 0;
       line-height: 1.3;
     }
 
@@ -316,13 +315,13 @@
       align-items: center;
       background: #f1f5f9;
       border-radius: 8px;
-      padding: 2px;
+      padding: 3px;
       border: 1px solid var(--border-color);
     }
 
     .qty-btn {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border: none;
       background: #fff;
       border-radius: 6px;
@@ -333,8 +332,8 @@
     }
 
     .qty-val {
-      padding: 0 10px;
-      font-size: 0.82rem;
+      padding: 0 12px;
+      font-size: 0.85rem;
       font-weight: 800;
     }
 
@@ -345,14 +344,14 @@
       left: 0;
       right: 0;
       background: #ffffff;
-      padding: 12px 20px;
+      padding: 14px 20px;
       border-top: 1px solid var(--border-color);
       box-shadow: 0 -8px 25px rgba(0,0,0,0.08);
       z-index: 1000;
     }
 
     .cart-container {
-      max-width: 520px;
+      max-width: 1100px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -360,14 +359,14 @@
     }
 
     .cart-info {
-      font-size: 0.85rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: var(--text-muted);
     }
 
     .cart-count {
       color: var(--accent-orange);
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-weight: 800;
     }
 
@@ -375,21 +374,46 @@
       background: var(--whatsapp);
       color: #fff;
       border: none;
-      padding: 11px 22px;
+      padding: 12px 26px;
       border-radius: 25px;
       font-weight: 800;
-      font-size: 0.88rem;
+      font-size: 0.92rem;
       display: flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+      transition: background 0.2s ease;
+    }
+
+    .btn-whatsapp-send:hover {
+      background: var(--whatsapp-hover);
     }
 
     .empty-state {
+      grid-column: 1 / -1;
       text-align: center;
-      padding: 30px 10px;
+      padding: 40px 10px;
       color: var(--text-muted);
+    }
+
+    /* Mobile Media Query Adjustments */
+    @media (max-width: 600px) {
+      .hero-banner {
+        padding: 24px 20px;
+      }
+      .hero-title {
+        font-size: 1.35rem;
+      }
+      .hero-desc {
+        font-size: 0.85rem;
+      }
+      .category-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .product-list {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -411,8 +435,7 @@
     <div class="hero-banner">
       <div class="hero-badge"><i class="fa-solid fa-microchip"></i> Premium Hardware</div>
       <div class="hero-title">Arduino & Electronic Components Hub</div>
-      <div class="hero-desc">Explore sensors, modules, audio parts & DIY accessories at unbeatable prices.</div>
-      <div class="hero-desc">Explore sensors, modules, audio parts & DIY accessories at unbeatable prices.</div>
+      <div class="hero-desc">Explore high-grade sensors, ICs, audio modules & DIY component kits at the best competitive prices.</div>
     </div>
 
     <!-- Category Shortcuts -->
@@ -455,7 +478,7 @@
       </div>
     </div>
 
-    <!-- Product List -->
+    <!-- Product List / Responsive Grid -->
     <div class="product-list" id="productList">
       <div class="empty-state">
         <i class="fa-solid fa-spinner fa-spin"></i>
@@ -485,15 +508,13 @@
     let cart = {}; 
     let currentCategory = "ALL";
 
-    // Helper function: Convert Google Drive Link to direct image viewable URL
+    // Format Google Drive link or standard image URLs
     function formatImageUrl(url) {
       if (!url) return 'https://via.placeholder.com/80?text=Parts';
       
-      // Check if it's a Google Drive URL
       if (url.includes('drive.google.com')) {
         let match = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
         if (match && match[1]) {
-          // Use Google Photos/Drive thumbnail API (Reliable for web images)
           return `https://lh3.googleusercontent.com/d/${match[1]}=s300`;
         }
       }
@@ -505,7 +526,7 @@
       try {
         const response = await fetch(SHEET_URL);
         const text = await response.text();
-        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const json = JSON.parse(text.substring(47).slice(0, -2));
         
         const rows = json.table.rows;
         let fetchedProducts = [];
@@ -557,7 +578,7 @@
       const listContainer = document.getElementById("productList");
       listContainer.innerHTML = "";
 
-      if(data.length === 0) {
+      if (data.length === 0) {
         listContainer.innerHTML = `
           <div class="empty-state">
             <i class="fa-solid fa-box-open"></i>
@@ -568,6 +589,7 @@
 
       data.forEach((item) => {
         const qty = cart[item.name] || 0;
+        const safeName = item.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
         
         const card = document.createElement("div");
         card.className = "product-card";
@@ -578,9 +600,9 @@
             <div class="prod-title">${item.name}</div>
             <div class="action-row">
               <div class="qty-btn-group">
-                <button class="qty-btn" onclick="updateQty('${item.name.replace(/'/g, "\\'")}', -1)">-</button>
+                <button class="qty-btn" onclick="updateQty('${safeName}', -1)">-</button>
                 <span class="qty-val">${qty}</span>
-                <button class="qty-btn" onclick="updateQty('${item.name.replace(/'/g, "\\'")}', 1)">+</button>
+                <button class="qty-btn" onclick="updateQty('${safeName}', 1)">+</button>
               </div>
             </div>
           </div>
@@ -628,7 +650,7 @@
     function filterByCategory(category, element) {
       currentCategory = category;
       document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
-      if(element) element.classList.add('active');
+      if (element) element.classList.add('active');
       filterProducts();
     }
 
@@ -639,7 +661,7 @@
       
       const chips = document.querySelectorAll('.cat-chip');
       chips.forEach(chip => {
-        if(chip.innerText.toLowerCase().includes(keyword.toLowerCase())) {
+        if (chip.innerText.toLowerCase().includes(keyword.toLowerCase())) {
           chip.classList.add('active');
         } else {
           chip.classList.remove('active');
