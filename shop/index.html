@@ -43,7 +43,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Container for Responsive Desktop & Mobile */
     .container {
       max-width: 1100px;
       margin: 0 auto;
@@ -89,7 +88,7 @@
       margin-top: 2px;
     }
 
-    /* Hero Banner (Enlarged) */
+    /* Hero Banner */
     .hero-banner {
       margin: 20px 0 24px 0;
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
@@ -142,54 +141,9 @@
       max-width: 650px;
     }
 
-    /* Section Title */
-    .section-title {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin: 24px 0 14px 0;
-    }
-
-    /* Category Grid Responsive */
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .category-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 16px 12px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .category-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-    }
-
-    .category-card i {
-      font-size: 1.5rem;
-      margin-bottom: 8px;
-      color: var(--accent);
-    }
-
-    .category-card span {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
     /* Search Box */
     .search-container {
-      margin-bottom: 18px;
+      margin: 20px 0;
     }
 
     .search-wrapper {
@@ -222,61 +176,101 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
-    /* Dynamic Filter Chips */
-    .categories-wrapper {
-      margin-bottom: 20px;
-    }
-
-    .categories {
+    /* Accordion Category Layout */
+    .category-group-list {
       display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      scrollbar-width: thin;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .cat-chip {
-      background: #fff;
+    .category-accordion {
+      background: var(--card-bg);
       border: 1px solid var(--border-color);
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      white-space: nowrap;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: all 0.2s ease;
+      border-radius: 16px;
+      overflow: hidden;
       box-shadow: var(--shadow-sm);
     }
 
-    .cat-chip.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
+    .category-header {
+      padding: 18px 20px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease;
     }
 
-    /* Product Grid for Responsive Layout */
-    .product-list {
+    .category-header:hover {
+      background: #f8fafc;
+    }
+
+    .category-title-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .category-title-info i {
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    .category-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .category-count-badge {
+      background: #e2e8f0;
+      color: var(--text-main);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+
+    .toggle-icon {
+      font-size: 1rem;
+      color: var(--text-muted);
+      transition: transform 0.3s ease;
+    }
+
+    .category-accordion.open .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    /* Sub-products Inside Category */
+    .category-content {
+      display: none;
+      padding: 16px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .category-accordion.open .category-content {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 14px;
+      gap: 12px;
     }
 
     .product-card {
-      background: var(--card-bg);
-      border-radius: 14px;
-      padding: 14px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 12px;
       display: flex;
-      gap: 14px;
+      gap: 12px;
       align-items: center;
       border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
     }
 
     .prod-img {
-      width: 80px;
-      height: 80px;
-      border-radius: 10px;
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
       object-fit: cover;
       background: #f1f5f9;
       flex-shrink: 0;
@@ -287,19 +281,11 @@
       flex-grow: 1;
     }
 
-    .prod-category {
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: var(--accent-orange);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
     .prod-title {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
       color: var(--text-main);
-      margin: 4px 0 10px 0;
+      margin-bottom: 8px;
       line-height: 1.3;
     }
 
@@ -315,25 +301,24 @@
       align-items: center;
       background: #f1f5f9;
       border-radius: 8px;
-      padding: 3px;
+      padding: 2px;
       border: 1px solid var(--border-color);
     }
 
     .qty-btn {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border: none;
       background: #fff;
       border-radius: 6px;
       font-weight: 800;
       cursor: pointer;
       color: var(--text-main);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
     .qty-val {
-      padding: 0 12px;
-      font-size: 0.85rem;
+      padding: 0 10px;
+      font-size: 0.82rem;
       font-weight: 800;
     }
 
@@ -383,21 +368,14 @@
       gap: 8px;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-      transition: background 0.2s ease;
-    }
-
-    .btn-whatsapp-send:hover {
-      background: var(--whatsapp-hover);
     }
 
     .empty-state {
-      grid-column: 1 / -1;
       text-align: center;
       padding: 40px 10px;
       color: var(--text-muted);
     }
 
-    /* Mobile Media Query Adjustments */
     @media (max-width: 600px) {
       .hero-banner {
         padding: 24px 20px;
@@ -405,13 +383,7 @@
       .hero-title {
         font-size: 1.35rem;
       }
-      .hero-desc {
-        font-size: 0.85rem;
-      }
-      .category-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .product-list {
+      .category-accordion.open .category-content {
         grid-template-columns: 1fr;
       }
     }
@@ -419,7 +391,7 @@
 </head>
 <body>
 
-  <!-- Top Sticky Header -->
+  <!-- Top Header -->
   <header>
     <div class="header-content">
       <div>
@@ -431,30 +403,11 @@
 
   <div class="container">
     
-    <!-- Hero Banner Section -->
+    <!-- Hero Banner -->
     <div class="hero-banner">
       <div class="hero-badge"><i class="fa-solid fa-microchip"></i> Premium Hardware</div>
       <div class="hero-title">Arduino & Electronic Components Hub</div>
       <div class="hero-desc">Explore high-grade sensors, ICs, audio modules & DIY component kits at the best competitive prices.</div>
-    </div>
-
-    <!-- Category Shortcuts -->
-    <div class="section-title">
-      <span>Top Categories</span>
-    </div>
-    <div class="category-grid">
-      <div class="category-card" onclick="quickSelectCategory('Arduino')">
-        <i class="fa-solid fa-microchip"></i>
-        <span>Arduino & Sensors</span>
-      </div>
-      <div class="category-card" onclick="quickSelectCategory('Speaker')">
-        <i class="fa-solid fa-volume-high"></i>
-        <span>Speakers & Audio</span>
-      </div>
-      <div class="category-card" onclick="quickSelectCategory('ALL')">
-        <i class="fa-solid fa-plug"></i>
-        <span>Other Parts</span>
-      </div>
     </div>
 
     <!-- Search Bar -->
@@ -465,21 +418,14 @@
           type="text" 
           id="searchInput" 
           class="search-input" 
-          placeholder="Search components, sensors, parts..." 
+          placeholder="Search items across all categories..." 
           onkeyup="filterProducts()"
         >
       </div>
     </div>
 
-    <!-- Dynamic Category Filter Chips -->
-    <div class="categories-wrapper">
-      <div class="categories" id="categoryChips">
-        <div class="cat-chip active" onclick="filterByCategory('ALL', this)">All Parts</div>
-      </div>
-    </div>
-
-    <!-- Product List / Responsive Grid -->
-    <div class="product-list" id="productList">
+    <!-- Category Dropdowns Area -->
+    <div class="category-group-list" id="categoryGroupList">
       <div class="empty-state">
         <i class="fa-solid fa-spinner fa-spin"></i>
         <p>Loading components...</p>
@@ -506,12 +452,10 @@
 
     let productsData = [];
     let cart = {}; 
-    let currentCategory = "ALL";
 
-    // Format Google Drive link or standard image URLs
+    // Format Drive URLs
     function formatImageUrl(url) {
       if (!url) return 'https://via.placeholder.com/80?text=Parts';
-      
       if (url.includes('drive.google.com')) {
         let match = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
         if (match && match[1]) {
@@ -521,7 +465,7 @@
       return url;
     }
 
-    // Fetch Data from Google Sheet
+    // Fetch Google Sheet Data
     async function fetchSheetData() {
       try {
         const response = await fetch(SHEET_URL);
@@ -536,7 +480,7 @@
             if (row.c[0].v.toString().toLowerCase() !== 'category') {
               let rawImg = row.c[2]?.v || '';
               fetchedProducts.push({
-                category: row.c[0]?.v || 'General',
+                category: row.c[0]?.v ? row.c[0].v.trim() : 'General Parts',
                 name: row.c[1]?.v || '',
                 image: formatImageUrl(rawImg),
               });
@@ -545,11 +489,10 @@
         });
 
         productsData = fetchedProducts;
-        generateCategoryChips();
-        renderProducts(productsData);
+        renderAccordionCategories(productsData);
       } catch (err) {
         console.error("Sheet loading error:", err);
-        document.getElementById("productList").innerHTML = `
+        document.getElementById("categoryGroupList").innerHTML = `
           <div class="empty-state">
             <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
             <p>Google Sheet loading error. Please check sharing settings!</p>
@@ -557,58 +500,82 @@
       }
     }
 
-    // Generate Dynamic Category Chips
-    function generateCategoryChips() {
-      const chipsContainer = document.getElementById("categoryChips");
-      chipsContainer.innerHTML = `<div class="cat-chip active" onclick="filterByCategory('ALL', this)">All Parts</div>`;
-
-      const categories = [...new Set(productsData.map(item => item.category.trim()).filter(Boolean))];
-
-      categories.forEach(cat => {
-        const chip = document.createElement("div");
-        chip.className = "cat-chip";
-        chip.innerText = cat;
-        chip.onclick = () => filterByCategory(cat, chip);
-        chipsContainer.appendChild(chip);
-      });
-    }
-
-    // Render Product Cards
-    function renderProducts(data) {
-      const listContainer = document.getElementById("productList");
-      listContainer.innerHTML = "";
+    // Render Grouped Accordion Categories
+    function renderAccordionCategories(data) {
+      const container = document.getElementById("categoryGroupList");
+      container.innerHTML = "";
 
       if (data.length === 0) {
-        listContainer.innerHTML = `
+        container.innerHTML = `
           <div class="empty-state">
             <i class="fa-solid fa-box-open"></i>
-            <p>No products found matching your filter.</p>
+            <p>No products found matching your search.</p>
           </div>`;
         return;
       }
 
-      data.forEach((item) => {
-        const qty = cart[item.name] || 0;
-        const safeName = item.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      // Group products by category
+      const grouped = {};
+      data.forEach(item => {
+        if (!grouped[item.category]) {
+          grouped[item.category] = [];
+        }
+        grouped[item.category].push(item);
+      });
+
+      const isSearching = document.getElementById("searchInput").value.trim().length > 0;
+
+      // Render Category Sections
+      for (let category in grouped) {
+        const items = grouped[category];
         
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-          <img src="${item.image}" alt="${item.name}" class="prod-img" onerror="this.src='https://via.placeholder.com/80?text=Parts'">
-          <div class="prod-details">
-            <span class="prod-category">${item.category}</span>
-            <div class="prod-title">${item.name}</div>
-            <div class="action-row">
-              <div class="qty-btn-group">
-                <button class="qty-btn" onclick="updateQty('${safeName}', -1)">-</button>
-                <span class="qty-val">${qty}</span>
-                <button class="qty-btn" onclick="updateQty('${safeName}', 1)">+</button>
+        const accordion = document.createElement("div");
+        accordion.className = `category-accordion ${isSearching ? 'open' : ''}`; // Auto open when searching
+        
+        let itemsHTML = '';
+        items.forEach(item => {
+          const qty = cart[item.name] || 0;
+          const safeName = item.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+          itemsHTML += `
+            <div class="product-card">
+              <img src="${item.image}" alt="${item.name}" class="prod-img" onerror="this.src='https://via.placeholder.com/80?text=Parts'">
+              <div class="prod-details">
+                <div class="prod-title">${item.name}</div>
+                <div class="action-row">
+                  <div class="qty-btn-group">
+                    <button class="qty-btn" onclick="updateQty('${safeName}', -1)">-</button>
+                    <span class="qty-val">${qty}</span>
+                    <button class="qty-btn" onclick="updateQty('${safeName}', 1)">+</button>
+                  </div>
+                </div>
               </div>
             </div>
+          `;
+        });
+
+        accordion.innerHTML = `
+          <div class="category-header" onclick="toggleAccordion(this)">
+            <div class="category-title-info">
+              <i class="fa-solid fa-layer-group"></i>
+              <span class="category-name">${category}</span>
+              <span class="category-count-badge">${items.length} items</span>
+            </div>
+            <i class="fa-solid fa-chevron-down toggle-icon"></i>
+          </div>
+          <div class="category-content">
+            ${itemsHTML}
           </div>
         `;
-        listContainer.appendChild(card);
-      });
+
+        container.appendChild(accordion);
+      }
+    }
+
+    // Toggle Dropdown Group
+    function toggleAccordion(headerEl) {
+      const parent = headerEl.parentElement;
+      parent.classList.toggle("open");
     }
 
     // Update Quantity
@@ -633,41 +600,15 @@
       document.getElementById("totalItems").innerText = totalCount;
     }
 
-    // Filter Logic
+    // Search Filter Logic
     function filterProducts() {
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
 
       const filtered = productsData.filter(item => {
-        const matchesCategory = (currentCategory === "ALL") || item.category.toLowerCase().trim().includes(currentCategory.toLowerCase().trim());
-        const matchesSearch = item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query);
-        return matchesCategory && matchesSearch;
+        return item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query);
       });
 
-      renderProducts(filtered);
-    }
-
-    // Category Chip Switch
-    function filterByCategory(category, element) {
-      currentCategory = category;
-      document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
-      if (element) element.classList.add('active');
-      filterProducts();
-    }
-
-    // Shortcut Grid Click Trigger
-    function quickSelectCategory(keyword) {
-      document.getElementById("searchInput").value = "";
-      currentCategory = keyword;
-      
-      const chips = document.querySelectorAll('.cat-chip');
-      chips.forEach(chip => {
-        if (chip.innerText.toLowerCase().includes(keyword.toLowerCase())) {
-          chip.classList.add('active');
-        } else {
-          chip.classList.remove('active');
-        }
-      });
-      filterProducts();
+      renderAccordionCategories(filtered);
     }
 
     // Send WhatsApp Order
