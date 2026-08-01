@@ -6,109 +6,430 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stock Market Learning Module</title>
 
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background: linear-gradient(180deg, #f0f4f8 0%, #ffffff 100%); color: #0f172a; min-height: 100vh; padding: 20px 0 80px 0; }
-    .container { width: 100%; max-width: 480px; margin: 0 auto; padding: 0 16px; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-    .main-header { text-align: center; padding: 10px 0 18px 0; }
-    .main-header .badge { display: inline-block; background: rgba(0, 100, 50, 0.1); color: #008040; font-size: 0.75rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; margin-bottom: 8px; }
-    .main-header h1 { font-size: 1.65rem; font-weight: 800; color: #0f172a; }
-    .main-header h1 span { color: #008040; } /* Bullish Green */
+    body {
+      /* Soft Premium Gradient Background */
+      background: linear-gradient(180deg, #e6f3fa 0%, #ffffff 100%);
+      color: #0f172a;
+      min-height: 100vh;
+      padding-top: 20px;
+      padding-bottom: 80px;
+    }
 
-    .search-container { position: sticky; top: 12px; z-index: 100; margin-bottom: 22px; }
-    .search-box { position: relative; background: #ffffff; border-radius: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border: 1.5px solid #e2e8f0; }
-    .search-input { width: 100%; padding: 14px 20px 14px 45px; border-radius: 30px; border: none; font-size: 0.95rem; outline: none; }
-    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); }
+    .container {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
 
-    .chapter-card { background: #ffffff; border-radius: 18px; margin-bottom: 14px; border: 1px solid #e2e8f0; overflow: hidden; transition: 0.3s; }
-    .chapter-header { padding: 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: #1e293b; }
-    .arrow-icon { width: 30px; height: 30px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-    
-    .chapter-body { display: none; padding: 18px; color: #475569; font-size: 0.93rem; line-height: 1.7; border-top: 1px solid #f1f5f9; }
-    .chapter-card.active { border-color: #008040; box-shadow: 0 10px 20px rgba(0,128,64,0.08); }
-    .chapter-card.active .arrow-icon { transform: rotate(180deg); background: #008040; color: white; }
-    .chapter-card.active .chapter-body { display: block; }
-    
-    .btn-floating-home { position: fixed; bottom: 22px; right: 20px; background: #008040; color: #ffffff; padding: 12px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; border: none; box-shadow: 0 8px 20px rgba(0,128,64,0.3); }
+    /* Main Title Header */
+    .main-header {
+      text-align: center;
+      padding: 10px 0 18px 0;
+    }
+
+    .main-header .badge {
+      display: inline-block;
+      background: rgba(0, 85, 135, 0.1);
+      color: #005587;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .main-header h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #005587;
+      letter-spacing: -0.5px;
+      line-height: 1.25;
+    }
+
+    .main-header h1 span {
+      color: #ff5800; /* Niva Bupa Orange */
+    }
+
+    .main-header p {
+      font-size: 0.88rem;
+      color: #64748b;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* Sticky Search Bar Container */
+    .search-container {
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      margin-bottom: 22px;
+    }
+
+    .search-box {
+      position: relative;
+      background: #ffffff;
+      border-radius: 30px;
+      box-shadow: 0 8px 25px rgba(0, 85, 135, 0.12);
+      border: 1.5px solid #bce0f2;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-box:focus-within {
+      border-color: #ff5800;
+      box-shadow: 0 8px 25px rgba(255, 88, 0, 0.18);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 20px 14px 45px;
+      border-radius: 30px;
+      border: none;
+      font-size: 0.95rem;
+      outline: none;
+      background: transparent;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+    }
+
+    /* Chapter Cards Styling */
+    .chapter-card {
+      background: #ffffff;
+      border-radius: 18px;
+      margin-bottom: 14px;
+      border: 1px solid #dbeafe;
+      box-shadow: 0 4px 14px rgba(0, 85, 135, 0.05);
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .chapter-header {
+      padding: 18px;
+      background: #ffffff;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      color: #002d62;
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .chapter-header:hover {
+      background: #f8fafc;
+    }
+
+    .arrow-icon {
+      font-size: 0.8rem;
+      transition: transform 0.3s ease, background 0.3s, color 0.3s;
+      color: #ff5800;
+      background: #fff3ec;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+
+    /* Active Expanded Chapter Content */
+    .chapter-body {
+      display: none;
+      padding: 18px;
+      color: #334155;
+      font-size: 0.93rem;
+      line-height: 1.7;
+      border-top: 1px solid #f1f5f9;
+      background: #f8fcff;
+    }
+
+    .chapter-card.active {
+      border-color: #ff5800;
+      box-shadow: 0 10px 25px rgba(0, 85, 135, 0.1);
+    }
+
+    .chapter-card.active .chapter-body {
+      display: block;
+    }
+
+    .chapter-card.active .arrow-icon {
+      transform: rotate(180deg);
+      background: #ff5800;
+      color: #ffffff;
+    }
+
+    .chapter-card.highlight {
+      border: 2px solid #ff5800;
+    }
+
+    /* Inner Body Content */
+    .chapter-body h4 {
+      color: #005587;
+      margin: 12px 0 6px 0;
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    .chapter-body p {
+      margin-bottom: 10px;
+    }
+
+    .chapter-body ul {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    /* Floating Home / Back To Top Button */
+    .btn-floating-home {
+      position: fixed;
+      bottom: 22px;
+      right: 20px;
+      background: linear-gradient(135deg, #005587 0%, #00385e 100%);
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 22px rgba(0, 85, 135, 0.35);
+      border: 2px solid #ffffff;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 800;
+      z-index: 99;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-floating-home:active {
+      transform: scale(0.95);
+    }
   </style>
 </head>
-<body>
+<body id="top">
 
   <div class="container">
+
+    <!-- Title Header -->
     <div class="main-header">
-      <span class="badge">Masterclass</span>
-      <h1>Stock Market <span>Handbook</span></h1>
-      <p>Basic to Advance Learning</p>
+      <span class="badge">E-Learning Guide</span>
+      <h1>stock market <span>Handbook</span></h1>
+      <p>Quick Reference & Knowledge Module</p>
     </div>
 
+    <!-- Sticky Live Search Bar -->
     <div class="search-container">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Topics search karein..." onkeyup="filterChapters()">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search chapters or topics..." onkeyup="filterChapters()">
       </div>
     </div>
 
-    <!-- CHAPTER 1 -->
-    <div class="chapter-card">
+    <!-- CHAPTER  -->
+    <!-- <div class="chapter-card">
       <div class="chapter-header" onclick="toggleChapter(this)">
-        <span>📈 Chapter 1: Introduction</span>
+        <span>📖 Chapter 1: Introduction to Health Insurance</span>
         <span class="arrow-icon">▼</span>
       </div>
       <div class="chapter-body">
-        <h4>Stock Market Kya Hai?</h4>
-        <p>Market ek aisi jagah hai jahan shares ki kharid-bikri hoti hai...</p>
-        <h4>Key Concepts:</h4>
+        <h4>1.1 What is Health Insurance?</h4>
+        <p>Health insurance is a contract where an insurer agrees to pay for medical expenses in case of illness or injury.</p>
+        <h4>Key Benefits:</h4>
         <ul>
-          <li>NSE vs BSE</li>
-          <li>Market Timing</li>
-          <li>Why companies list shares?</li>
+          <li>Cashless Hospitalization</li>
+          <li>Financial Protection against Medical Emergencies</li>
+          <li>Tax Benefits under Section 80D</li>
         </ul>
       </div>
-    </div>
+    </div> -->
 
-    <!-- CHAPTER 2 -->
+    <!-- CHAPTER  -->
     <div class="chapter-card">
       <div class="chapter-header" onclick="toggleChapter(this)">
-        <span>💳 Chapter 2: Account Opening</span>
+        <span>📖 Chapter 1: Company History</span>
         <span class="arrow-icon">▼</span>
       </div>
       <div class="chapter-body">
-        <h4>Demat & Trading Account</h4>
-        <p>Investment shuru karne ke liye aapko Demat aur Trading account ki zaroorat hoti hai.</p>
-        <h4>Documents Required:</h4>
+        <h4>History</h4>
+        <p>शुरुआत
+          भारत में पहले Health Insurance ज़्यादातर Life Insurance कंपनियाँ बेचती थीं।
+          उस समय लोगों के पास विकल्प कम थे।
+          फिर कुछ कंपनियाँ केवल Health Insurance पर फोकस करने लगीं।
+          इन्हीं में से एक है</p>
+
+        <h4>Niva Bupa Company History</h4>
+        <p>Company की शुरुआत
+          साल 2008
+          Company का नाम था
+          Max Bupa Health Insurance
+          दो बड़ी कंपनियों ने मिलकर इसे शुरू किया।
+          1. Max India
+          एक भारतीय कंपनी।
+          Healthcare में काम करती थी।</p>
+
+        <h4>Bupa</h4>
+        <p>यूके (United Kingdom) की बहुत बड़ी Healthcare Company.
+          Bupa का मतलब है
+          British United Provident Association
+          Bupa दुनिया के कई देशों में Health Insurance और Hospitals चलाती है।</p>
+
+        <h4>Bupa कौन है?</h4>
+        <p>Bupa की शुरुआत
+          1947
+          United Kingdom
+          लगभग 75+ देशों में मौजूद है।
+          Millions of Customers हैं।
+          Hospital
+          Clinic
+          Dental
+          Health Insurance
+          सब चलाती है।
+          यानी Health Sector में इसका बहुत बड़ा अनुभव है।</p>
+
+        <h4>Max Bupa क्यों बनी?</h4>
+        <p>भारत में Health Insurance तेजी से बढ़ रहा था।
+          Max के पास Indian Market की समझ थी।
+          Bupa के पास International Experience.
+          दोनों ने मिलकर
+          Max Bupa
+          बनाई।</p>
+        
+        <h4>फिर नाम क्यों बदला?</h4>
+        <p>कुछ साल बाद
+          Max Group ने अपनी हिस्सेदारी बेच दी।
+          नई Indian Company
+          True North
+          Investor बन गई।
+          उसके बाद
+          Company का नया नाम रखा गया
+          Niva Bupa
+          "Max" हट गया।
+          "Bupa" वही रहा।</p>
+
+        <h4>Current Name</h4>
+        <p>Niva Bupa Health Insurance Company Limited</p>
+
+        <h4>Niva का Meaning</h4>
+        <p>"Niva" कोई छोटा रूप (abbreviation) नहीं है।
+          इसे एक नए भारतीय ब्रांड के रूप में चुना गया, जिसका उद्देश्य नई शुरुआत, सुरक्षा और भरोसे की पहचान बनाना था।</p>
+
+        <h4>Company किस चीज़ में Expert है?</h4>
+        <p>सिर्फ
+          Health Insurance
+          यानी
+              • Mediclaim
+              • Family Floater
+              • Critical Illness
+              • Senior Citizen Plans
+              • Top-up Plans
+              • Personal Accident (कुछ उत्पादों में)
+              • Hospital Cash (कुछ योजनाओं में)
+          यह कंपनी मुख्य रूप से Health Insurance पर केंद्रित है।</p>
+
+        <h4>Head Office</h4>
+        <p>Niva Bupa Health Insurance का मुख्यालय Gurugram, Haryana में है।</p>
+
+        <h4>Company का उद्देश्य</h4>
+        <p>लोगों को बीमारी आने के बाद आर्थिक परेशानी से बचाना।
+          यानी
+          बीमारी से पहले Insurance,
+          बीमारी के समय Support,
+          बीमारी के बाद Financial Protection.</p>
+
+        <h4>Company की Philosophy</h4>
+        <p>Health Insurance केवल एक Product नहीं है।
+          यह Financial Protection है।
+          अगर किसी व्यक्ति का ₹8 लाख का ऑपरेशन हो जाए और Insurance न हो, तो उसकी वर्षों की बचत खत्म हो सकती है।
+          इसलिए Advisor का काम सिर्फ Policy बेचना नहीं, बल्कि ग्राहक को सही सुरक्षा दिलाना है।</p>
+
+        <h4>Advisor की भूमिका</h4>
+        <p>एक अच्छे Advisor का काम है:</p>
         <ul>
-          <li>PAN Card</li>
-          <li>Aadhaar Card (Linked with Mobile)</li>
-          <li>Bank Statement</li>
+          <li>ग्राहक की ज़रूरत समझना।</li>
+          <li>सही Sum Insured चुनने में मदद करना।</li>
+          <li>Policy की शर्तें साफ़-साफ़ बताना।</li>
+          <li>गलत वादे न करना।</li>
+          <li>Claim के समय भी सहायता करना।</li>
         </ul>
+        
+
+        <h4></h4>
+        <p></p>
+        
+        <!-- <h4>Key Benefits:</h4>
+        <ul>
+          <li>Cashless Hospitalization</li>
+          <li>Financial Protection against Medical Emergencies</li>
+          <li>Tax Benefits under Section 80D</li>
+        </ul> -->
       </div>
     </div>
 
-    <!-- Aap yahan naye chapters isi format mein copy-paste karke add kar sakte hain -->
+    
 
-  </div>
-
-  <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="btn-floating-home">🏠 Home</button>
+  <!-- Floating Home / Top Button -->
+  <button onclick="scrollToTop()" class="btn-floating-home">
+    🏠 Home
+  </button>
 
   <script>
+    // Chapter Open/Close Toggle
     function toggleChapter(headerElement) {
       const card = headerElement.parentElement;
       card.classList.toggle('active');
     }
 
+    // Scroll Smoothly to Top
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Instant Real-Time Search & Auto Open
     function filterChapters() {
       const query = document.getElementById('searchInput').value.toLowerCase().trim();
       const chapters = document.querySelectorAll('.chapter-card');
+
       chapters.forEach(card => {
-        const text = card.innerText.toLowerCase();
-        card.style.display = text.includes(query) ? "block" : "none";
+        const headerText = card.querySelector('.chapter-header').innerText.toLowerCase();
+        
+        if (query === "") {
+          card.style.display = "block";
+          card.classList.remove('active', 'highlight');
+        } else if (headerText.includes(query)) {
+          card.style.display = "block";
+          card.classList.add('active', 'highlight');
+        } else {
+          card.style.display = "none";
+          card.classList.remove('active', 'highlight');
+        }
       });
     }
   </script>
+
 </body>
 </html>
