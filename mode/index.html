@@ -217,7 +217,8 @@
       border-radius: 10px;
       margin-bottom: 12px;
       border: 1px solid var(--border-color);
-      cursor: pointer;
+      /* Removed click zoom from showcase cards */
+      cursor: default;
     }
 
     .showcase-card h4 {
@@ -247,7 +248,7 @@
       margin: 0 auto 15px auto;
       border-radius: 12px;
       border: 1px solid var(--border-color);
-      cursor: pointer;
+      cursor: default;
     }
 
     @media (min-width: 768px) {
@@ -391,6 +392,7 @@
       border: 1px solid var(--border-color);
       flex-shrink: 0;
       background-color: #f1f5f9;
+      /* Only product stock images keep pointer cursor for zoom */
       cursor: pointer;
     }
 
@@ -569,7 +571,8 @@
       background: #fff;
       padding: 6px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      cursor: pointer;
+      /* Removed click zoom from QR Code */
+      cursor: default;
     }
 
     .qr-caption {
@@ -757,17 +760,20 @@
       <h2 class="section-heading">Our Project Showcase</h2>
       <div class="showcase-grid">
         <div class="showcase-card">
-          <img src="https://images.unsplash.com/photo-1707948952416-67f9dd252265?q=80&w=870&auto=format&fit=crop" alt="Robotic Arm" onclick="openImageModal(this.src)">
+          <!-- Removed zoom onclick -->
+          <img src="https://images.unsplash.com/photo-1707948952416-67f9dd252265?q=80&w=870&auto=format&fit=crop" alt="Robotic Arm">
           <h4>Robotic Arm</h4>
           <p>Custom-built robotic arm working models designed for school science exhibitions and technical demonstrations.</p>
         </div>
         <div class="showcase-card">
-          <img src="https://images.unsplash.com/photo-1779219667857-cb0a92399223?q=80&w=387&auto=format&fit=crop" alt="Smart Circuit" onclick="openImageModal(this.src)">
+          <!-- Removed zoom onclick -->
+          <img src="https://images.unsplash.com/photo-1779219667857-cb0a92399223?q=80&w=387&auto=format&fit=crop" alt="Smart Circuit">
           <h4>Smart Circuit</h4>
           <p>Custom-designed electronic and IoT-based working models for school science projects and automation demonstrations.</p>
         </div>
         <div class="showcase-card">
-          <img src="https://images.unsplash.com/photo-1716929157559-d86a11b7b786?q=80&w=399&auto=format&fit=crop" alt="Custom Charts" onclick="openImageModal(this.src)">
+          <!-- Removed zoom onclick -->
+          <img src="https://images.unsplash.com/photo-1716929157559-d86a11b7b786?q=80&w=399&auto=format&fit=crop" alt="Custom Charts">
           <h4>Custom Charts</h4>
           <p>Beautifully handwritten and neatly designed charts for school projects, ready to paste on Thermocol or MDF sheets.</p>
         </div>
@@ -775,7 +781,8 @@
 
       <!-- Main Featured Custom Project Card -->
       <div class="showcase-card featured-showcase">
-        <img class="custom-project-img" src="https://lh3.googleusercontent.com/d/1LDwBsx8fpBzbt18LWKAmmQb6RIZxrPFk" alt="Custom Project" onclick="openImageModal(this.src)">
+        <!-- Removed zoom onclick -->
+        <img class="custom-project-img" src="https://lh3.googleusercontent.com/d/1LDwBsx8fpBzbt18LWKAmmQb6RIZxrPFk" alt="Custom Project">
         <h4>Custom Project</h4>
         <p>Waste Water Treatment Plant - A working model for school science exhibitions that demonstrates wastewater filtration and purification.</p>
       </div>
@@ -811,8 +818,8 @@
       </div>
       <div class="payment-grid">
         <div class="qr-box">
-          <!-- Dynamic QR Code generated using official UPI ID -->
-          <img id="upiQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=cyberntek@oksbi&pn=honey" alt="Science Craft Payment QR Code" onclick="openImageModal(this.src)">
+          <!-- Removed zoom onclick from QR code image -->
+          <img id="upiQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=cyberntek@oksbi&pn=honey" alt="Science Craft Payment QR Code">
           <div class="qr-caption"><i class="fa-solid fa-qrcode"></i> Scan with any UPI App</div>
         </div>
         <div class="upi-details">
@@ -829,7 +836,7 @@
             <i class="fa-solid fa-credit-card" title="UPI"></i>
           </div>
           <p class="payment-note">
-            <i class="fa-solid fa-circle-info"></i> Copy the UPI ID & paste it into the 'Pay anyone' secton in Google pay. After completing payment, please send a screenshot of the transaction along with your WhatsApp order.
+            <i class="fa-solid fa-circle-info"></i> Copy the UPI ID & paste it into the 'Pay anyone' section in Google Pay. After completing payment, please send a screenshot of the transaction along with your WhatsApp order.
           </p>
         </div>
       </div>
@@ -958,6 +965,7 @@
 
           itemsHTML += `
             <div class="product-card">
+              <!-- Only stock product images have onclick zoom enabled -->
               <img 
                 src="${imgSrc}" 
                 alt="${encodedName}" 
@@ -1020,8 +1028,6 @@
           let currentQty = cart[productName] || 0;
           if (currentQty < 5) {
             cart[productName] = currentQty + 1;
-          } else {
-            //alert("Maximum Reach");
           }
         } else if (target.classList.contains('btn-minus')) {
           if (cart[productName] > 1) {
@@ -1100,9 +1106,7 @@
     // Copy UPI Function
     function copyUPI() {
       const upiText = document.getElementById("upiId").innerText;
-      navigator.clipboard.writeText(upiText).then(() => {
-        //alert("UPI ID copied to clipboard: " + upiText);
-      }).catch(err => {
+      navigator.clipboard.writeText(upiText).then(() => {}).catch(err => {
         console.error("Could not copy text: ", err);
       });
     }
