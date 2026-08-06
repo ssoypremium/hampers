@@ -1009,7 +1009,7 @@
     function copyUPI() {
       const upiText = document.getElementById("upiId").innerText;
       navigator.clipboard.writeText(upiText).then(() => {
-        alert("UPI ID copied to clipboard: " + upiText);
+        alert("UPI ID copied: " + upiText);
       }).catch(err => {
         console.error("Could not copy text: ", err);
       });
