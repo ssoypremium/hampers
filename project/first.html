@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScienceModels | Complete Science Solution</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --navy: #0f172a; --orange: #f97316; --white: #ffffff; --grey: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; color: #334155; margin: 0; }
+
+        /* Professional Hero Banner */
+        .hero { 
+            /* background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1696258686263-9f42a5e34371?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); */
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.6)), url('https://images.unsplash.com/photo-1696258686263-9f42a5e34371?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            
+            
+            background-size: cover; background-position: center; padding: 100px 20px; text-align: center; color: white;
+        }
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .section-title { border-left: 5px solid var(--orange); padding-left: 15px; margin: 50px 0 30px; font-size: 1.6rem; color: var(--navy); }
+        
+        /* Grid & Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .card { background: var(--white); border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
+        .badge { background: var(--orange); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; display: inline-block; margin-bottom: 8px; }
+        
+        /* Custom Image Control */
+        .custom-project-img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 15px auto;
+            border-radius: 8px;
+        }
+
+        /* Desktop/Laptop Screen Query */
+        @media (min-width: 768px) {
+            .custom-project-img {
+                width: 600px;
+                height: 600px;
+            }
+        }
+
+        /* Accordion */
+        .accordion { background: white; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; }
+        .accordion-header { width: 100%; padding: 15px 20px; background: #f1f5f9; border: none; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; }
+        .accordion-content { padding: 20px; display: none; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+        
+        /* Specs Section */
+        .specs-section { background: #f1f5f9; padding: 30px; border-radius: 20px; margin-top: 40px; }
+        
+        /* Payment Section */
+        .payment-box { background: #fff; border: 2px dashed var(--orange); padding: 30px; border-radius: 20px; text-align: center; margin-top: 40px; }
+        .btn-pay { background: #1a73e8; color: white; padding: 12px 40px; border-radius: 50px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 1.1rem; }
+        
+        /* Action Buttons */
+        .btn-wa { background: #25D366; color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: bold; margin: 10px; display:inline-block; }
+        .btn-call { background: #0284c7; color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: bold; margin: 10px; display:inline-block; }
+    </style>
+</head>
+<body>
+
+<header class="hero">    
+    <h1>SCIENCE CRAFT</h1>   
+    <p>Education Models & Project Solution</p>
+</header>
+
+<div class="container">
+    
+    <!-- DIY Kits & Lab Equipment -->
+    <h4 class="section-title">Learning Programs</h4>    
+    <div class="grid">        
+        <div class="card">
+            <span class="badge">BEST SELLER</span>
+            <h4>Student Telescope</h4>
+            <p>Beginner-friendly telescope for school students, perfect for basic astronomy learning and observing the Moon, bright planets, and stars. Easy to set up and use.</p>
+        </div>
+        <div class="card">
+            <span class="badge">BEST SELLER</span>
+            <h4>Student Microscope</h4>
+            <p>Easy-to-use microscope for school students, ideal for science learning, lab activities, and projects. Microscope slides and other essential accessories are also available..</p>
+        </div>
+        <div class="card">
+            <span class="badge">BEST SELLER</span>
+            <h4>STEM Learning Projects</h4>
+            <p>Hands-on learning tools for Science, Technology, Engineering & Mathematics, designed to make learning practical, interactive, and engaging for students.</p>
+        </div>
+    </div>
+
+    <!-- Main Showcase -->
+    <h2 class="section-title">Our Project Showcase</h2>
+    <div class="grid">
+        <div class="card"><img src="https://images.unsplash.com/photo-1707948952416-67f9dd252265?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dw=500"><h4>Robotic Arm</h4><p>Robotic Arm
+Custom-built robotic arm working models designed for school science exhibitions, engineering projects, and technical demonstrations. Built with functional mechanisms to make learning interactive, practical, and engaging.</p></div>
+        <div class="card"><img src="https://images.unsplash.com/photo-1779219667857-cb0a92399223?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dw=500"><h4>Smart Circuit</h4><p>Smart Circuit
+Custom-designed electronic and IoT-based working models for school science projects and exhibitions. From smart automation to sensor-based circuits, each model is built to demonstrate concepts in a simple, practical, and interactive way.</p></div>
+        <div class="card"><img src="https://images.unsplash.com/photo-1716929157559-d86a11b7b786?q=80&w=399&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dw=500"><h4>Custom Charts</h4><p>Custom Handmade Charts
+Beautifully handwritten and neatly designed charts for school projects. Ready to paste on Thermocol or MDF sheets, customized according to your project topic and requirements.</p></div>
+    </div>
+
+    <div class="card" style="margin-top: 25px;">
+        <img class="custom-project-img" src="https://lh3.googleusercontent.com/d/1LDwBsx8fpBzbt18LWKAmmQb6RIZxrPFk" alt="Custom Charts Image">
+        <h4>Custom Project</h4>
+        <p>Waste Water Treatment Plant - A working model for school science exhibitions that demonstrates wastewater filtration and purification</p>
+    </div>
+    
+
+    <!-- Project Library (Accordion) -->
+    <h2 class="section-title">200+ Project Library</h2>
+    <div class="accordion">
+        <button class="accordion-header" onclick="toggle(this)">Physics & Engineering <span>+</span></button>
+        <div class="accordion-content">
+            <div>• Hydraulic Lift</div>
+            <div>• Windmill Generator</div>
+            <div>• Robotic Arm</div>
+            <div>• Smart Street Light</div>
+            <div>• Automatic Irrigation</div>
+        </div>
+    </div>
+    <div class="accordion">
+        <button class="accordion-header" onclick="toggle(this)">Biology & Anatomy Charts <span>+</span></button>
+        <div class="accordion-content">
+            <div>• Human Heart Model</div>
+            <div>• DNA Double Helix</div>
+            <div>• Kidney Function</div>
+            <div>• Respiratory Chart</div>
+            <div>• Plant Cell Chart</div>
+        </div>
+    </div>
+
+    <!-- Specifications -->
+    <div class="specs-section">
+        <h3>Board & Finishing Specifications</h3>
+        <p>Professional mounting on high-quality <strong>MDF</strong> or <strong>Thermocol</strong> bases.</p>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+            <div><strong>Drawing Chart/Model Board:</strong><br>46.5cm x 59cm (19" x 24" inches)</div>
+            <div><strong>Small Model Board:</strong><br>25cm x 33cm (10" x 13" inches)</div>
+            <div><strong>Large Model Board:</strong><br>36cm x 56cm (14" x 22" inches)</div>
+        </div>
+    </div>
+
+    <!-- Payment Section -->
+    <h2 class="section-title">Secure Payments</h2>
+    <div class="payment-box">
+        <h3>Quick Payment</h3>
+        <!--<p>Click below to pay directly via Google Pay or Scan the QR code.</p>\ -->  
+        <p>Scan QR code for Payment.</p>
+        
+        <!-- REPLACE 'YOUR_UPI_ID' AND 'YOUR_NAME' BELOW -->
+        <!--<a href="upi://pay?pa=cyberntek@oksbi=honey&cu=INR" class="btn-pay">\ -->        
+        <!--<a href="upi://pay?pa=cyberntek@oksbi&pn=Honey&cu=INR" class="btn-pay">Google Pay</a>\ --> 
+            <!--<i class="" style="font-size: 1.5rem;"></i>\ --> 
+            <!-- <i class="fab fa-google-pay" style="font-size: 1.5rem;"></i> Google Pay -->
+        </a>
+        <br>
+        <!--<p><strong>OR Scan QR Code:</strong></p>-->
+        <!-- REPLACE 'YOUR_QR_IMAGE_LINK' WITH YOUR ACTUAL QR IMAGE URL -->
+        <!-- <img src="YOUR_QR_IMAGE_LINK" alt="QR Code" style="width: 200px; border: 1px solid #ccc; padding: 5px; border-radius: 10px;">\ -->
+        <img src="https://drive.google.com/thumbnail?id=17vRbD9GlidqSfR_fbsgYyHcOW0s3eHO2&sz=w200" alt="Image">
+        
+        
+    </div>
+    
+    <!-- Contact Section -->
+    <div style="text-align:center; margin: 60px 0;">
+        <a href="https://wa.me/918847259996" class="btn-wa">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+        <a href="tel:+918847259996" class="btn-call">
+            <i class="fas fa-phone"></i> Call Now
+        </a>
+    </div>
+</div>
+
+<script>
+    function toggle(btn) {
+        let content = btn.nextElementSibling;
+        content.style.display = content.style.display === "grid" ? "none" : "grid";
+        btn.querySelector("span").innerText = content.style.display === "grid" ? "-" : "+";
+    }
+</script>
+
+</body>
+</html>
