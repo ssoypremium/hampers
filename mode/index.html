@@ -1017,9 +1017,18 @@
         if (!productName) return;
 
         if (target.classList.contains('btn-plus')) {
-          cart[productName] = 1;
+          let currentQty = cart[productName] || 0;
+          if (currentQty < 9) {
+            cart[productName] = currentQty + 1;
+          } else {
+            alert("आप अधिकतम 9 क्वांटिटी ही जोड़ सकते हैं!");
+          }
         } else if (target.classList.contains('btn-minus')) {
-          delete cart[productName];
+          if (cart[productName] > 1) {
+            cart[productName] -= 1;
+          } else {
+            delete cart[productName];
+          }
         }
 
         // Update UI
