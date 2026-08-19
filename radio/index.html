@@ -2,12 +2,16 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>सहज रेडियो</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             text-align: center; 
-            padding: 40px; 
+            padding: 20px; 
             background: linear-gradient(135deg, #134e5e 0%, #71b280 100%); 
             min-height: 100vh; 
             margin: 0; 
@@ -17,32 +21,65 @@
             color: #fff;
         }
         .player-card { 
+            width: 100%;
             max-width: 450px; 
             margin: auto; 
             background: rgba(255, 255, 255, 0.95); 
-            padding: 30px; 
+            padding: 20px; 
             border-radius: 15px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
             color: #2d3748;
         }
-        h1 { color: #134e5e; margin-bottom: 15px; font-size: 28px; }
-        audio { width: 100%; margin-top: 20px; outline: none; }
-        .date-display { color: #718096; font-size: 16px; margin-bottom: 15px; }
-        .track-title { font-size: 14px; color: #4a5568; margin-top: 10px; font-weight: bold; }
+        h1 { 
+            color: #134e5e; 
+            margin-bottom: 15px; 
+            font-size: 24px; 
+        }
+        audio { 
+            width: 100%; 
+            margin-top: 20px; 
+            outline: none; 
+        }
+        .date-display { 
+            color: #718096; 
+            font-size: 14px; 
+            margin-bottom: 15px; 
+        }
+        .track-title { 
+            font-size: 15px; 
+            color: #4a5568; 
+            margin-top: 10px; 
+            font-weight: bold; 
+        }
         
         /* Footer Advertisement Marquee Style */
         footer {
             background: rgba(0, 0, 0, 0.6);
             padding: 10px 0;
             width: 100%;
-            position: fixed;
-            bottom: 0;
-            left: 0;
+            position: relative;
+            margin-top: 20px;
         }
         marquee {
-            font-size: 18px;
+            font-size: 16px;
             color: #ffeb3b;
             font-weight: bold;
+        }
+
+        /* Mobile Specific Adjustments */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .player-card {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            marquee {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -67,7 +104,6 @@
 </footer>
 
 <script>
-    // 1. ऑडियो फाइल्स की लिस्ट (आप यहाँ और भी लिंक जोड़ सकते हैं)
     const speeches = [
         { name: "आत्मशतकम् - भाग 1", url: "https://raw.githubusercontent.com/ssoypremium/hampers/main/radio/Atmashatakam.mp3" },
         { name: "आत्मशतकम् - भाग 2", url: "https://raw.githubusercontent.com/ssoypremium/hampers/main/radio/Atmashatakam.mp3" },
@@ -78,49 +114,25 @@
     const player = document.getElementById('audioPlayer');
     const trackTitleElem = document.getElementById('trackTitle');
 
-    // तारीख दिखाने के लिए
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById('dateDisplay').innerText = today.toLocaleDateString('hi-IN', options);
 
-    // एक ट्रैक सेट करने का फंक्शन
     function playTrack(index) {
         if (index >= speeches.length) {
-            currentIndex = 0; // लिस्ट खत्म होने पर दोबारा शुरू से चलाएं
+            currentIndex = 0;
         }
         player.src = speeches[currentIndex].url;
         trackTitleElem.innerText = speeches[currentIndex].name;
         player.play().catch(e => console.log("Auto-play blocked, user interaction needed"));
     }
 
-    // जब एक गाना खत्म हो, तो ऑटोमैटिकली अगला गाना चले (Sequence)
     player.addEventListener('ended', function() {
         currentIndex++;
         playTrack(currentIndex);
     });
 
-    // पहली बार लोड होने पर प्ले शुरू करें
     playTrack(currentIndex);
-
-
-    /* 
-      ================================================================
-      GOOGLE SHEET ADS INTEGRATION (लॉजिक स्ट्रक्चर):
-      ================================================================
-      अगर आप Google Sheet से एडवर्टाइजमेंट और टाइमिंग कंट्रोल करना चाहते हैं, 
-      तो आप Google Apps Script का उपयोग करके शीट का डेटा JSON फॉर्मेट में 
-      फेच (fetch) करवा सकते हैं। 
-      
-      शीट्स में कॉलम होंगे: [AdText, StartTime, EndTime]
-      जावास्क्रिप्ट में 'fetch()' का उपयोग करके उस डेटा को यहाँ चेक किया जाएगा:
-      
-      const currentTime = new Date().getTime();
-      if (currentTime >= startTime && currentTime <= endTime) {
-          document.getElementById('adMarquee').innerText = adText;
-      } else {
-          document.getElementById('adMarquee').innerText = "सामान्य संदेश...";
-      }
-    */
 </script>
 
 </body>
