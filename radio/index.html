@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sahaja Radio</title>
+    <title>सहज रेडियो</title>
     <style>
         * {
             box-sizing: border-box;
@@ -83,10 +83,11 @@
 
 <div class="main-container">
     <div class="player-card">
-        <h1>Sahaja Radio</h1>
+        <h1>सहज रेडियो</h1>
         <div class="date-display" id="dateDisplay"></div>
         <div class="track-title" id="trackTitle">लोड हो रहा है...</div>
-        <audio id="audioPlayer" controls autoplay>
+        <!-- controlsList="nodownload" जोड़ने से डाउनलोड का विकल्प छिप जाता है -->
+        <audio id="audioPlayer" controls controlsList="nodownload" autoplay>
             Aapka browser audio support nahi karta.
         </audio>
     </div>
