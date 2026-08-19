@@ -8,26 +8,33 @@
         * {
             box-sizing: border-box;
         }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* स्क्रीन को स्क्रॉल होने से रोकने के लिए ताकि सब कुछ एक ही बार में फिट रहे */
+        }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             text-align: center; 
-            padding: 15px; 
             background: linear-gradient(135deg, #134e5e 0%, #71b280 100%); 
-            min-height: 100vh; 
-            margin: 0; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            align-items: center;
             color: #fff;
+            padding: 10px;
         }
         .main-container {
-            margin: auto;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
         }
         .player-card { 
             width: 100%;
-            max-width: 450px; 
-            margin: 0 auto; 
+            max-width: 420px; 
             background: rgba(255, 255, 255, 0.95); 
             padding: 20px; 
             border-radius: 15px; 
@@ -36,8 +43,8 @@
         }
         h1 { 
             color: #134e5e; 
-            margin-bottom: 10px; 
-            font-size: 24px; 
+            margin: 0 0 10px 0; 
+            font-size: 22px; 
         }
         audio { 
             width: 100%; 
@@ -46,44 +53,29 @@
         }
         .date-display { 
             color: #718096; 
-            font-size: 14px; 
+            font-size: 13px; 
             margin-bottom: 10px; 
         }
         .track-title { 
-            font-size: 15px; 
+            font-size: 14px; 
             color: #4a5568; 
-            margin-top: 10px; 
+            margin-top: 5px; 
             font-weight: bold; 
         }
         
         /* Footer Advertisement Marquee Style */
         footer {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 12px 5px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
             width: 100%;
+            max-width: 600px;
             border-radius: 8px;
-            margin-top: 20px;
+            margin-bottom: 5px;
         }
         marquee {
-            font-size: 16px;
+            font-size: 15px;
             color: #ffeb3b;
             font-weight: bold;
-        }
-
-        /* Mobile Specific Adjustments */
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            .player-card {
-                padding: 15px;
-            }
-            h1 {
-                font-size: 20px;
-            }
-            marquee {
-                font-size: 14px;
-            }
         }
     </style>
 </head>
