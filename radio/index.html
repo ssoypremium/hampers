@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Meditation Speeches</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 60px; background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%); min-height: 100vh; margin: 0; }
+        .player-card { max-width: 450px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { color: #2d3748; margin-bottom: 25px; font-size: 24px; }
+        audio { width: 100%; margin-top: 20px; outline: none; }
+        .date-display { color: #718096; font-size: 16px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="player-card">
+    <h1>Daily Guidance</h1>
+    <div class="date-display" id="dateDisplay"></div>
+    <audio id="audioPlayer" controls>
+        <source src="" type="audio/mp3">
+        Aapka browser audio support nahi karta.
+    </audio>
+</div>
+
+<script>
+    // Apni MP3 files ke Raw GitHub links yahan dalein
+    const speeches = [
+        "https://raw.githubusercontent.com/username/repo/main/speech1.mp3",
+        "https://raw.githubusercontent.com/username/repo/main/speech2.mp3",
+        "https://raw.githubusercontent.com/username/repo/main/speech3.mp3",
+        "https://raw.githubusercontent.com/username/repo/main/speech4.mp3"
+        // Isi tarah apni saari files ki list banate jayen
+    ];
+
+    // Aaj ki date dikhayen
+    const today = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('dateDisplay').innerText = today.toLocaleDateString('en-US', options);
+
+    // Current date ke hisab se audio file chunein
+    const day = today.getDate(); 
+    const speechIndex = day % speeches.length;
+
+    // Player mein file set karein
+    const player = document.getElementById('audioPlayer');
+    player.src = speeches[speechIndex];
+</script>
+
+</body>
+</html>
