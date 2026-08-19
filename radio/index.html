@@ -2,48 +2,125 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <title>Apna RADIO</title>
+    <title>सहज रेडियो</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 60px; background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%); min-height: 100vh; margin: 0; }
-        .player-card { max-width: 450px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { color: #2d3748; margin-bottom: 25px; font-size: 24px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            padding: 40px; 
+            background: linear-gradient(135deg, #134e5e 0%, #71b280 100%); 
+            min-height: 100vh; 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #fff;
+        }
+        .player-card { 
+            max-width: 450px; 
+            margin: auto; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            color: #2d3748;
+        }
+        h1 { color: #134e5e; margin-bottom: 15px; font-size: 28px; }
         audio { width: 100%; margin-top: 20px; outline: none; }
         .date-display { color: #718096; font-size: 16px; margin-bottom: 15px; }
+        .track-title { font-size: 14px; color: #4a5568; margin-top: 10px; font-weight: bold; }
+        
+        /* Footer Advertisement Marquee Style */
+        footer {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 0;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+        marquee {
+            font-size: 18px;
+            color: #ffeb3b;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
+<div></div> <!-- Spacing alignment -->
+
 <div class="player-card">
-    <h1>Apna Radio</h1>
+    <h1>सहज रेडियो</h1>
     <div class="date-display" id="dateDisplay"></div>
-    <audio id="audioPlayer" controls>
-        <source src="" type="audio/mp3">
+    <div class="track-title" id="trackTitle">लोड हो रहा है...</div>
+    <audio id="audioPlayer" controls autoplay>
         Aapka browser audio support nahi karta.
     </audio>
 </div>
 
+<!-- Footer with Ad Marquee -->
+<footer>
+    <marquee id="adMarquee" behavior="scroll" direction="left">
+        सहज रेडियो में आपका स्वागत है! | यहाँ ध्यान और शांति से जुड़ी बातें सुनें।
+    </marquee>
+</footer>
+
 <script>
-    // Apni MP3 files ke Raw GitHub links yahan dalein
+    // 1. ऑडियो फाइल्स की लिस्ट (आप यहाँ और भी लिंक जोड़ सकते हैं)
     const speeches = [
-        "https://raw.githubusercontent.com/ssoypremium/hampers/refs/heads/main/radio/Atmashatakam.mp3",
-        "https://raw.githubusercontent.com/ssoypremium/hampers/refs/heads/main/radio/Atmashatakam.mp3",
-        "https://raw.githubusercontent.com/ssoypremium/hampers/refs/heads/main/radio/Atmashatakam.mp3",
-        "https://raw.githubusercontent.com/ssoypremium/hampers/refs/heads/main/radio/Atmashatakam.mp3"
-        // Isi tarah apni saari files ki list banate jayen
+        { name: "आत्मशतकम् - भाग 1", url: "https://raw.githubusercontent.com/ssoypremium/hampers/main/radio/Atmashatakam.mp3" },
+        { name: "आत्मशतकम् - भाग 2", url: "https://raw.githubusercontent.com/ssoypremium/hampers/main/radio/Atmashatakam.mp3" },
+        { name: "आत्मशतकम् - भाग 3", url: "https://raw.githubusercontent.com/ssoypremium/hampers/main/radio/Atmashatakam.mp3" }
     ];
 
-    // Aaj ki date dikhayen
+    let currentIndex = 0;
+    const player = document.getElementById('audioPlayer');
+    const trackTitleElem = document.getElementById('trackTitle');
+
+    // तारीख दिखाने के लिए
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('dateDisplay').innerText = today.toLocaleDateString('en-US', options);
+    document.getElementById('dateDisplay').innerText = today.toLocaleDateString('hi-IN', options);
 
-    // Current date ke hisab se audio file chunein
-    const day = today.getDate(); 
-    const speechIndex = day % speeches.length;
+    // एक ट्रैक सेट करने का फंक्शन
+    function playTrack(index) {
+        if (index >= speeches.length) {
+            currentIndex = 0; // लिस्ट खत्म होने पर दोबारा शुरू से चलाएं
+        }
+        player.src = speeches[currentIndex].url;
+        trackTitleElem.innerText = speeches[currentIndex].name;
+        player.play().catch(e => console.log("Auto-play blocked, user interaction needed"));
+    }
 
-    // Player mein file set karein
-    const player = document.getElementById('audioPlayer');
-    player.src = speeches[speechIndex];
+    // जब एक गाना खत्म हो, तो ऑटोमैटिकली अगला गाना चले (Sequence)
+    player.addEventListener('ended', function() {
+        currentIndex++;
+        playTrack(currentIndex);
+    });
+
+    // पहली बार लोड होने पर प्ले शुरू करें
+    playTrack(currentIndex);
+
+
+    /* 
+      ================================================================
+      GOOGLE SHEET ADS INTEGRATION (लॉजिक स्ट्रक्चर):
+      ================================================================
+      अगर आप Google Sheet से एडवर्टाइजमेंट और टाइमिंग कंट्रोल करना चाहते हैं, 
+      तो आप Google Apps Script का उपयोग करके शीट का डेटा JSON फॉर्मेट में 
+      फेच (fetch) करवा सकते हैं। 
+      
+      शीट्स में कॉलम होंगे: [AdText, StartTime, EndTime]
+      जावास्क्रिप्ट में 'fetch()' का उपयोग करके उस डेटा को यहाँ चेक किया जाएगा:
+      
+      const currentTime = new Date().getTime();
+      if (currentTime >= startTime && currentTime <= endTime) {
+          document.getElementById('adMarquee').innerText = adText;
+      } else {
+          document.getElementById('adMarquee').innerText = "सामान्य संदेश...";
+      }
+    */
 </script>
 
 </body>
