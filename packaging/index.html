@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ssoy Packaging Solutions | Enterprise & Custom Packaging</title>
+    <!-- Inter Font for SaaS look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --surface-color: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-color: #2563eb;
+            --accent-hover: #1d4ed8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* SaaS Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        .nav-cta {
+            background: var(--text-main);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: #334155;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 50px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eff6ff;
+            color: var(--accent-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Features Grid */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto 80px auto;
+            padding: 0 20px;
+        }
+
+        .section-heading {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 40px;
+            letter-spacing: -0.5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: #e0e7ff;
+            color: var(--accent-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .span-2 {
+            grid-column: 1 / -1;
+        }
+
+        /* SaaS Footer Bar */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .action-btn {
+            flex: 1;
+            text-align: center;
+            padding: 14px 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .whatsapp-btn {
+            background-color: #16a34a;
+            color: white;
+        }
+        .whatsapp-btn:hover {
+            background-color: #15803d;
+        }
+
+        .call-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .call-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 20px 80px 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media(min-width: 768px) {
+            .hero h1 { font-size: 3.2rem; }
+            .grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">SSOY<span> PACKAGING</span></div>
+        <a href="https://wa.me/918847259996?text=Hi,%20I%20want%20to%20explore%20packaging%20solutions." class="nav-cta" target="_blank">Contact Sales</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="badge">
+            <i class="fa-solid fa-bolt"></i> Next-Gen Packaging Solutions
+        </div>
+        <h1>Elevate your brand with custom Packaging.</h1>
+        <p>Complete enterprise-grade packaging solutions for weddings, corporate events, and luxury gift hampers designed to impress at scale.</p>
+    </section>
+
+    <!-- Features / Offerings Section -->
+    <div class="container">
+        <h2 class="section-heading">Platform Capabilities</h2>
+        
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-box"></i></div>
+                <h3>CNC & Laser MDF Boxes</h3>
+                <p>Precision-cut 4mm MDF structures featuring intricate laser engraving with matte, laser, and premium gold finish variants.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-jar"></i></div>
+                <h3>Luxury Glass & Wooden Jars</h3>
+                <p>Airtight candy and storage jars optimized for fine dry fruits, gourmet sweets, and elite gifting hampers.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                <h3>Designer Cloth Pouches</h3>
+                <p>High-end branded fabric packaging, featuring rich chenille options engineered for a royal presentation.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-layer-group"></i></div>
+                <h3>Custom Wooden Trays</h3>
+                <p>Structurally balanced wooden trays tailored to fit seamlessly into your custom hamper design framework.</p>
+            </div>
+
+            <div class="card span-2">
+                <div class="card-icon"><i class="fa-solid fa-fingerprint"></i></div>
+                <h3>Complete Branding Ecosystem</h3>
+                <p>End-to-end identity solutions including customized sticker printing, professional stamping, and personalized messaging integration.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Ssoy Packaging Solutions. All rights reserved.</p>
+    </footer>
+
+    <!-- Fixed Bottom Action Bar -->
+    <div class="action-bar">
+        <a href="https://wa.me/918847259996?text=Hi,%20I%20want%20to%20know%20more%20about%20your%20packaging%20solutions." class="action-btn whatsapp-btn" target="_blank">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp Us
+        </a>
+        <a href="tel:8847259996" class="action-btn call-btn">
+            <i class="fa-solid fa-phone"></i> Call 88472-59996
+        </a>
+    </div>
+
+</body>
+</html>
