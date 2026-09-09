@@ -75,7 +75,7 @@
             <div class="hidden md:flex items-center space-x-6">
                 <a href="tel:8847259996" class="flex items-center space-x-2 bg-gold/10 px-4 py-2 rounded-full border border-gold/30 text-gold-dark hover:bg-gold hover:text-white transition-all duration-300 font-semibold text-sm">
                     <i class="fa-solid fa-phone"></i>
-                    <span>Booking No: 8847259996</span> 
+                    <span>Booking No: PL10106</span> 
                 </a>
                 <a href="#catalog" class="bg-boutique-dark text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gold transition-colors duration-300 shadow-md">
                     Explore Catalog
@@ -214,7 +214,7 @@
                     <i class="fa-brands fa-whatsapp text-gold text-2xl"></i>
                 </div>
                 <h3 class="font-serif text-2xl font-bold text-boutique-dark">Instant WhatsApp Booking</h3>
-                <p class="text-xs text-zinc-500 mt-1">Official Booking Number: <span class="font-bold text-gold-dark font-mono">8847259996</span></p>
+                <p class="text-xs text-zinc-500 mt-1">Booking No: <span id="modal-booking-id" class="font-bold text-gold-dark font-mono">PL10106</span></p>
             </div>
 
             <form id="whatsapp-form" onsubmit="submitBooking(event)" class="space-y-4">
@@ -298,10 +298,11 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        // Sample Product Catalog Dataset tailored for Designer Fashion Palace
+        // Sample Product Catalog Dataset tailored for Designer Fashion Palace with unique booking codes (PL10106, PL10107, etc.)
         const products = [
             {
                 id: 1,
+                bookingId: "PL10106",
                 name: "Sunshine Yellow Punjabi Suit with Potli",
                 category: "suit",
                 price: "₹2,499",
@@ -312,6 +313,7 @@
             },
             {
                 id: 2,
+                bookingId: "PL10107",
                 name: "Royal Blue Banarasi Brocade Kurti Set",
                 category: "suit",
                 price: "₹2,899",
@@ -322,6 +324,7 @@
             },
             {
                 id: 3,
+                bookingId: "PL10108",
                 name: "Dark Luxe Velvet Embroidered Suit",
                 category: "suit",
                 price: "₹3,299",
@@ -332,6 +335,7 @@
             },
             {
                 id: 4,
+                bookingId: "PL10109",
                 name: "Pastel Pink Designer Georgette Lehenga",
                 category: "lehenga",
                 price: "₹4,999",
@@ -342,6 +346,7 @@
             },
             {
                 id: 5,
+                bookingId: "PL10110",
                 name: "Pure Organza Floral Print Dress Material",
                 category: "material",
                 price: "₹1,899",
@@ -352,6 +357,7 @@
             },
             {
                 id: 6,
+                bookingId: "PL10111",
                 name: "Embroidered Net Anarkali Suit Set",
                 category: "suit",
                 price: "₹3,499",
@@ -380,7 +386,7 @@
                             ${product.tag}
                         </span>
                         <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-bold text-zinc-900 border border-zinc-200 shadow-sm">
-                            Booking: 8847259996
+                            Booking No: ${product.bookingId}
                         </div>
                     </div>
                     <div class="p-5 flex flex-col flex-grow justify-between">
@@ -396,7 +402,7 @@
                             </div>
                         </div>
                         <div class="mt-5 pt-4 border-t border-zinc-100 flex items-center gap-2">
-                            <button onclick="openBookingModal('${product.name}', '46')" class="flex-1 bg-boutique-dark hover:bg-gold text-white py-2.5 rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center justify-center space-x-1.5">
+                            <button onclick="openBookingModal('${product.name}', '46', '${product.bookingId}')" class="flex-1 bg-boutique-dark hover:bg-gold text-white py-2.5 rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center justify-center space-x-1.5">
                                 <i class="fa-brands fa-whatsapp text-sm"></i>
                                 <span>Book Now</span>
                             </button>
@@ -422,9 +428,10 @@
         }
 
         // Modal Controls
-        function openBookingModal(productName, defaultSize) {
+        function openBookingModal(productName, defaultSize, bookingId) {
             document.getElementById('modal-product-name').value = productName;
             document.getElementById('modal-size').value = defaultSize;
+            document.getElementById('modal-booking-id').innerText = bookingId;
             document.getElementById('booking-modal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -438,11 +445,12 @@
         function submitBooking(event) {
             event.preventDefault();
             const productName = document.getElementById('modal-product-name').value;
+            const bookingId = document.getElementById('modal-booking-id').innerText;
             const size = document.getElementById('modal-size').value;
             const customerName = document.getElementById('modal-customer-name').value;
             const customerCity = document.getElementById('modal-customer-city').value;
 
-            const message = `Hello Designer Fashion Palace! 👋\nI want to book this outfit:\n\n*Outfit:* ${productName}\n*Size:* ${size}\n*My Name:* ${customerName}\n*City:* ${customerCity}\n\nPlease confirm availability and booking number 8847259996.`;
+            const message = `Hello Designer Fashion Palace! 👋\nI want to book this outfit:\n\n*Booking ID:* ${bookingId}\n*Outfit:* ${productName}\n*Size:* ${size}\n*My Name:* ${customerName}\n*City:* ${customerCity}\n\nPlease confirm availability.`;
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/918847259996?text=${encodedMessage}`;
             
