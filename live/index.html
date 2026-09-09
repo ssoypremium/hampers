@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designer Fashion Palace - Premium Ethnic Wear & Dress Materials</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            DEFAULT: '#C5A059',
+                            light: '#E2C88F',
+                            dark: '#9A7B38'
+                        },
+                        boutique: {
+                            dark: '#1A1A1A',
+                            light: '#FBFBFA',
+                            card: '#FFFFFF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FBFBFA;
+            color: #1A1A1A;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C5A059;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-boutique-light min-h-screen flex flex-col antialiased selection:bg-gold selection:text-white">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gold/20 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center border border-gold/30">
+                    <i class="fa-solid fa-crown text-gold text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-boutique-dark">Designer Fashion Palace</h1>
+                    <p class="text-xs text-gold font-medium tracking-widest uppercase">Exclusive Ethnic & Dress Material</p>
+                </div>
+            </div>
+            
+            <!-- Desktop Contact & CTA -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="tel:85859604" class="flex items-center space-x-2 bg-gold/10 px-4 py-2 rounded-full border border-gold/30 text-gold-dark hover:bg-gold hover:text-white transition-all duration-300 font-semibold text-sm">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>Booking No: 858596046</span>
+                </a>
+                <a href="#catalog" class="bg-boutique-dark text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gold transition-colors duration-300 shadow-md">
+                    Explore Catalog
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button id="menu-toggle" class="md:hidden text-boutique-dark focus:outline-none p-2 rounded-lg hover:bg-gold/10">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gold/20 px-4 pt-2 pb-4 space-y-3">
+            <a href="tel:858596046" class="flex items-center justify-center space-x-2 bg-gold/10 py-2.5 rounded-xl text-gold-dark font-semibold text-sm border border-gold/30">
+                <i class="fa-solid fa-phone"></i>
+                <span>Call: 858596046</span>
+            </a>
+            <a href="#catalog" class="block text-center bg-boutique-dark text-white py-2.5 rounded-xl text-sm font-medium">
+                Explore Catalog
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero / Live Showcase Section with Clean White Backdrop & Professional Styling -->
+    <section class="relative bg-gradient-to-b from-white via-boutique-light to-white py-12 lg:py-16 overflow-hidden border-b border-gold/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Left Column: Live Showcase Visual Banner -->
+                <div class="lg:col-span-7 relative">
+                    <div class="absolute -top-4 -left-4 w-24 h-24 bg-gold/10 rounded-full blur-xl pointer-events-none"></div>
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-white">
+                        <div class="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-zinc-900">
+                            <!-- Showcase Video/Image Simulation -->
+                            <img src="watermarked_img_1532915442094497414.png" alt="Live Boutique Showcase" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700" onerror="this.src='https://placehold.co/800x600/1a1a1a/ffffff?text=Designer+Fashion+Live'">
+                            
+                            <!-- Live Badge Overlay -->
+                            <div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase flex items-center space-x-2 shadow-lg animate-pulse">
+                                <span class="w-2 h-2 rounded-full bg-white"></span>
+                                <span>LIVE SHOWCASE</span>
+                            </div>
+
+                            <!-- Booking Number Watermark Badge -->
+                            <div class="absolute bottom-4 right-4 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-xl border border-gold/40 shadow-xl">
+                                <p class="text-xs text-gold uppercase tracking-wider font-medium">Booking / WhatsApp No.</p>
+                                <p class="text-lg font-bold font-mono tracking-wider">858596046</p>
+                            </div>
+                        </div>
+
+                        <!-- Banner Info Bar -->
+                        <div class="p-5 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <div>
+                                <h2 class="font-serif text-xl font-bold text-boutique-dark">Pure Cotton & Silk Suit Material</h2>
+                                <p class="text-sm text-zinc-600">Showing live on YouTube & Instagram daily. Premium quality guaranteed.</p>
+                            </div>
+                            <button onclick="openBookingModal('General Live Showcase Inquire', 'All Sizes Available')" class="w-full sm:w-auto bg-gold hover:bg-gold-dark text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg transition-all duration-300 flex items-center justify-center space-x-2">
+                                <i class="fa-brands fa-whatsapp text-lg"></i>
+                                <span>Book via WhatsApp</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Size Chart & Quick Highlights -->
+                <div class="lg:col-span-5 flex flex-col justify-center space-y-6">
+                    <div>
+                        <span class="inline-block bg-gold/10 text-gold-dark text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3 border border-gold/20">
+                            Exclusive Collection
+                        </span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-boutique-dark leading-tight">
+                            Ready Stock & Custom Dress Materials
+                        </h2>
+                        <p class="mt-3 text-zinc-600 text-sm sm:text-base">
+                            We bring you the finest designer suits, lehengas, and dress materials directly from manufacturers. Uncompromised quality at wholesale prices.
+                        </p>
+                    </div>
+
+                    <!-- Size Guide Box -->
+                    <div class="bg-white p-5 rounded-2xl border border-gold/30 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-sm text-boutique-dark uppercase tracking-wider flex items-center space-x-2">
+                                <i class="fa-solid fa-ruler-combined text-gold"></i>
+                                <span>Available Sizes</span>
+                            </h3>
+                            <span class="text-xs text-zinc-500 font-medium">Standard & Plus Sizes</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="bg-boutique-light border border-gold/20 rounded-xl py-2 text-center font-bold text-sm text-boutique-dark hover:bg-gold hover:text-white transition-colors cursor-default">40</div>
+                            <div class="bg-boutique-light border border-gold/20 rounded-xl py-2 text-center font-bold text-sm text-boutique-dark hover:bg-gold hover:text-white transition-colors cursor-default">42</div>
+                            <div class="bg-boutique-light border border-gold/20 rounded-xl py-2 text-center font-bold text-sm text-boutique-dark hover:bg-gold hover:text-white transition-colors cursor-default">44</div>
+                            <div class="bg-boutique-light border border-gold/20 rounded-xl py-2 text-center font-bold text-sm text-boutique-dark hover:bg-gold hover:text-white transition-colors cursor-default">46</div>
+                            <div class="bg-boutique-light border border-gold/20 rounded-xl py-2 text-center font-bold text-sm text-boutique-dark hover:bg-gold hover:text-white transition-colors cursor-default">48</div>
+                            <div class="bg-boutique-light border border-gold/20 rounded-xl py-2 text-center font-bold text-sm text-boutique-dark hover:bg-gold hover:text-white transition-colors cursor-default">50</div>
+                            <div class="bg-boutique-light border border-gold/20 rounded-xl py-2 text-center font-bold text-sm text-boutique-dark hover:bg-gold hover:text-white transition-colors cursor-default">54</div>
+                            <div class="bg-boutique-light border border-gold/20 rounded-xl py-2 text-center font-bold text-sm text-boutique-dark hover:bg-gold hover:text-white transition-colors cursor-default">56</div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center space-x-3 p-3 bg-white rounded-xl border border-zinc-200">
+                            <div class="w-10 h-10 rounded-lg bg-green-500/10 text-green-600 flex items-center justify-center">
+                                <i class="fa-solid fa-shield-halved text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-zinc-900">100% Quality</h4>
+                                <p class="text-[11px] text-zinc-500">Verified Fabrics</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-white rounded-xl border border-zinc-200">
+                            <div class="w-10 h-10 rounded-lg bg-gold/10 text-gold-dark flex items-center justify-center">
+                                <i class="fa-solid fa-truck-fast text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-zinc-900">Fast Shipping</h4>
+                                <p class="text-[11px] text-zinc-500">Pan India Delivery</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Catalog Section -->
+    <section id="catalog" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow w-full">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-xs font-bold text-gold uppercase tracking-widest bg-gold/10 px-3 py-1 rounded-full border border-gold/20">Our Collection</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-boutique-dark mt-3">Featured Dress Materials & Suits</h2>
+            <p class="text-zinc-600 text-sm mt-2">Select your favorite piece and book instantly via WhatsApp using our official booking number.</p>
+            
+            <!-- Category Filter Tabs -->
+            <div class="flex flex-wrap justify-center gap-2 mt-6">
+                <button onclick="filterCatalog('all')" id="btn-all" class="filter-btn active-tab px-5 py-2 rounded-full text-sm font-semibold transition-all bg-boutique-dark text-white shadow-md">All Collection</button>
+                <button onclick="filterCatalog('suit')" id="btn-suit" class="filter-btn px-5 py-2 rounded-full text-sm font-semibold transition-all bg-white text-zinc-700 hover:bg-gold/10 border border-zinc-200">Punjabi & Salwar Suits</button>
+                <button onclick="filterCatalog('lehenga')" id="btn-lehenga" class="filter-btn px-5 py-2 rounded-full text-sm font-semibold transition-all bg-white text-zinc-700 hover:bg-gold/10 border border-zinc-200">Designer Lehengas</button>
+                <button onclick="filterCatalog('material')" id="btn-material" class="filter-btn px-5 py-2 rounded-full text-sm font-semibold transition-all bg-white text-zinc-700 hover:bg-gold/10 border border-zinc-200">Dress Material</button>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Products will be dynamically populated via JS -->
+        </div>
+    </section>
+
+    <!-- Booking / Inquiry Modal -->
+    <div id="booking-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gold/30 relative transform transition-all">
+            <!-- Close Button -->
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-red-50 hover:text-red-500 transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-3 border border-gold/30">
+                    <i class="fa-brands fa-whatsapp text-gold text-2xl"></i>
+                </div>
+                <h3 class="font-serif text-2xl font-bold text-boutique-dark">Instant WhatsApp Booking</h3>
+                <p class="text-xs text-zinc-500 mt-1">Official Booking Number: <span class="font-bold text-gold-dark font-mono">858596046</span></p>
+            </div>
+
+            <form id="whatsapp-form" onsubmit="submitBooking(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">Selected Outfit</label>
+                    <input type="text" id="modal-product-name" readonly class="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-800 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">Select Size</label>
+                        <select id="modal-size" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-800 focus:outline-none focus:border-gold">
+                            <option value="40">Size 40</option>
+                            <option value="42">Size 42</option>
+                            <option value="44">Size 44</option>
+                            <option value="46" selected>Size 46</option>
+                            <option value="48">Size 48</option>
+                            <option value="50">Size 50</option>
+                            <option value="52">Size 52</option>
+                            <option value="54">Size 54</option>
+                            <option value="56">Size 56</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">Your Name</label>
+                        <input type="text" id="modal-customer-name" required placeholder="Enter your name" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-800 focus:outline-none focus:border-gold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">Delivery City / Address</label>
+                    <input type="text" id="modal-customer-city" required placeholder="e.g. Delhi, Mumbai, Jaipur" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-800 focus:outline-none focus:border-gold">
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all duration-300 flex items-center justify-center space-x-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Send Booking to WhatsApp</span>
+                </button>
+            </form>
+            
+            <p class="text-[11px] text-center text-zinc-400 mt-4">You will be redirected to WhatsApp with your pre-filled booking details.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-boutique-dark text-white border-t border-gold/20 pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-zinc-800">
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-white mb-2">Designer Fashion Palace</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        Your trusted destination for premium ethnic wear, party wear suits, and dress materials. Live showcasing daily on YouTube & Instagram.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-gold mb-3">Quick Contact</h4>
+                    <p class="text-zinc-300 text-sm flex items-center space-x-2 mb-2">
+                        <i class="fa-solid fa-phone text-gold"></i>
+                        <span>Booking No: <strong class="text-white">858596046</strong></span>
+                    </p>
+                    <p class="text-zinc-300 text-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-clock text-gold"></i>
+                        <span>Timing: 10:00 AM – 8:00 PM IST</span>
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-gold mb-3">Live Streaming</h4>
+                    <p class="text-zinc-400 text-sm mb-3">Join our live sessions for new arrivals and exclusive festive discounts.</p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-10 h-10 rounded-full bg-zinc-800 hover:bg-red-600 flex items-center justify-center transition-colors text-white">
+                            <i class="fa-brands fa-youtube"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-zinc-800 hover:bg-pink-600 flex items-center justify-center transition-colors text-white">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="https://wa.me/91858596046" target="_blank" class="w-10 h-10 rounded-full bg-zinc-800 hover:bg-green-600 flex items-center justify-center transition-colors text-white">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-6 text-center text-xs text-zinc-500">
+                &copy; 2026 Designer Fashion Palace. All rights reserved. Official Booking Hotline: 858596046
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Sample Product Catalog Dataset tailored for Designer Fashion Palace
+        const products = [
+            {
+                id: 1,
+                name: "Sunshine Yellow Punjabi Suit with Potli",
+                category: "suit",
+                price: "₹2,499",
+                originalPrice: "₹3,999",
+                sizes: ["40", "42", "44", "46", "48", "50", "52", "54", "56"],
+                image: "https://www.amydus.com/cdn/shop/files/5_c69f559d-6303-4514-9d62-71cb7ad69a86_1000x.jpg?v=1782209175 ",
+                tag: "Bestseller"
+            },
+            {
+                id: 2,
+                name: "Royal Blue Banarasi Brocade Kurti Set",
+                category: "suit",
+                price: "₹2,899",
+                originalPrice: "₹4,500",
+                sizes: ["40", "42", "44", "46", "48", "50", "52", "54", "56"],
+                image: "https://www.amydus.com/cdn/shop/files/1_cd4546b1-9ce6-4683-b3fa-03543d311114.jpg?v=1776170516",
+                tag: "New Arrival"
+            },
+            {
+                id: 3,
+                name: "Dark Luxe Velvet Embroidered Suit",
+                category: "suit",
+                price: "₹3,299",
+                originalPrice: "₹5,200",
+                sizes: ["40", "42", "44", "46", "48", "50", "52", "54", "56"],
+                image: "https://www.amydus.com/cdn/shop/files/751A5043_700x.jpg?v=1756631536",
+                tag: "Party Wear"
+            },
+            {
+                id: 4,
+                name: "Pastel Pink Designer Georgette Lehenga",
+                category: "lehenga",
+                price: "₹4,999",
+                originalPrice: "₹7,999",
+                sizes: ["40", "42", "44", "46", "48", "50"],
+                image: "https://www.amydus.com/cdn/shop/files/6_4212ab9d-2a37-4aa7-b3d2-cba0836d334d_700x.jpg?v=1773233664",
+                tag: "Trending"
+            },
+            {
+                id: 5,
+                name: "Pure Organza Floral Print Dress Material",
+                category: "material",
+                price: "₹1,899",
+                originalPrice: "₹2,999",
+                sizes: ["Unstitched (Up to Size 56)"],
+                image: "https://www.amydus.com/cdn/shop/files/1_5011296f-48fb-4bc5-9101-fa570d1e8927_700x.jpg?v=1787226989",
+                tag: "Unstitched"
+            },
+            {
+                id: 6,
+                name: "Embroidered Net Anarkali Suit Set",
+                category: "suit",
+                price: "₹3,499",
+                originalPrice: "₹5,500",
+                sizes: ["40", "42", "44", "46", "48", "50", "52", "54", "56"],
+                image: "https://www.amydus.com/cdn/shop/files/1_bb306705-ce4d-4a10-a85c-3fc980d16299_700x.jpg?v=1785407409",
+                tag: "Special Edition"
+            }
+        ];
+
+        // Render products into the grid
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl overflow-hidden border border-zinc-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group";
+                
+                card.innerHTML = `
+                    <div class="relative aspect-[4/5] overflow-hidden bg-zinc-100">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x800/e2e8f0/1a1a1a?text=Designer+Fashion'">
+                        <span class="absolute top-3 left-3 bg-gold text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                            ${product.tag}
+                        </span>
+                        <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-bold text-zinc-900 border border-zinc-200 shadow-sm">
+                            Booking: 858596046
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow justify-between">
+                        <div>
+                            <h3 class="font-serif font-bold text-lg text-boutique-dark group-hover:text-gold transition-colors">${product.name}</h3>
+                            <div class="flex items-center space-x-3 mt-2">
+                                <span class="text-lg font-bold text-boutique-dark">${product.price}</span>
+                                <span class="text-sm text-zinc-400 line-through">${product.originalPrice}</span>
+                            </div>
+                            <div class="mt-3 flex flex-wrap gap-1">
+                                ${product.sizes.slice(0, 5).map(s => `<span class="text-[10px] bg-boutique-light border border-zinc-200 px-2 py-0.5 rounded font-medium text-zinc-600">Size ${s}</span>`).join('')}
+                                ${product.sizes.length > 5 ? `<span class="text-[10px] bg-gold/10 text-gold-dark px-2 py-0.5 rounded font-bold">+ More</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="mt-5 pt-4 border-t border-zinc-100 flex items-center gap-2">
+                            <button onclick="openBookingModal('${product.name}', '46')" class="flex-1 bg-boutique-dark hover:bg-gold text-white py-2.5 rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center justify-center space-x-1.5">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Book Now</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter button state handler
+        function filterCategory(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-boutique-dark', 'text-white', 'shadow-md');
+                btn.classList.add('bg-white', 'text-zinc-700', 'border', 'border-zinc-200');
+            });
+            const activeBtn = document.getElementById(`btn-${category}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-white', 'text-zinc-700', 'border', 'border-zinc-200');
+                activeBtn.classList.add('bg-boutique-dark', 'text-white', 'shadow-md');
+            }
+            renderProducts(category);
+        }
+
+        // Modal Controls
+        function openBookingModal(productName, defaultSize) {
+            document.getElementById('modal-product-name').value = productName;
+            document.getElementById('modal-size').value = defaultSize;
+            document.getElementById('booking-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBookingModal() {
+            document.getElementById('booking-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // WhatsApp Direct Booking Redirect
+        function submitBooking(event) {
+            event.preventDefault();
+            const productName = document.getElementById('modal-product-name').value;
+            const size = document.getElementById('modal-size').value;
+            const customerName = document.getElementById('modal-customer-name').value;
+            const customerCity = document.getElementById('modal-customer-city').value;
+
+            const message = `Hello Designer Fashion Palace! 👋\nI want to book this outfit:\n\n*Outfit:* ${productName}\n*Size:* ${size}\n*My Name:* ${customerName}\n*City:* ${customerCity}\n\nPlease confirm availability and booking number 858596046.`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/91858596046?text=${encodedMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
+            closeBookingModal();
+        }
+
+        // Mobile menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Initialize on load
+        window.onload = function() {
+            renderProducts('all');
+        }
+    </script>
+</body>
+</html>
