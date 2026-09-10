@@ -1,0 +1,503 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OYO - Royal Stay & Hotel Booking Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        royal: {
+                            DEFAULT: '#1E3A8A', // Deep Royal Blue
+                            dark: '#1E293B',    // Slate Dark
+                            light: '#3B82F6',   // Bright Blue
+                            accent: '#F59E0B',  // Gold / Orange Accent
+                            surface: '#F8FAFC'  // Light background
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-pattern {
+            background: linear-gradient(135deg, #1E3A8A 0%, #172554 100%);
+        }
+    </style>
+</head>
+<body class="bg-royal-surface text-gray-800 antialiased pb-24 md:pb-0">
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="#" class="bg-royal text-white font-black text-xl px-3 py-1.5 rounded-xl tracking-wider shadow-md flex items-center">
+                    OYO <span class="text-xs font-semibold uppercase bg-royal-accent text-royal-dark px-1.5 py-0.5 rounded ml-1.5">Royal</span>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-600">
+                <a href="#hotels" class="hover:text-royal transition">Explore Hotels</a>
+                <a href="#offers" class="hover:text-royal transition">Offers & Deals</a>
+                <a href="#testimonials" class="hover:text-royal transition">Testimonials</a>
+                <a href="#faq" class="hover:text-royal transition">FAQs</a>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="tel:1800258696" class="hidden sm:inline-flex items-center text-xs font-semibold text-royal bg-royal/10 px-3 py-2 rounded-xl">
+                    <i class="fa-solid fa-phone mr-1.5 text-royal-accent"></i> 1800-OYO-ROYAL
+                </a>
+                <button onclick="openBookingModal('General Booking', 'Standard Royal Room', '₹1,499')" class="bg-royal-accent hover:bg-amber-600 text-royal-dark font-bold text-sm px-4 py-2.5 rounded-xl shadow-lg shadow-royal-accent/20 transition transform active:scale-95">
+                    Book Now
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-pattern text-white relative overflow-hidden py-12 lg:py-20">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto space-y-4 mb-10">
+                <div class="inline-flex items-center bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium text-royal-accent border border-white/20">
+                    <i class="fa-solid fa-crown mr-2"></i> India's Most Trusted Luxury & Budget Stay
+                </div>
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                    Over 157,000+ Hotels & Homes <br>
+                    <span class="text-royal-accent">Across 35+ Countries</span>
+                </h1>
+                <p class="text-blue-100 text-sm sm:text-base">
+                    World-class stays at unbeatable prices. Book sanitized rooms with zero hassle.
+                </p>
+            </div>
+
+            <!-- Search Filter Card Bar -->
+            <div class="bg-white rounded-3xl shadow-2xl p-4 sm:p-6 text-gray-800 max-w-5xl mx-auto border border-gray-100">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+                    <!-- Location -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-2xl p-3">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">City or Location</label>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-location-dot text-royal"></i>
+                            <input type="text" id="searchCity" value="Mumbai, India" class="w-full bg-transparent text-sm font-semibold text-gray-800 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-2xl p-3">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Check-in / Check-out</label>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-regular fa-calendar text-royal"></i>
+                            <input type="text" value="Today - Tomorrow" class="w-full bg-transparent text-sm font-semibold text-gray-800 focus:outline-none" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Guests -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-2xl p-3">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Rooms & Guests</label>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-regular fa-user text-royal"></i>
+                            <input type="text" value="1 Room, 2 Guests" class="w-full bg-transparent text-sm font-semibold text-gray-800 focus:outline-none" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Search Button -->
+                    <div>
+                        <button onclick="filterHotels()" class="w-full bg-royal hover:bg-royal-dark text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-royal/30 transition transform active:scale-95 text-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Search Hotels</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Badges -->
+            <div class="flex flex-wrap justify-center items-center gap-6 mt-8 text-xs font-medium text-blue-200">
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-royal-accent mr-1.5"></i> Free Cancellation</span>
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-royal-accent mr-1.5"></i> Sanitized Rooms</span>
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-royal-accent mr-1.5"></i> Pay at Hotel Available</span>
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-royal-accent mr-1.5"></i> 24/7 Guest Support</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotional Banner -->
+    <section id="offers" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
+        <div class="bg-gradient-to-r from-royal-dark to-royal rounded-3xl shadow-2xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between border border-blue-900">
+            <div class="space-y-2 mb-4 md:mb-0 text-center md:text-left">
+                <span class="bg-royal-accent text-royal-dark font-bold text-xs px-3 py-1 rounded-full uppercase">Limited Offer</span>
+                <h3 class="text-2xl font-extrabold">Get Flat 50% OFF on Your First Booking</h3>
+                <p class="text-blue-200 text-xs sm:text-sm">Use coupon code <span class="bg-white/20 px-2 py-0.5 rounded font-mono font-bold text-royal-accent">ROYAL50</span> during checkout.</p>
+            </div>
+            <button onclick="openBookingModal('Special Offer Deal', 'Royal Suite with Discount', '₹999')" class="bg-royal-accent hover:bg-amber-600 text-royal-dark font-bold px-6 py-3 rounded-xl shadow-lg transition transform active:scale-95 text-sm whitespace-nowrap">
+                Claim Offer Now
+            </button>
+        </div>
+    </section>
+
+    <!-- Featured Hotels Section -->
+    <section id="hotels" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-royal bg-royal/10 px-3 py-1 rounded-full">Top Picks</span>
+                <h2 class="text-3xl font-extrabold text-gray-900 mt-3">Featured Royal Hotels</h2>
+            </div>
+            <p class="text-gray-500 text-sm max-w-md mt-2 md:mt-0">Handpicked premium properties offering exceptional luxury and comfort at budget-friendly prices.</p>
+        </div>
+
+        <!-- Hotel Grid -->
+        <div id="hotelGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Hotel 1 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition group flex flex-col justify-between" data-city="Mumbai">
+                <div>
+                    <div class="relative h-52 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="Hotel" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/1E3A8A/ffffff?text=Royal+Hotel'">
+                        <span class="absolute top-3 left-3 bg-royal text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.8 (1,420 ratings)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-royal-accent text-royal-dark text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Save 60%
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-location-dot text-royal mr-1"></i> Bandra West, Mumbai</span>
+                            <span class="text-emerald-600 font-bold">Free WiFi</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">OYO Townhouse Royal Palm</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Experience premium hospitality with king-sized beds, modular bathrooms, and gourmet breakfast included.</p>
+                        <!-- Amenities -->
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">AC</span>
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">TV</span>
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">Swimming Pool</span>
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">Power Backup</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-gray-100 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹1,499</span>
+                            <span class="text-xs text-gray-400 line-through">₹3,999</span>
+                        </div>
+                        <div class="text-[10px] text-gray-500">+ taxes & fees • Per night</div>
+                    </div>
+                    <button onclick="openBookingModal('OYO Townhouse Royal Palm', 'Deluxe Room', '₹1,499')" class="bg-royal hover:bg-royal-dark text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hotel 2 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition group flex flex-col justify-between" data-city="Bangalore">
+                <div>
+                    <div class="relative h-52 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="Hotel" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/1E3A8A/ffffff?text=Royal+Hotel'">
+                        <span class="absolute top-3 left-3 bg-royal text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 (980 ratings)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-royal-accent text-royal-dark text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Best Seller
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-location-dot text-royal mr-1"></i> Indiranagar, Bangalore</span>
+                            <span class="text-emerald-600 font-bold">Breakfast included</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">OYO Flagship Royal Leaf</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Modern aesthetics paired with prime tech-park location. Ideal for corporate travelers and vacationers.</p>
+                        <!-- Amenities -->
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">Workspace</span>
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">High-Speed WiFi</span>
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">Parking</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-gray-100 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹1,899</span>
+                            <span class="text-xs text-gray-400 line-through">₹4,500</span>
+                        </div>
+                        <div class="text-[10px] text-gray-500">+ taxes & fees • Per night</div>
+                    </div>
+                    <button onclick="openBookingModal('OYO Flagship Royal Leaf', 'Executive Suite', '₹1,899')" class="bg-royal hover:bg-royal-dark text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hotel 3 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition group flex flex-col justify-between" data-city="Delhi">
+                <div>
+                    <div class="relative h-52 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80" alt="Hotel" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/1E3A8A/ffffff?text=Royal+Hotel'">
+                        <span class="absolute top-3 left-3 bg-royal text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.7 (2,100 ratings)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-royal-accent text-royal-dark text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Top Rated
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-location-dot text-royal mr-1"></i> Connaught Place, New Delhi</span>
+                            <span class="text-emerald-600 font-bold">City Center</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">OYO Rooms Imperial Crown</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Situated right at the heart of the capital city with royal architecture, fine dining, and unmatched hospitality.</p>
+                        <!-- Amenities -->
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">Spa & Salon</span>
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">Restaurant</span>
+                            <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-lg">Valet Parking</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-gray-100 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹2,299</span>
+                            <span class="text-xs text-gray-400 line-through">₹5,200</span>
+                        </div>
+                        <div class="text-[10px] text-gray-500">+ taxes & fees • Per night</div>
+                    </div>
+                    <button onclick="openBookingModal('OYO Rooms Imperial Crown', 'Royal King Room', '₹2,299')" class="bg-royal hover:bg-royal-dark text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="bg-royal-dark text-white py-16 my-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-royal-accent bg-white/10 px-3 py-1 rounded-full">Customer Love</span>
+                <h2 class="text-3xl font-extrabold mt-3">What Our Guests Say About Us</h2>
+                <p class="text-blue-200 text-sm mt-2">Over 10 million happy travelers book their stays with OYO Royal every single year.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-4">
+                    <div class="flex items-center space-x-1 text-royal-accent">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-blue-100 italic">"The booking experience was instant and seamless. Check-in took less than 2 minutes and the room was exceptionally clean!"</p>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-royal-accent flex items-center justify-center font-bold text-royal-dark">AS</div>
+                        <div>
+                            <div class="font-bold text-sm">Aarav Sharma</div>
+                            <div class="text-xs text-blue-300">Stayed in Mumbai</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-4">
+                    <div class="flex items-center space-x-1 text-royal-accent">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-blue-100 italic">"Unbeatable prices with amazing amenities. The royal blue theme and customer support made my business trip so stress-free."</p>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-royal-accent flex items-center justify-center font-bold text-royal-dark">PK</div>
+                        <div>
+                            <div class="font-bold text-sm">Priya Kapoor</div>
+                            <div class="text-xs text-blue-300">Stayed in Bangalore</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-4">
+                    <div class="flex items-center space-x-1 text-royal-accent">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-blue-100 italic">"The 50% discount coupon worked like magic! Will definitely recommend OYO Royal to all my friends and family."</p>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-royal-accent flex items-center justify-center font-bold text-royal-dark">RM</div>
+                        <div>
+                            <div class="font-bold text-sm">Rohit Malhotra</div>
+                            <div class="text-xs text-blue-300">Stayed in New Delhi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <span class="text-xs font-bold uppercase tracking-widest text-royal bg-royal/10 px-3 py-1 rounded-full">Got Questions?</span>
+            <h2 class="text-3xl font-extrabold text-gray-900 mt-3">Frequently Asked Questions</h2>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <h3 class="text-base font-bold text-gray-900 flex justify-between items-center cursor-pointer">
+                    <span>How can I apply discount coupon codes?</span>
+                    <i class="fa-solid fa-chevron-down text-royal text-sm"></i>
+                </h3>
+                <p class="text-gray-600 text-sm mt-2">You can apply codes like ROYAL50 directly in our booking checkout modal to instantly slash 50% off your stay price.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <h3 class="text-base font-bold text-gray-900 flex justify-between items-center cursor-pointer">
+                    <span>Is early check-in or late check-out available?</span>
+                    <i class="fa-solid fa-chevron-down text-royal text-sm"></i>
+                </h3>
+                <p class="text-gray-600 text-sm mt-2">Yes, subject to room availability at the property. You can also request it directly through the OYO Royal guest support desk.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <h3 class="text-base font-bold text-gray-900 flex justify-between items-center cursor-pointer">
+                    <span>What is the cancellation policy?</span>
+                    <i class="fa-solid fa-chevron-down text-royal text-sm"></i>
+                </h3>
+                <p class="text-gray-600 text-sm mt-2">We offer free cancellation up to 24 hours before your scheduled check-in time with 100% instant refund.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="bg-royal text-white font-black text-xl px-3 py-1.5 rounded-xl inline-block tracking-wider mb-4">
+                        OYO <span class="text-xs font-semibold uppercase bg-royal-accent text-royal-dark px-1.5 py-0.5 rounded ml-1">Royal</span>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">Redefining budget and luxury hospitality across the globe with trusted technology and verified comfort.</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-royal-accent">Quick Links</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#hotels" class="hover:text-white transition">Explore Hotels</a></li>
+                        <li><a href="#offers" class="hover:text-white transition">Offers & Deals</a></li>
+                        <li><a href="#testimonials" class="hover:text-white transition">Testimonials</a></li>
+                        <li><a href="#faq" class="hover:text-white transition">FAQs</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-royal-accent">Support & Legal</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Customer Helpdesk</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms & Conditions</a></li>
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-royal-accent">Contact Us</h4>
+                    <p class="text-xs text-gray-400 mb-2"><i class="fa-solid fa-phone mr-2 text-royal-accent"></i> Toll-Free: 1800-258-696</p>
+                    <p class="text-xs text-gray-400"><i class="fa-solid fa-envelope mr-2 text-royal-accent"></i> booking@oyoroyal.com</p>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
+                &copy; 2026 OYO Royal Hospitality Network. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Sticky Bottom Action Bar -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 p-3 md:hidden flex items-center justify-between shadow-2xl">
+        <div>
+            <div class="text-[10px] text-gray-500 uppercase font-semibold">Starting from</div>
+            <div class="text-base font-black text-royal">₹999 / Night</div>
+        </div>
+        <button onclick="openBookingModal('Quick Mobile Booking', 'Royal Standard Room', '₹999')" class="bg-royal hover:bg-royal-dark text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-lg shadow-royal/30">
+            Book Now
+        </button>
+    </div>
+
+    <!-- Interactive Booking Modal -->
+    <div id="bookingModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 relative border border-gray-100 animate-fade-in">
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="mb-4">
+                <span class="bg-royal/10 text-royal font-bold text-xs px-3 py-1 rounded-full uppercase">Instant Reservation</span>
+                <h3 id="modalHotelTitle" class="text-xl font-bold text-gray-900 mt-2">OYO Royal Hotel</h3>
+                <p id="modalRoomType" class="text-xs text-gray-500">Deluxe Room • ₹1,499</p>
+            </div>
+
+            <form id="bookingForm" onsubmit="handleBookingSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Full Name</label>
+                    <input type="text" required placeholder="Enter your full name" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-royal transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Mobile Number</label>
+                    <input type="tel" pattern="[0-9]{10}" required placeholder="9876543210" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-royal transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Coupon Code (Optional)</label>
+                    <input type="text" id="couponInput" value="ROYAL50" placeholder="Enter promo code" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono uppercase focus:outline-none focus:border-royal transition">
+                </div>
+                <button type="submit" class="w-full bg-royal hover:bg-royal-dark text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-royal/30 transition transform active:scale-95 text-base">
+                    Confirm Booking <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </form>
+
+            <div id="bookingSuccessMsg" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-center text-sm font-medium">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-xl mb-1 block"></i>
+                Booking Confirmed! SMS confirmation sent to your phone.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openBookingModal(hotelName, roomType, price) {
+            document.getElementById('modalHotelTitle').innerText = hotelName;
+            document.getElementById('modalRoomType').innerText = roomType + ' • ' + price;
+            document.getElementById('bookingModal').classList.remove('hidden');
+            document.getElementById('bookingSuccessMsg').classList.add('hidden');
+            document.getElementById('bookingForm').reset();
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+
+        function handleBookingSubmit(e) {
+            e.preventDefault();
+            document.getElementById('bookingForm').style.display = 'none';
+            document.getElementById('bookingSuccessMsg').classList.remove('hidden');
+            setTimeout(() => {
+                closeBookingModal();
+                document.getElementById('bookingForm').style.display = 'block';
+            }, 3500);
+        }
+
+        function filterHotels() {
+            const city = document.getElementById('searchCity').value.trim();
+            const cards = document.querySelectorAll('#hotelGrid > div');
+            cards.forEach(card => {
+                const hotelCity = card.getAttribute('data-city');
+                if (city === '' || hotelCity.toLowerCase().includes(city.toLowerCase()) || city.toLowerCase().includes(hotelCity.toLowerCase())) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
