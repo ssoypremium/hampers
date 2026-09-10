@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designer Fashion Plaza - Plus-Size Women's Dresses Sale in India</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        plaza: {
+                            DEFAULT: '#831843', // Luxurious Warm Burgundy / Wine Red
+                            dark: '#500724',    // Deep Wine Dark
+                            light: '#9D174D',   // Vibrant Burgundy
+                            accent: '#B45309',  // Champagne Gold Accent
+                            gold: '#D97706',    // Rich Gold
+                            surface: '#FFF1F2'  // Soft Rose tint
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-pattern {
+            background: linear-gradient(135deg, #500724 0%, #831843 50%, #9D174D 100%);
+        }
+        .plaza-btn-gradient {
+            background: linear-gradient(135deg, #831843 0%, #B45309 100%);
+        }
+        .plaza-btn-gradient:hover {
+            background: linear-gradient(135deg, #500724 0%, #831843 100%);
+        }
+        .gold-btn-gradient {
+            background: linear-gradient(135deg, #B45309 0%, #D97706 100%);
+        }
+        .gold-btn-gradient:hover {
+            background: linear-gradient(135deg, #92400E 0%, #B45309 100%);
+        }
+    </style>
+</head>
+<body class="bg-plaza-surface text-gray-800 antialiased pb-24 md:pb-0">
+
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-rose-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="#" class="bg-plaza text-white font-black text-lg sm:text-xl px-3.5 py-1.5 rounded-xl tracking-wider shadow-md flex items-center">
+                    DESIGNER <span class="text-xs font-semibold uppercase bg-plaza-accent text-white px-1.5 py-0.5 rounded ml-1.5">Plaza</span>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-600">
+                <a href="#collection" class="hover:text-plaza transition">All Dresses</a>
+                <a href="#sale" class="hover:text-plaza transition font-bold text-plaza-accent">Sale (Up to 50% OFF)</a>
+                <a href="#sizeGuide" onclick="openSizeGuideModal(event)" class="hover:text-plaza transition flex items-center"><i class="fa-solid fa-ruler mr-1 text-plaza-gold"></i> Size Guide (XL - 6XL)</a>
+                <a href="#reviews" class="hover:text-plaza transition">Customer Reviews</a>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleCartDrawer()" class="relative bg-plaza hover:bg-plaza-dark text-white p-2.5 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center">
+                    <i class="fa-solid fa-bag-shopping text-base"></i>
+                    <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-plaza-accent text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-pattern text-white relative overflow-hidden py-12 lg:py-20">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto space-y-4 mb-10">
+                <div class="inline-flex items-center bg-white/15 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium text-amber-200 border border-white/20 shadow-sm">
+                    <i class="fa-solid fa-crown mr-2 text-amber-300"></i> Premium Plus-Size Fashion across India • Sizes XL to 6XL
+                </div>
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                    Flattering Fits For Every Curve <br>
+                    <span class="text-amber-300">Exclusive Plus-Size Dresses Sale</span>
+                </h1>
+                <p class="text-rose-200 text-sm sm:text-base">
+                    Discover stunning evening gowns, Anarkalis, lehengas, and indo-western dresses tailored meticulously for Indian plus sizes XL to 6XL. Order instantly with our themed WhatsApp checkout!
+                </p>
+            </div>
+
+            <!-- Category & Indian Size Filter Bar -->
+            <div class="bg-white rounded-3xl shadow-2xl p-4 sm:p-6 text-gray-800 max-w-5xl mx-auto border border-rose-100">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                    <div class="bg-gray-50 border border-gray-200 rounded-2xl p-3">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Dress Style</label>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-shirt text-plaza"></i>
+                            <select id="filterCategory" onchange="filterProducts()" class="w-full bg-transparent text-sm font-semibold text-gray-800 focus:outline-none cursor-pointer">
+                                <option value="all">All Dress Styles</option>
+                                <option value="Anarkali">Anarkali Gowns</option>
+                                <option value="Lehengas">Festive Lehengas</option>
+                                <option value="Kurtis">Designer Kurtis</option>
+                                <option value="Indo-Western">Indo-Western Gowns</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 border border-gray-200 rounded-2xl p-3">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Select Size (Indian)</label>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-ruler text-plaza"></i>
+                            <select id="filterSize" onchange="filterProducts()" class="w-full bg-transparent text-sm font-semibold text-gray-800 focus:outline-none cursor-pointer">
+                                <option value="all">All Sizes (XL - 6XL)</option>
+                                <option value="XL">XL (Bust 42-44")</option>
+                                <option value="XXL">XXL (Bust 44-46")</option>
+                                <option value="3XL">3XL (Bust 46-48")</option>
+                                <option value="4XL">4XL (Bust 48-50")</option>
+                                <option value="5XL">5XL (Bust 50-52")</option>
+                                <option value="6XL">6XL (Bust 52-55")</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button onclick="filterProducts()" class="w-full plaza-btn-gradient text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition transform active:scale-95 text-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-filter"></i>
+                            <span>Filter Plaza Styles</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Trust Badges -->
+            <div class="flex flex-wrap justify-center items-center gap-6 mt-8 text-xs font-medium text-rose-200">
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-300 mr-1.5"></i> Curvy-Fit Certified for Indian Women</span>
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-300 mr-1.5"></i> Stretch Fabrics & Supportive Lining</span>
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-300 mr-1.5"></i> Pan-India Shipping Available</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
+        <div id="sale" class="bg-gradient-to-r from-plaza-dark via-plaza to-rose-900 rounded-3xl shadow-2xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between border border-rose-800">
+            <div class="space-y-2 mb-4 md:mb-0 text-center md:text-left">
+                <span class="bg-plaza-accent text-white font-bold text-xs px-3 py-1 rounded-full uppercase">Mega Season Sale</span>
+                <h3 class="text-2xl font-extrabold">Extra 40% OFF All Plus-Size Dresses</h3>
+                <p class="text-rose-200 text-xs sm:text-sm">Use Promo Code <span class="bg-white/20 px-2 py-0.5 rounded font-mono font-bold text-amber-300">PLAZACURVY40</span> inside cart checkout for instant discount.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleCartDrawer()" class="gold-btn-gradient hover:opacity-95 text-white font-bold px-6 py-3.5 rounded-xl shadow-lg transition transform active:scale-95 text-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span>View Cart & Apply Discount</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="collection" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-plaza bg-rose-100 px-3 py-1 rounded-full">Curated Plus-Size Collection</span>
+                <h2 class="text-3xl font-extrabold text-gray-900 mt-3">Trending Dresses (Indian Sizes XL - 6XL)</h2>
+            </div>
+            <p class="text-gray-500 text-sm max-w-md mt-2 md:mt-0">Designed exclusively to flatter Indian curves with stretch comfort, premium breathability, and gorgeous silhouettes.</p>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Product 1 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-rose-100 hover:shadow-xl transition group flex flex-col justify-between" data-category="Anarkali" data-sizes="XL,XXL,3XL,4XL,5XL,6XL" data-price="3999" data-name="Royal Burgundy Zari Anarkali Gown">
+                <div>
+                    <div class="relative h-72 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=600&q=80" alt="Burgundy Zari Anarkali" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/831843/ffffff?text=Burgundy+Anarkali'">
+                        <span class="absolute top-3 left-3 bg-plaza text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 (340 reviews)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-plaza-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Sale 40% OFF
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-tag text-plaza mr-1"></i> Anarkali Gown</span>
+                            <span class="text-emerald-600 font-bold">Georgette & Zari</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Royal Burgundy Zari Anarkali Gown</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Luxurious rich wine burgundy fabric with intricate gold zari embroidery and empire waistline crafted for full figures.</p>
+                        <!-- Size selector for this product -->
+                        <div class="pt-2">
+                            <div class="text-[11px] font-bold uppercase text-gray-500 mb-1.5 flex justify-between">
+                                <span>Select Indian Size:</span>
+                                <span class="text-plaza font-semibold">XL to 6XL</span>
+                            </div>
+                            <select id="size_prod_1" class="w-full bg-rose-50 border border-rose-200 text-xs font-bold text-plaza p-2.5 rounded-xl focus:outline-none">
+                                <option value="XL">XL (Bust 42-44")</option>
+                                <option value="XXL">XXL (Bust 44-46")</option>
+                                <option value="3XL">3XL (Bust 46-48")</option>
+                                <option value="4XL" selected>4XL (Bust 48-50")</option>
+                                <option value="5XL">5XL (Bust 50-52")</option>
+                                <option value="6XL">6XL (Bust 52-55")</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-rose-50 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹3,999</span>
+                            <span class="text-xs text-gray-400 line-through">₹6,699</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">In Stock • Ready to Order</div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="addToCart('Royal Burgundy Zari Anarkali Gown', '3,999', document.getElementById('size_prod_1').value)" class="plaza-btn-gradient hover:opacity-95 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-rose-100 hover:shadow-xl transition group flex flex-col justify-between" data-category="Lehengas" data-sizes="XL,XXL,3XL,4XL,5XL" data-price="4899" data-name="Champagne Gold Accent Festive Lehenga">
+                <div>
+                    <div class="relative h-72 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=600&q=80" alt="Festive Lehenga" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/831843/ffffff?text=Festive+Lehenga'">
+                        <span class="absolute top-3 left-3 bg-plaza text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.8 (215 reviews)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-plaza-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Bestseller
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-tag text-plaza mr-1"></i> Festive Lehenga</span>
+                            <span class="text-emerald-600 font-bold">Silk & Gold Thread</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Champagne Gold Accent Festive Lehenga</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Exquisite burgundy flared skirt paired with a heavy champange gold embroidered blouse and net dupatta for weddings.</p>
+                        <div class="pt-2">
+                            <div class="text-[11px] font-bold uppercase text-gray-500 mb-1.5 flex justify-between">
+                                <span>Select Indian Size:</span>
+                                <span class="text-plaza font-semibold">XL to 5XL</span>
+                            </div>
+                            <select id="size_prod_2" class="w-full bg-rose-50 border border-rose-200 text-xs font-bold text-plaza p-2.5 rounded-xl focus:outline-none">
+                                <option value="XL">XL (Bust 42-44")</option>
+                                <option value="XXL" selected>XXL (Bust 44-46")</option>
+                                <option value="3XL">3XL (Bust 46-48")</option>
+                                <option value="4XL">4XL (Bust 48-50")</option>
+                                <option value="5XL">5XL (Bust 50-52")</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-rose-50 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹4,899</span>
+                            <span class="text-xs text-gray-400 line-through">₹7,999</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">In Stock • Ready to Order</div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="addToCart('Champagne Gold Accent Festive Lehenga', '4,899', document.getElementById('size_prod_2').value)" class="plaza-btn-gradient hover:opacity-95 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-rose-100 hover:shadow-xl transition group flex flex-col justify-between" data-category="Kurtis" data-sizes="XXL,3XL,4XL,5XL,6XL" data-price="2199" data-name="Wine Velvet Embroidered Kurti Set">
+                <div>
+                    <div class="relative h-72 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=600&q=80" alt="Velvet Kurti Set" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/831843/ffffff?text=Velvet+Kurti+Set'">
+                        <span class="absolute top-3 left-3 bg-plaza text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.7 (189 reviews)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-plaza-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Trending
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-tag text-plaza mr-1"></i> Designer Kurti</span>
+                            <span class="text-emerald-600 font-bold">Stretch Velvet</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Wine Velvet Embroidered Kurti Set</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Elegant straight-cut velvet kurti with gold neckline embroidery paired with matching comfortable trousers for festive occasions.</p>
+                        <div class="pt-2">
+                            <div class="text-[11px] font-bold uppercase text-gray-500 mb-1.5 flex justify-between">
+                                <span>Select Indian Size:</span>
+                                <span class="text-plaza font-semibold">XXL to 6XL</span>
+                            </div>
+                            <select id="size_prod_3" class="w-full bg-rose-50 border border-rose-200 text-xs font-bold text-plaza p-2.5 rounded-xl focus:outline-none">
+                                <option value="XXL">XXL (Bust 44-46")</option>
+                                <option value="3XL" selected>3XL (Bust 46-48")</option>
+                                <option value="4XL">4XL (Bust 48-50")</option>
+                                <option value="5XL">5XL (Bust 50-52")</option>
+                                <option value="6XL">6XL (Bust 52-55")</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-rose-50 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹2,199</span>
+                            <span class="text-xs text-gray-400 line-through">₹3,799</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">In Stock • Ready to Order</div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="addToCart('Wine Velvet Embroidered Kurti Set', '2,199', document.getElementById('size_prod_3').value)" class="plaza-btn-gradient hover:opacity-95 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-rose-100 hover:shadow-xl transition group flex flex-col justify-between" data-category="Indo-Western" data-sizes="XL,XXL,3XL,4XL,5XL,6XL" data-price="3499" data-name="Crimson Fusion Cape Sleeve Gown">
+                <div>
+                    <div class="relative h-72 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=600&q=80" alt="Cape Gown" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/831843/ffffff?text=Indo-Western+Gown'">
+                        <span class="absolute top-3 left-3 bg-plaza text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 (410 reviews)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-plaza-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Top Rated
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-tag text-plaza mr-1"></i> Indo-Western</span>
+                            <span class="text-emerald-600 font-bold">Chiffon & Satin</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Crimson Fusion Cape Sleeve Gown</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Contemporary cape-style sleeve evening gown with gold stone work on the waist, designed to flatter full figures.</p>
+                        <div class="pt-2">
+                            <div class="text-[11px] font-bold uppercase text-gray-500 mb-1.5 flex justify-between">
+                                <span>Select Indian Size:</span>
+                                <span class="text-plaza font-semibold">XL to 6XL</span>
+                            </div>
+                            <select id="size_prod_4" class="w-full bg-rose-50 border border-rose-200 text-xs font-bold text-plaza p-2.5 rounded-xl focus:outline-none">
+                                <option value="XL">XL (Bust 42-44")</option>
+                                <option value="XXL">XXL (Bust 44-46")</option>
+                                <option value="3XL">3XL (Bust 46-48")</option>
+                                <option value="4XL">4XL (Bust 48-50")</option>
+                                <option value="5XL">5XL (Bust 50-52")</option>
+                                <option value="6XL" selected>6XL (Bust 52-55")</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-rose-50 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹3,499</span>
+                            <span class="text-xs text-gray-400 line-through">₹5,999</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">In Stock • Ready to Order</div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="addToCart('Crimson Fusion Cape Sleeve Gown', '3,499', document.getElementById('size_prod_4').value)" class="plaza-btn-gradient hover:opacity-95 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 5 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-rose-100 hover:shadow-xl transition group flex flex-col justify-between" data-category="Anarkali" data-sizes="3XL,4XL,5XL,6XL" data-price="4599" data-name="Imperial Silk Plus Size Floor Gown">
+                <div>
+                    <div class="relative h-72 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=600&q=80" alt="Silk Floor Gown" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/831843/ffffff?text=Silk+Floor+Gown'">
+                        <span class="absolute top-3 left-3 bg-plaza text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 5.0 (95 reviews)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-plaza-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Exclusive
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-tag text-plaza mr-1"></i> Luxury Gown</span>
+                            <span class="text-emerald-600 font-bold">Matte Silk Satin</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Imperial Silk Plus Size Floor Gown</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Stunning cowl neck matte silk gown in deep wine burgundy with built-in corset support and dramatic floor-sweeping hemline.</p>
+                        <div class="pt-2">
+                            <div class="text-[11px] font-bold uppercase text-gray-500 mb-1.5 flex justify-between">
+                                <span>Select Indian Size:</span>
+                                <span class="text-plaza font-semibold">3XL to 6XL</span>
+                            </div>
+                            <select id="size_prod_5" class="w-full bg-rose-50 border border-rose-200 text-xs font-bold text-plaza p-2.5 rounded-xl focus:outline-none">
+                                <option value="3XL" selected>3XL (Bust 46-48")</option>
+                                <option value="4XL">4XL (Bust 48-50")</option>
+                                <option value="5XL">5XL (Bust 50-52")</option>
+                                <option value="6XL">6XL (Bust 52-55")</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-rose-50 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹4,599</span>
+                            <span class="text-xs text-gray-400 line-through">₹7,999</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">In Stock • Ready to Order</div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="addToCart('Imperial Silk Plus Size Floor Gown', '4,599', document.getElementById('size_prod_5').value)" class="plaza-btn-gradient hover:opacity-95 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 6 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-rose-100 hover:shadow-xl transition group flex flex-col justify-between" data-category="Lehengas" data-sizes="XXL,3XL,4XL,5XL,6XL" data-price="5299" data-name="Royal Zardozi Velvet Bridal Lehenga">
+                <div>
+                    <div class="relative h-72 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=600&q=80" alt="Bridal Lehenga" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/831843/ffffff?text=Bridal+Lehenga'">
+                        <span class="absolute top-3 left-3 bg-plaza text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 (156 reviews)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-plaza-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Festive Special
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-tag text-plaza mr-1"></i> Festive Lehenga</span>
+                            <span class="text-emerald-600 font-bold">Velvet & Zari</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Royal Zardozi Velvet Bridal Lehenga</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Exquisite heavy velvet bridal lehenga in rich burgundy tone with champagne gold zardozi work for grand celebrations.</p>
+                        <div class="pt-2">
+                            <div class="text-[11px] font-bold uppercase text-gray-500 mb-1.5 flex justify-between">
+                                <span>Select Indian Size:</span>
+                                <span class="text-plaza font-semibold">XXL to 6XL</span>
+                            </div>
+                            <select id="size_prod_6" class="w-full bg-rose-50 border border-rose-200 text-xs font-bold text-plaza p-2.5 rounded-xl focus:outline-none">
+                                <option value="XXL">XXL (Bust 44-46")</option>
+                                <option value="3XL" selected>3XL (Bust 46-48")</option>
+                                <option value="4XL">4XL (Bust 48-50")</option>
+                                <option value="5XL">5XL (Bust 50-52")</option>
+                                <option value="6XL">6XL (Bust 52-55")</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 flex items-center justify-between border-t border-rose-50 mt-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-black text-gray-900">₹5,299</span>
+                            <span class="text-xs text-gray-400 line-through">₹8,999</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">In Stock • Ready to Order</div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="addToCart('Royal Zardozi Velvet Bridal Lehenga', '5,299', document.getElementById('size_prod_6').value)" class="plaza-btn-gradient hover:opacity-95 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews" class="bg-plaza-dark text-white py-16 my-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-300 bg-white/10 px-3 py-1 rounded-full">Curves Confirmed</span>
+                <h2 class="text-3xl font-extrabold mt-3">Loved By Plus-Size Divas Across India</h2>
+                <p class="text-rose-200 text-sm mt-2">Read real reviews from women who found their perfect fit and felt stunning at milestone events.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-4">
+                    <div class="flex items-center space-x-1 text-amber-400">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-rose-100 italic">"Ordering via WhatsApp from the cart checkout was so effortless! I placed my order for Size 4XL and received prompt pan-India delivery."</p>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-plaza-accent flex items-center justify-center font-bold text-white">SR</div>
+                        <div>
+                            <div class="font-bold text-sm">Sunita R.</div>
+                            <div class="text-xs text-rose-300">Verified 4XL Buyer, Mumbai</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-4">
+                    <div class="flex items-center space-x-1 text-amber-400">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-rose-100 italic">"The fabric quality is phenomenal! So stretchy and breathable. The 3XL Anarkali fit my bust and hips perfectly."</p>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-plaza-accent flex items-center justify-center font-bold text-white">PM</div>
+                        <div>
+                            <div class="font-bold text-sm">Priya Mehta</div>
+                            <div class="text-xs text-rose-300">Verified 3XL Buyer, Delhi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-4">
+                    <div class="flex items-center space-x-1 text-amber-400">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-sm text-rose-100 italic">"I loved how easily the checkout generated my order message with the 40% promo code applied. Outstanding styling and sizing!"</p>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-plaza-accent flex items-center justify-center font-bold text-white">AK</div>
+                        <div>
+                            <div class="font-bold text-sm">Anita Kapoor</div>
+                            <div class="text-xs text-rose-300">Verified 6XL Buyer, Bangalore</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="bg-plaza text-white font-black text-lg px-3 py-1.5 rounded-xl inline-block tracking-wider mb-4">
+                        DESIGNER <span class="text-xs font-semibold uppercase bg-plaza-accent text-white px-1.5 py-0.5 rounded ml-1">Plaza</span>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">Your premier Indian destination for trendy, luxurious plus-size women's dresses (Sizes XL - 6XL) designed with love and curves in mind.</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-amber-300">Dress Categories</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#collection" class="hover:text-white transition">Anarkali Gowns</a></li>
+                        <li><a href="#collection" class="hover:text-white transition">Festive Lehengas</a></li>
+                        <li><a href="#collection" class="hover:text-white transition">Designer Kurtis</a></li>
+                        <li><a href="#collection" class="hover:text-white transition">Indo-Western Gowns</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-amber-300">Size & Fit Care</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#" onclick="openSizeGuideModal(event)" class="hover:text-white transition">Comprehensive Size Chart (XL - 6XL)</a></li>
+                        <li><a href="#" class="hover:text-white transition">Curvy-Fit Guarantee</a></li>
+                        <li><a href="#" class="hover:text-white transition">Pan-India Shipping & Exchanges</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-amber-300">Contact & Support</h4>
+                    <p class="text-xs text-gray-400 mb-2"><i class="fa-solid fa-location-dot mr-2 text-amber-300"></i> Designer Fashion Plaza, Mumbai, India</p>
+                    <p class="text-xs text-gray-400"><i class="fa-solid fa-envelope mr-2 text-amber-300"></i> curvydivas@designerplaza.com</p>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
+                &copy; 2026 Designer Fashion Plaza. All rights reserved. Proudly celebrating all body shapes across India.
+            </div>
+        </div>
+    </footer>
+
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-rose-200 p-3 md:hidden flex items-center justify-between shadow-2xl">
+        <div class="text-xs font-bold text-plaza pl-2">
+            <div>Designer Fashion Plaza</div>
+            <div class="text-[10px] text-gray-500 font-normal">Indian Sizes XL - 6XL</div>
+        </div>
+        <button onclick="toggleCartDrawer()" class="plaza-btn-gradient text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-1.5">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span>Cart (<span id="mobileCartCount">0</span>)</span>
+        </button>
+    </div>
+
+    <div id="cartDrawer" class="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6 animate-slide-left relative overflow-y-auto">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-rose-100">
+                    <h3 class="text-xl font-extrabold text-gray-900 flex items-center">
+                        <i class="fa-solid fa-bag-shopping text-plaza mr-2"></i> Your Shopping Bag
+                    </h3>
+                    <button onclick="toggleCartDrawer()" class="text-gray-400 hover:text-gray-600 text-lg p-2">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div id="cartItemsList" class="py-4 space-y-4">
+                    <div class="text-center text-gray-400 py-12">
+                        <i class="fa-solid fa-cart-shopping text-4xl mb-3 text-rose-200"></i>
+                        <p class="text-sm">Your shopping bag is currently empty.</p>
+                        <p class="text-xs text-rose-400 mt-1">Select your favorite plus-size dress and size to get started!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="cartFooter" class="border-t border-rose-100 pt-4 space-y-3">
+                <div class="bg-rose-50 p-3 rounded-xl border border-rose-200 space-y-2">
+                    <label class="block text-xs font-bold text-plaza uppercase">Customer Details for WhatsApp Order</label>
+                    <input type="text" id="customerName" placeholder="Your Full Name" class="w-full text-xs p-2.5 bg-white border border-rose-200 rounded-lg focus:outline-none">
+                    <textarea id="customerAddress" placeholder="Delivery Address & City (India)" rows="2" class="w-full text-xs p-2.5 bg-white border border-rose-200 rounded-lg focus:outline-none"></textarea>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-500">Subtotal:</span>
+                    <span id="cartSubtotal" class="font-bold text-gray-900">₹0</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-emerald-600 font-semibold">Plus-Size Promo (PLAZACURVY40):</span>
+                    <span class="text-emerald-600 font-bold">-40% Applied</span>
+                </div>
+                <div class="flex justify-between items-center text-base font-black border-t pt-2">
+                    <span>Total Amount:</span>
+                    <span id="cartTotal" class="text-plaza">₹0</span>
+                </div>
+                <!-- Themed WhatsApp order button matching website Burgundy and Gold theme colors -->
+                <button onclick="sendOrderViaWhatsApp()" class="w-full plaza-btn-gradient text-white font-bold py-4 px-6 rounded-2xl shadow-xl transition transform active:scale-95 text-base flex items-center justify-center space-x-2">
+                    <i class="fa-brands fa-whatsapp text-2xl text-amber-300"></i>
+                    <span>Confirm & Order via WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sizeGuideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 relative border border-rose-100">
+            <button onclick="closeSizeGuideModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="mb-4">
+                <span class="bg-rose-100 text-plaza font-bold text-xs px-3 py-1 rounded-full uppercase">Inclusive Fit Chart</span>
+                <h3 class="text-xl font-bold text-gray-900 mt-2">Plus-Size Measurement Guide (Indian Sizes XL - 6XL)</h3>
+                <p class="text-xs text-gray-500">Designed specifically for fuller Indian figures with stretch allowances.</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-rose-50 text-plaza font-bold">
+                            <th class="p-2.5 rounded-l-lg">Indian Size</th>
+                            <th class="p-2.5">Bust (inches)</th>
+                            <th class="p-2.5">Waist (inches)</th>
+                            <th class="p-2.5 rounded-r-lg">Hips (inches)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 text-gray-700">
+                        <tr>
+                            <td class="p-2.5 font-bold text-plaza">XL</td>
+                            <td class="p-2.5">42" - 44"</td>
+                            <td class="p-2.5">35" - 37"</td>
+                            <td class="p-2.5">45" - 47"</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-plaza">XXL</td>
+                            <td class="p-2.5">44" - 46"</td>
+                            <td class="p-2.5">37" - 39"</td>
+                            <td class="p-2.5">47" - 49"</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-plaza">3XL</td>
+                            <td class="p-2.5">46" - 48"</td>
+                            <td class="p-2.5">39" - 41"</td>
+                            <td class="p-2.5">49" - 51"</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-plaza">4XL</td>
+                            <td class="p-2.5">48" - 50"</td>
+                            <td class="p-2.5">41" - 43"</td>
+                            <td class="p-2.5">51" - 53"</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-plaza">5XL</td>
+                            <td class="p-2.5">50" - 52"</td>
+                            <td class="p-2.5">43" - 45"</td>
+                            <td class="p-2.5">53" - 55"</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-plaza">6XL</td>
+                            <td class="p-2.5">52" - 55"</td>
+                            <td class="p-2.5">45" - 48"</td>
+                            <td class="p-2.5">55" - 58"</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6">
+                <button onclick="closeSizeGuideModal()" class="w-full plaza-btn-gradient text-white font-bold py-3 rounded-xl shadow-md text-sm">
+                    Got It, Back to Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cartDrawer');
+            drawer.classList.toggle('hidden');
+            renderCart();
+        }
+
+        function openSizeGuideModal(e) {
+            if(e) e.preventDefault();
+            document.getElementById('sizeGuideModal').classList.remove('hidden');
+        }
+
+        function closeSizeGuideModal() {
+            document.getElementById('sizeGuideModal').classList.add('hidden');
+        }
+
+        function addToCart(name, priceStr, selectedSize) {
+            const price = parseInt(priceStr.replace(/,/g, ''));
+            const existingItem = cart.find(item => item.name === name && item.size === selectedSize);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ name, price, size: selectedSize, qty: 1 });
+            }
+            updateCartBadge();
+            toggleCartDrawer();
+        }
+
+        function updateCartBadge() {
+            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').innerText = totalCount;
+            document.getElementById('mobileCartCount').innerText = totalCount;
+        }
+
+        function renderCart() {
+            const listContainer = document.getElementById('cartItemsList');
+            const cartFooter = document.getElementById('cartFooter');
+            
+            if (cart.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center text-gray-400 py-12">
+                        <i class="fa-solid fa-cart-shopping text-4xl mb-3 text-rose-200"></i>
+                        <p class="text-sm">Your shopping bag is currently empty.</p>
+                        <p class="text-xs text-rose-400 mt-1">Select your favorite plus-size dress to get started!</p>
+                    </div>
+                `;
+                cartFooter.style.display = 'none';
+                return;
+            }
+
+            cartFooter.style.display = 'block';
+            let html = '';
+            let subtotal = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.qty;
+                subtotal += itemTotal;
+                html += `
+                    <div class="flex items-center justify-between bg-rose-50/50 p-3 rounded-2xl border border-rose-100">
+                        <div class="space-y-1">
+                            <h4 class="text-sm font-bold text-gray-900">${item.name}</h4>
+                            <div class="text-xs text-plaza font-semibold">Indian Size: ${item.size} • ₹${item.price.toLocaleString()}</div>
+                            <div class="flex items-center space-x-2 pt-1">
+                                <button onclick="updateQty(${index}, -1)" class="w-6 h-6 bg-white border border-gray-300 rounded font-bold text-xs flex items-center justify-center">-</button>
+                                <span class="text-xs font-bold">${item.qty}</span>
+                                <button onclick="updateQty(${index}, 1)" class="w-6 h-6 bg-white border border-gray-300 rounded font-bold text-xs flex items-center justify-center">+</button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-black text-gray-900">₹${itemTotal.toLocaleString()}</div>
+                            <button onclick="removeItem(${index})" class="text-xs text-rose-500 hover:text-rose-700 mt-2 block"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+            document.getElementById('cartSubtotal').innerText = '₹' + subtotal.toLocaleString();
+            const finalTotal = Math.round(subtotal * 0.6); // 40% discount applied with PLAZACURVY40
+            document.getElementById('cartTotal').innerText = '₹' + finalTotal.toLocaleString();
+        }
+
+        function updateQty(index, change) {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartBadge();
+            renderCart();
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            renderCart();
+        }
+
+        function sendOrderViaWhatsApp() {
+            if (cart.length === 0) return;
+
+            const name = document.getElementById('customerName').value.trim();
+            const address = document.getElementById('customerAddress').value.trim();
+
+            if (!name || !address) {
+                alert("Please fill in your name and delivery address before confirming the order!");
+                return;
+            }
+
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let finalTotal = Math.round(subtotal * 0.6);
+
+            let message = "🛍️ *New Plus-Size Dress Order - Designer Fashion Plaza* 🛍️\n\n";
+            message += `👤 *Customer Name:* ${name}\n`;
+            message += `📍 *Delivery Address:* ${address}\n`;
+            message += `🎟️ *Promo Applied:* PLAZACURVY40 (40% OFF)\n\n*Order Items:*\n`;
+
+            cart.forEach((item, i) => {
+                message += `${i + 1}. *${item.name}*\n   - Size: ${item.size}\n   - Qty: ${item.qty}\n   - Price: ₹${(item.price * item.qty).toLocaleString()}\n\n`;
+            });
+
+            message += `----------------------------------\n`;
+            message += `*Subtotal:* ₹${subtotal.toLocaleString()}\n`;
+            message += `*Final Total (with 40% OFF):* ₹${finalTotal.toLocaleString()}\n\n`;
+            message += "Please confirm my order and dispatch details!";
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/919876543210?text=${encodedMessage}`;
+            window.open(whatsappURL, '_blank');
+        }
+
+        function filterProducts() {
+            const cat = document.getElementById('filterCategory').value;
+            const size = document.getElementById('filterSize').value;
+            const cards = document.querySelectorAll('#productGrid > div');
+
+            cards.forEach(card => {
+                const cardCat = card.getAttribute('data-category');
+                const cardSizes = card.getAttribute('data-sizes').split(',');
+
+                let matchCat = (cat === 'all' || cardCat === cat);
+                let matchSize = (size === 'all' || cardSizes.includes(size));
+
+                if (matchCat && matchSize) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
