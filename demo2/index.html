@@ -3,417 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Crafts & Gifts - Luxury Catalogue & Showcase</title>
+    <title>Aura Crafts & Gifts - Modern Catalogue</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        midnight: {
-                            DEFAULT: '#0F172A',
-                            dark: '#020617',
-                            light: '#1E293B',
-                            accent: '#D97706',
-                            gold: '#F59E0B',
-                            surface: '#F8FAFC'
+                        slate: {
+                            900: '#0F172A',
+                            800: '#1E293B',
+                            700: '#334155'
+                        },
+                        copper: {
+                            DEFAULT: '#C2410C',
+                            dark: '#9A3412',
+                            light: '#EA580C'
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+                        sans: ['Inter', 'sans-serif']
                     }
                 }
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-        .hero-pattern {
-            background: linear-gradient(135deg, #020617 0%, #0F172A 50%, #1E293B 100%);
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-midnight-surface text-gray-800 antialiased pb-16">
+<body class="bg-[#FAFAFA] text-slate-900 antialiased selection:bg-copper selection:text-white pb-20">
 
-    <script>
-        // ==========================================
-        // CATALOGUE CONFIGURATION BLOCK
-        // ==========================================
-        const STORE_CONFIG = {
-            STORE_NAME: 'Aura Crafts & Gifts',
-            CONTACT_PHONE: '+91 98765 43210',
-            STUDIO_LOCATION: 'Artisans Lane, Jaipur, India'
-        };
-    </script>
-
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <a href="#" class="bg-midnight text-white font-black text-lg sm:text-xl px-4 py-2 rounded-xl tracking-wide shadow-md flex items-center">
-                    AURA <span class="text-xs font-semibold uppercase bg-amber-600 text-white px-2 py-0.5 rounded-lg ml-2">Crafts</span>
-                </a>
-            </div>
-            <div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-gray-600">
-                <span class="text-midnight font-bold">Product Showcase Catalogue</span>
-            </div>
-            <div class="flex items-center space-x-3">
-                <div class="bg-amber-50 text-amber-800 border border-amber-200 font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl flex items-center space-x-2">
-                    <i class="fa-solid fa-phone text-amber-600"></i>
-                    <span>+91 884 725 9996</span>
-                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900">
+                    AURA <span class="text-copper font-medium text-sm tracking-widest uppercase ml-1">Crafts & Gifts</span>
+                </span>
             </div>
         </div>
     </header>
 
-    <section class="hero-pattern text-white relative overflow-hidden py-16 lg:py-24">
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <div class="max-w-3xl mx-auto space-y-4">
-                <div class="inline-flex items-center bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-semibold text-amber-400 border border-white/15 shadow-sm">
-                    <i class="fa-solid fa-gem mr-2 text-amber-400"></i> Premium Artisan Catalogue & Collection
-                </div>
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-                    Artisanal Gift Hampers & <br>
-                    <span class="text-amber-400">Traditional Fragrances</span>
+    <section class="bg-slate-900 text-white py-16 lg:py-24 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="max-w-2xl space-y-4">
+                <h1 class="text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
+                    Timeless Handicrafts & <br>
+                    <span class="text-copper">Refined Fragrances</span>
                 </h1>
-                <p class="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto font-normal">
-                    Explore our exclusive luxury gift hampers, exquisite Indian handicrafts, organic soy scented candles, and heritage attars with unique item product codes.
+                <p class="text-slate-400 text-sm sm:text-base leading-relaxed font-light">
+                    A digital showcase of luxury gift hampers, organic soy candles, traditional attars, and bespoke handicrafts. Each piece carries a unique product code for reference.
                 </p>
-            </div>
-
-            <div class="flex flex-wrap justify-center items-center gap-6 mt-10 text-xs font-medium text-gray-300">
-                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-400 mr-1.5"></i> 100% Handcrafted Artisan Made</span>
-                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-400 mr-1.5"></i> Natural Soy Wax & Organic Oils</span>
-                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-400 mr-1.5"></i> Unique Item Codes Displayed</span>
             </div>
         </div>
     </section>
 
-    <section id="products" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-12">
-            <span class="text-xs font-bold uppercase tracking-widest text-midnight bg-gray-200 px-3.5 py-1.5 rounded-full">Exquisite Showcase</span>
-            <h2 class="text-3xl font-extrabold text-gray-900 mt-3">Our Handcrafted Collection</h2>
-            <p class="text-gray-600 text-sm mt-2">Browse our unique artisanal creations with individual product codes for your reference.</p>
+    <main class="max-w-7xl mx-auto px-6 py-16">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-gray-200 pb-6">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-widest text-copper">Product Directory</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Complete Catalogue</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 md:mt-0 font-medium">Displaying items with unique verification codes.</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             
             <!-- Item 1 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition group flex flex-col justify-between">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="relative h-60 overflow-hidden bg-gray-100">
+                    <div class="relative h-64 overflow-hidden bg-slate-100">
                         <img src="https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=600&q=80" alt="Royal Festive Gift Hamper" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Gift+Hamper'">
-                        <span class="absolute top-3 left-3 bg-midnight text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded tracking-wider">
                             ACG-001
-                        </span>
-                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow">
-                            Hamper
-                        </span>
+                        </div>
                     </div>
                     <div class="p-5 space-y-2">
-                        <div class="text-xs font-bold text-amber-600 flex items-center justify-between">
-                            <span>Code: ACG-001</span>
-                            <span class="text-gray-500 font-medium">In Stock</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Royal Festive Gift Hamper</h3>
-                        <p class="text-gray-600 text-xs leading-relaxed">Includes brass handcrafted diya, scented soy candle, pure attar bottle, and artisan dry fruits in a keepsake wooden box.</p>
+                        <div class="text-[11px] font-semibold text-copper tracking-wider uppercase">Gift Hamper</div>
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">Royal Festive Gift Hamper</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed font-light">Includes brass handcrafted diya, scented soy candle, pure attar bottle, and artisan dry fruits in keepsake box.</p>
                     </div>
                 </div>
-                <div class="p-5 pt-0 border-t border-gray-100 mt-4">
-                    <div class="flex items-center justify-between pt-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black text-gray-900">₹2,499</span>
-                            <span class="text-xs text-gray-400 line-through">₹3,999</span>
-                        </div>
-                    </div>
+                <div class="p-5 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <span class="text-lg font-bold text-slate-900">₹2,499</span>
+                    <span class="text-xs text-slate-400 font-medium line-through">₹3,999</span>
                 </div>
             </div>
 
             <!-- Item 2 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition group flex flex-col justify-between">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="relative h-60 overflow-hidden bg-gray-100">
+                    <div class="relative h-64 overflow-hidden bg-slate-100">
                         <img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=600&q=80" alt="Traditional Brass Peacock Idol" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Handicraft'">
-                        <span class="absolute top-3 left-3 bg-midnight text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded tracking-wider">
                             ACG-002
-                        </span>
-                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow">
-                            Handicraft
-                        </span>
+                        </div>
                     </div>
                     <div class="p-5 space-y-2">
-                        <div class="text-xs font-bold text-amber-600 flex items-center justify-between">
-                            <span>Code: ACG-002</span>
-                            <span class="text-gray-500 font-medium">In Stock</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Traditional Brass Peacock Idol</h3>
-                        <p class="text-gray-600 text-xs leading-relaxed">Hand-carved solid brass peacock figurine with intricate antique finish, ideal for home decor and auspicious gifting.</p>
+                        <div class="text-[11px] font-semibold text-copper tracking-wider uppercase">Handicraft</div>
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">Traditional Brass Peacock Idol</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed font-light">Hand-carved solid brass peacock figurine with intricate antique finish, ideal for home decor.</p>
                     </div>
                 </div>
-                <div class="p-5 pt-0 border-t border-gray-100 mt-4">
-                    <div class="flex items-center justify-between pt-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black text-gray-900">₹1,299</span>
-                            <span class="text-xs text-gray-400 line-through">₹2,199</span>
-                        </div>
-                    </div>
+                <div class="p-5 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <span class="text-lg font-bold text-slate-900">₹1,299</span>
+                    <span class="text-xs text-slate-400 font-medium line-through">₹2,199</span>
                 </div>
             </div>
 
             <!-- Item 3 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition group flex flex-col justify-between">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="relative h-60 overflow-hidden bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80" alt="Oud & Jasmine Soy Wax Candle" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Luxury+Candle'">
-                        <span class="absolute top-3 left-3 bg-midnight text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                    <div class="relative h-64 overflow-hidden bg-slate-100">
+                        <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80" alt="Oud & Jasmine Soy Wax Candle" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Candle'">
+                        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded tracking-wider">
                             ACG-003
-                        </span>
-                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow">
-                            Candle
-                        </span>
+                        </div>
                     </div>
                     <div class="p-5 space-y-2">
-                        <div class="text-xs font-bold text-amber-600 flex items-center justify-between">
-                            <span>Code: ACG-003</span>
-                            <span class="text-gray-500 font-medium">Soy Wax</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Oud & Jasmine Soy Wax Candle</h3>
-                        <p class="text-gray-600 text-xs leading-relaxed">Hand-poured organic soy wax candle infused with rich oriental oud and fresh night-blooming jasmine essential oils.</p>
+                        <div class="text-[11px] font-semibold text-copper tracking-wider uppercase">Soy Candle</div>
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">Oud & Jasmine Soy Wax Candle</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed font-light">Hand-poured organic soy wax candle infused with rich oriental oud and fresh night jasmine essential oils.</p>
                     </div>
                 </div>
-                <div class="p-5 pt-0 border-t border-gray-100 mt-4">
-                    <div class="flex items-center justify-between pt-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black text-gray-900">₹799</span>
-                            <span class="text-xs text-gray-400 line-through">₹1,499</span>
-                        </div>
-                    </div>
+                <div class="p-5 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <span class="text-lg font-bold text-slate-900">₹799</span>
+                    <span class="text-xs text-slate-400 font-medium line-through">₹1,499</span>
                 </div>
             </div>
 
             <!-- Item 4 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition group flex flex-col justify-between">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="relative h-60 overflow-hidden bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80" alt="Royal Heritage Pure Attar Gift Set" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Pure+Attar'">
-                        <span class="absolute top-3 left-3 bg-midnight text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                    <div class="relative h-64 overflow-hidden bg-slate-100">
+                        <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80" alt="Royal Heritage Pure Attar Gift Set" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Attar'">
+                        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded tracking-wider">
                             ACG-004
-                        </span>
-                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow">
-                            Attar
-                        </span>
+                        </div>
                     </div>
                     <div class="p-5 space-y-2">
-                        <div class="text-xs font-bold text-amber-600 flex items-center justify-between">
-                            <span>Code: ACG-004</span>
-                            <span class="text-gray-500 font-medium">In Stock</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Royal Heritage Pure Attar Gift Set</h3>
-                        <p class="text-gray-600 text-xs leading-relaxed">Set of 4 traditional alcohol-free botanical attars: Ruh Kewra, Shahi Rose, Royal Musk, and Oud Al-Malik in crystal bottles.</p>
+                        <div class="text-[11px] font-semibold text-copper tracking-wider uppercase">Pure Attar</div>
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">Royal Heritage Pure Attar Gift Set</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed font-light">Set of 4 traditional alcohol-free botanical attars: Ruh Kewra, Shahi Rose, Royal Musk, and Oud Al-Malik.</p>
                     </div>
                 </div>
-                <div class="p-5 pt-0 border-t border-gray-100 mt-4">
-                    <div class="flex items-center justify-between pt-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black text-gray-900">₹1,899</span>
-                            <span class="text-xs text-gray-400 line-through">₹3,299</span>
-                        </div>
-                    </div>
+                <div class="p-5 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <span class="text-lg font-bold text-slate-900">₹1,899</span>
+                    <span class="text-xs text-slate-400 font-medium line-through">₹3,299</span>
                 </div>
             </div>
 
             <!-- Item 5 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition group flex flex-col justify-between">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="relative h-60 overflow-hidden bg-gray-100">
+                    <div class="relative h-64 overflow-hidden bg-slate-100">
                         <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80" alt="Executive Wooden Corporate Hamper" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Corporate+Hamper'">
-                        <span class="absolute top-3 left-3 bg-midnight text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded tracking-wider">
                             ACG-005
-                        </span>
-                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow">
-                            Hamper
-                        </span>
+                        </div>
                     </div>
                     <div class="p-5 space-y-2">
-                        <div class="text-xs font-bold text-amber-600 flex items-center justify-between">
-                            <span>Code: ACG-005</span>
-                            <span class="text-gray-500 font-medium">Bulk Ready</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Executive Wooden Corporate Hamper</h3>
-                        <p class="text-gray-600 text-xs leading-relaxed">Curated for VIP clients and employees with premium dry fruits, brass utility pen stand, and organic tea.</p>
+                        <div class="text-[11px] font-semibold text-copper tracking-wider uppercase">Gift Hamper</div>
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">Executive Wooden Corporate Hamper</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed font-light">Curated for VIP clients with premium dry fruits, brass utility pen stand, and organic herbal tea.</p>
                     </div>
                 </div>
-                <div class="p-5 pt-0 border-t border-gray-100 mt-4">
-                    <div class="flex items-center justify-between pt-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black text-gray-900">₹3,499</span>
-                            <span class="text-xs text-gray-400 line-through">₹4,999</span>
-                        </div>
-                    </div>
+                <div class="p-5 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <span class="text-lg font-bold text-slate-900">₹3,499</span>
+                    <span class="text-xs text-slate-400 font-medium line-through">₹4,999</span>
                 </div>
             </div>
 
             <!-- Item 6 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition group flex flex-col justify-between">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="relative h-60 overflow-hidden bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80" alt="Hand-Painted Terracotta Aroma Oil Diffuser" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Diffuser'">
-                        <span class="absolute top-3 left-3 bg-midnight text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                    <div class="relative h-64 overflow-hidden bg-slate-100">
+                        <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80" alt="Hand-Painted Terracotta Diffuser" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Diffuser'">
+                        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded tracking-wider">
                             ACG-006
-                        </span>
-                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow">
-                            Handicraft
-                        </span>
+                        </div>
                     </div>
                     <div class="p-5 space-y-2">
-                        <div class="text-xs font-bold text-amber-600 flex items-center justify-between">
-                            <span>Code: ACG-006</span>
-                            <span class="text-gray-500 font-medium">In Stock</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Hand-Painted Terracotta Diffuser</h3>
-                        <p class="text-gray-600 text-xs leading-relaxed">Hand-painted earthenware diffuser crafted by rural potters for diffusing essential oils and calming ambiance.</p>
+                        <div class="text-[11px] font-semibold text-copper tracking-wider uppercase">Handicraft</div>
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">Hand-Painted Terracotta Diffuser</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed font-light">Hand-painted earthenware oil diffuser crafted by rural artisans for soothing home ambiance.</p>
                     </div>
                 </div>
-                <div class="p-5 pt-0 border-t border-gray-100 mt-4">
-                    <div class="flex items-center justify-between pt-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black text-gray-900">₹649</span>
-                            <span class="text-xs text-gray-400 line-through">₹1,199</span>
-                        </div>
-                    </div>
+                <div class="p-5 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <span class="text-lg font-bold text-slate-900">₹649</span>
+                    <span class="text-xs text-slate-400 font-medium line-through">₹1,199</span>
                 </div>
             </div>
 
             <!-- Item 7 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition group flex flex-col justify-between">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="relative h-60 overflow-hidden bg-gray-100">
+                    <div class="relative h-64 overflow-hidden bg-slate-100">
                         <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80" alt="Mysore Sandalwood Soy Wax Candle" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Sandalwood+Candle'">
-                        <span class="absolute top-3 left-3 bg-midnight text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded tracking-wider">
                             ACG-007
-                        </span>
-                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow">
-                            Candle
-                        </span>
+                        </div>
                     </div>
                     <div class="p-5 space-y-2">
-                        <div class="text-xs font-bold text-amber-600 flex items-center justify-between">
-                            <span>Code: ACG-007</span>
-                            <span class="text-gray-500 font-medium">Soy Wax</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Mysore Sandalwood Soy Wax Candle</h3>
-                        <p class="text-gray-600 text-xs leading-relaxed">Luxurious creamy sandalwood aroma infused into pure eco-friendly soy wax in a reusable glass jar.</p>
+                        <div class="text-[11px] font-semibold text-copper tracking-wider uppercase">Soy Candle</div>
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">Mysore Sandalwood Soy Wax Candle</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed font-light">Luxurious creamy sandalwood aroma infused into pure eco-friendly soy wax in a reusable glass jar.</p>
                     </div>
                 </div>
-                <div class="p-5 pt-0 border-t border-gray-100 mt-4">
-                    <div class="flex items-center justify-between pt-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black text-gray-900">₹899</span>
-                            <span class="text-xs text-gray-400 line-through">₹1,599</span>
-                        </div>
-                    </div>
+                <div class="p-5 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <span class="text-lg font-bold text-slate-900">₹899</span>
+                    <span class="text-xs text-slate-400 font-medium line-through">₹1,599</span>
                 </div>
             </div>
 
             <!-- Item 8 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition group flex flex-col justify-between">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="relative h-60 overflow-hidden bg-gray-100">
+                    <div class="relative h-64 overflow-hidden bg-slate-100">
                         <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80" alt="Ruh Khus Vetiver Pure Attar" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/0F172A/ffffff?text=Khus+Attar'">
-                        <span class="absolute top-3 left-3 bg-midnight text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded tracking-wider">
                             ACG-008
-                        </span>
-                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow">
-                            Attar
-                        </span>
+                        </div>
                     </div>
                     <div class="p-5 space-y-2">
-                        <div class="text-xs font-bold text-amber-600 flex items-center justify-between">
-                            <span>Code: ACG-008</span>
-                            <span class="text-gray-500 font-medium">Pure Vetiver</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Ruh Khus Vetiver Pure Attar</h3>
-                        <p class="text-gray-600 text-xs leading-relaxed">Authentic hydro-distilled green vetiver roots aged to perfection, offering a cooling, earthy fragrance.</p>
+                        <div class="text-[11px] font-semibold text-copper tracking-wider uppercase">Pure Attar</div>
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">Ruh Khus Vetiver Pure Attar</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed font-light">Authentic hydro-distilled green vetiver roots aged to perfection, offering a cooling, earthy fragrance.</p>
                     </div>
                 </div>
-                <div class="p-5 pt-0 border-t border-gray-100 mt-4">
-                    <div class="flex items-center justify-between pt-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl font-black text-gray-900">₹1,499</span>
-                            <span class="text-xs text-gray-400 line-through">₹2,499</span>
-                        </div>
-                    </div>
+                <div class="p-5 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <span class="text-lg font-bold text-slate-900">₹1,499</span>
+                    <span class="text-xs text-slate-400 font-medium line-through">₹2,499</span>
                 </div>
             </div>
 
         </div>
-    </section>
+    </main>
 
-    <section class="bg-midnight-dark text-white py-16 my-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-12">
-                <span class="text-xs font-bold uppercase tracking-widest text-amber-400 bg-white/10 px-3 py-1 rounded-full">Artisanal Excellence</span>
-                <h2 class="text-3xl font-extrabold mt-3">Why Choose Aura Crafts & Gifts</h2>
-                <p class="text-gray-300 text-sm mt-2">Every item is carefully handcrafted by master artisans preserving India's rich heritage of traditional craftsmanship and natural perfumery.</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-amber-600 flex items-center justify-center text-white text-xl font-bold">
-                        <i class="fa-solid fa-gift"></i>
-                    </div>
-                    <h3 class="text-lg font-bold">Custom Gift Hampers</h3>
-                    <p class="text-xs text-gray-300 leading-relaxed">Tailor-made hampers with personalized notes and festive packaging for weddings and corporate events.</p>
-                </div>
-                <div class="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-amber-600 flex items-center justify-center text-white text-xl font-bold">
-                        <i class="fa-solid fa-hand-holding-heart"></i>
-                    </div>
-                    <h3 class="text-lg font-bold">Authentic Handicrafts</h3>
-                    <p class="text-xs text-gray-300 leading-relaxed">Sourced directly from traditional brass, wood, and pottery artisans across rural India.</p>
-                </div>
-                <div class="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-amber-600 flex items-center justify-center text-white text-xl font-bold">
-                        <i class="fa-solid fa-spa"></i>
-                    </div>
-                    <h3 class="text-lg font-bold">Natural Soy Candles</h3>
-                    <p class="text-xs text-gray-300 leading-relaxed">Non-toxic, eco-friendly soy wax candles infused with therapeutic grade botanical essential oils.</p>
-                </div>
-                <div class="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-amber-600 flex items-center justify-center text-white text-xl font-bold">
-                        <i class="fa-solid fa-spray-can-sparkles"></i>
-                    </div>
-                    <h3 class="text-lg font-bold">Heritage Pure Attars</h3>
-                    <p class="text-xs text-gray-300 leading-relaxed">Aged hydro-distilled natural floral and wood extracts following centuries-old Kannauj traditions.</p>
-                </div>
+    <!-- Bottom Action Section with Call & WhatsApp Buttons -->
+    <section class="max-w-4xl mx-auto px-6 mb-16">
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-8 sm:p-12 text-center text-white shadow-xl border border-slate-700/50">
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4">Have Questions or Want to Place an Order?</h3>
+            <p class="text-slate-300 text-xs sm:text-sm max-w-lg mx-auto mb-8 font-light">
+                Connect directly with us instantly via phone call or WhatsApp.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="tel:+918847259996" class="w-full sm:w-auto bg-white hover:bg-gray-100 text-slate-900 font-semibold px-8 py-3.5 rounded-xl shadow-md flex items-center justify-center space-x-3 transition transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-phone text-copper text-base"></i>
+                    <span>Call</span>
+                </a>
+                <a href="https://wa.me/918847259996?text=Hi%2C%20I%20would%20like%20to%20inquire%20about%20your%20catalogue%20products." target="_blank" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-8 py-3.5 rounded-xl shadow-md flex items-center justify-center space-x-3 transition transform hover:-translate-y-0.5">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>WhatsApp</span>
+                </a>
             </div>
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <div class="bg-midnight text-white font-black text-lg px-4 py-2 rounded-xl inline-block tracking-wide mb-4 border border-gray-700">
-                        AURA <span class="text-xs font-semibold uppercase bg-amber-600 text-white px-2 py-0.5 rounded ml-1">Crafts</span>
-                    </div>
-                    <p class="text-xs text-gray-400 leading-relaxed">Your premier showcase for custom gift hampers, traditional handicrafts, organic soy candles, and heritage pure attars.</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-amber-400">Catalogue Support</h4>
-                    <p class="text-xs text-gray-400 mb-2"><i class="fa-solid fa-phone mr-2 text-amber-400"></i> Phone: +91 98765 43210</p>
-                    <p class="text-xs text-gray-400"><i class="fa-solid fa-envelope mr-2 text-amber-400"></i> support@auracrafts.com</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-amber-400">Studio Location</h4>
-                    <p class="text-xs text-gray-400"><i class="fa-solid fa-location-dot mr-2 text-amber-400"></i> Artisans Lane, Jaipur, India</p>
-                </div>
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+                <span class="text-white font-bold text-base tracking-tight block mb-3">
+                    AURA <span class="text-copper font-medium text-xs uppercase ml-1">Crafts & Gifts</span>
+                </span>
+                <p class="text-xs text-slate-400 font-light leading-relaxed">Minimalist showcase for custom gift hampers, traditional handicrafts, organic soy candles, and heritage attars.</p>
             </div>
-            <div class="pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
-                &copy; 2026 Aura Crafts & Gifts. All rights reserved. Handcrafted with love across India.
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-3">Catalogue Inquiries</h4>
+                <p class="text-xs text-slate-400 mb-1">
+                    <a href="tel:+918847259996" class="hover:text-white transition"><i class="fa-solid fa-phone mr-2 text-copper"></i> +91 88472 59996</a>
+                </p>
+                <p class="text-xs text-slate-400 mb-1">
+                    <a href="https://wa.me/918847259996" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-whatsapp mr-2 text-emerald-500"></i> WhatsApp Chat</a>
+                </p>
             </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-3">Studio Location</h4>
+                <p class="text-xs text-slate-400"><i class="fa-solid fa-location-dot mr-2 text-copper"></i> Artisans Lane, Jaipur, India</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 pt-8 border-t border-slate-800 text-center text-xs text-slate-500 font-light">
+            &copy; 2026 Aura Crafts & Gifts. All rights reserved.
         </div>
     </footer>
 
