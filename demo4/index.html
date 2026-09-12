@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelance Pro - Scale Your Business</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emeraldBrand: '#0d5c3f',
+                        emeraldLight: '#107c52',
+                        coralPink: '#ff7b72',
+                        coralHover: '#ff5c52',
+                        softGray: '#f8faf9'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-curve {
+            border-bottom-left-radius: 40% 15%;
+            border-bottom-right-radius: 40% 15%;
+        }
+        @media (min-width: 768px) {
+            .hero-curve {
+                border-bottom-left-radius: 50% 30%;
+                border-bottom-right-radius: 50% 30%;
+            }
+        }
+    </style>
+</head>
+<body class="bg-softGray text-gray-800 antialiased selection:bg-emeraldBrand selection:text-white">
+
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight text-gray-900">Freelance<span class="text-emeraldBrand">Pro</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex items-center space-x-8 font-medium text-sm">
+                    <a href="#services" class="text-gray-600 hover:text-emeraldBrand transition-colors">Services</a>
+                    <a href="#portfolio" class="text-gray-600 hover:text-emeraldBrand transition-colors">Portfolio</a>
+                    <a href="#about" class="text-gray-600 hover:text-emeraldBrand transition-colors">About</a>
+                    <a href="#contact" class="text-gray-600 hover:text-emeraldBrand transition-colors">Contact</a>
+                </nav>
+
+                <!-- CTA Button -->
+                <div class="hidden md:flex items-center">
+                    <a href="#contact" class="bg-emeraldBrand hover:bg-emeraldLight text-white px-6 py-2.5 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" aria-label="Toggle menu" class="text-gray-700 hover:text-emeraldBrand p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-100 px-4 pt-2 pb-6 space-y-3 shadow-lg">
+            <a href="#services" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Services</a>
+            <a href="#portfolio" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Portfolio</a>
+            <a href="#about" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">About</a>
+            <a href="#contact" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Contact</a>
+            <div class="pt-2">
+                <a href="#contact" class="block text-center w-full bg-emeraldBrand text-white py-3 rounded-xl font-semibold shadow">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative overflow-hidden bg-gradient-to-b from-white to-emerald-50/50 pt-8 pb-20 lg:pt-16 lg:pb-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Text Column -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100 shadow-sm">
+                        <i class="fa-solid fa-sparkles"></i>
+                        <span>Scale Your Independent Career</span>
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                        Be your own <span class="text-emeraldBrand">Boss!</span>
+                    </h1>
+                    
+                    <p class="text-xl sm:text-2xl font-semibold text-gray-700 leading-snug">
+                        Start your own freelance business and earn up to <span class="text-emeraldBrand font-bold underline decoration-wavy decoration-emerald-300">₹50,000*/Month</span>
+                    </p>
+
+                    <p class="text-gray-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0">
+                        We provide top-tier mentorship, client acquisition funnels, and expert execution frameworks to launch your freelance journey without risk.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#contact" class="w-full sm:w-auto bg-emeraldBrand hover:bg-emeraldLight text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-center flex items-center justify-center space-x-3">
+                            <span>Start Freelancing Now</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="#services" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-800 font-semibold px-6 py-4 rounded-xl border border-gray-200 shadow-sm transition-all text-center">
+                            Explore Services
+                        </a>
+                    </div>
+
+                    <!-- Trust Stats Bar -->
+                    <div class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200/60 mt-8 max-w-lg mx-auto lg:mx-0">
+                        <div class="flex flex-col items-center lg:items-start">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>45+</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">Projects Done</span>
+                        </div>
+                        <div class="flex flex-col items-center lg:items-start border-x border-gray-200 px-2">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Zero</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">Risk Setup</span>
+                        </div>
+                        <div class="flex flex-col items-center lg:items-start">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-user-group"></i>
+                                <span>3.1 Lakh+</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">Happy Clients</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Visual Column (Styled after reference image) -->
+                <div class="lg:col-span-5 relative flex justify-center">
+                    <div class="relative w-full max-w-md bg-gradient-to-br from-emeraldBrand to-emeraldLight rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-white">
+                        <!-- Background Decorative circles -->
+                        <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                        
+                        <div class="relative z-10 space-y-6">
+                            <div class="flex justify-between items-center">
+                                <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">Featured Expert</span>
+                                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                    <i class="fa-solid fa-award text-yellow-300"></i>
+                                </div>
+                            </div>
+
+                            <!-- Mock Profile card -->
+                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 flex items-center space-x-4">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="Freelancer Avatar" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md">
+                                <div>
+                                    <h3 class="font-bold text-lg">Priya Sharma</h3>
+                                    <p class="text-emerald-100 text-sm">Lead UI/UX & Web Developer</p>
+                                    <div class="flex items-center space-x-1 text-xs text-yellow-300 mt-1">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <span class="text-white ml-1 font-semibold">4.9 (450+ reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Earnings preview badge -->
+                            <div class="bg-white text-gray-900 rounded-2xl p-4 shadow-lg flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs text-gray-500 font-semibold block uppercase">Average Monthly Payout</span>
+                                    <span class="text-2xl font-black text-emeraldBrand">₹52,400</span>
+                                </div>
+                                <span class="bg-emerald-100 text-emeraldBrand px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1">
+                                    <i class="fa-solid fa-arrow-trend-up"></i>
+                                    <span>+24%</span>
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-emerald-100 text-center italic">
+                                *Verified average earnings for active freelancers in our top-tier network. Standard T&C apply.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">Our Expertise</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Professional Services Tailored For You</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Choose from our proven suite of freelance services designed to convert visitors into loyal paying customers.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Web Development</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">High-performance, fully mobile-responsive websites built with modern frameworks, optimized for lightning-fast speeds and conversions.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Custom UI Development</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>SEO Optimized Code</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Lightning Fast Speed</span></li>
+                    </ul>
+                    <a href="#contact" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Book Service</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">UI/UX Design</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">Stunning, user-centric interfaces crafted in Figma that captivate users, drive engagement, and deliver seamless digital experiences.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Wireframes & Prototypes</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Modern Design Systems</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>User Research & Testing</span></li>
+                    </ul>
+                    <a href="#contact" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Book Service</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Digital Marketing</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">Data-driven marketing campaigns, social media growth, and high-converting funnels to skyrocket your brand visibility and sales.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Social Media Strategy</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>PPC & Lead Generation</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Analytics & Reporting</span></li>
+                    </ul>
+                    <a href="#contact" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Book Service</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="py-20 bg-softGray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">Our Work</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Recent Portfolio Showcase</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Explore successful client projects delivered with precision and flair.</p>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-2 mb-12">
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-emeraldBrand text-white shadow-md transition-all" data-filter="all">All Projects</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-gray-100 border border-gray-200 transition-all" data-filter="web">Web Dev</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-gray-100 border border-gray-200 transition-all" data-filter="ui">UI/UX</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-gray-100 border border-gray-200 transition-all" data-filter="marketing">Marketing</button>
+            </div>
+
+            <!-- Portfolio Grid -->
+            <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Project 1 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="web">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=600" alt="E-Commerce Platform" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Web Dev</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">E-Commerce Dashboard</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Built a full-stack responsive web application with real-time analytics and fast checkout flows.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Client: RetailCorp</span>
+                            <span class="text-xs text-gray-400 font-medium">Completed Jan 2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="ui">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=600" alt="Fintech App UI" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">UI/UX</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Fintech Mobile App</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Designed clean user interfaces and smooth interactive prototypes for an intuitive banking experience.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Client: PayFlow</span>
+                            <span class="text-xs text-gray-400 font-medium">Completed Dec 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="marketing">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://images.unsplash.com/photo-1533750349077-cdcd106d4c72?auto=format&fit=crop&q=80&w=600" alt="Brand Growth Campaign" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Marketing</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Brand Growth Campaign</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Executed targeted multi-channel ad campaigns achieving a 3.4x ROAS within the first month.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Client: Apex Fitness</span>
+                            <span class="text-xs text-gray-400 font-medium">Completed Nov 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="web">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&q=80&w=600" alt="SaaS Landing Page" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Web Dev</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">SaaS High-Conv Landing Page</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Engineered a conversion-focused landing page with dynamic interactive components and CRM integration.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Client: Cloudify</span>
+                            <span class="text-xs text-gray-400 font-medium">Completed Oct 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 5 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="ui">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&q=80&w=600" alt="Design System" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">UI/UX</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Enterprise Design System</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Created a unified component library and accessibility guidelines for a multi-product tech enterprise.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Client: NovaTech</span>
+                            <span class="text-xs text-gray-400 font-medium">Completed Sep 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 6 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="marketing">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=600" alt="Lead Generation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Marketing</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">B2B Lead Gen Funnel</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Optimized email automation sequences and webinars to double qualified B2B client acquisition.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Client: Stratix Global</span>
+                            <span class="text-xs text-gray-400 font-medium">Completed Aug 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Left Image/Badge Column -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border-4 border-emerald-50">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600" alt="About Freelance Pro" class="w-full h-auto object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-emeraldBrand/80 via-transparent to-transparent flex items-end p-6">
+                            <div class="text-white">
+                                <span class="text-sm font-bold block text-yellow-300">Certified Professional</span>
+                                <span class="text-xl font-black">5+ Years Industry Experience</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Text Column -->
+                <div class="lg:col-span-7 space-y-6">
+                    <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">About Us</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Empowering Freelancers & Businesses to Scale Beyond Limits</h2>
+                    <p class="text-gray-600 text-base sm:text-lg leading-relaxed">
+                        Founded by top-tier industry experts, FreelancePro bridges the gap between raw talent and elite clientele. We provide turnkey project execution, mentorship, and high-converting web solutions so you can focus on what you do best.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Proven Expertise</h4>
+                                <p class="text-xs text-gray-500">Over 45+ successful enterprise-grade projects delivered.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Transparent Pricing</h4>
+                                <p class="text-xs text-gray-500">No hidden charges or unexpected surprise fees.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">24/7 Support</h4>
+                                <p class="text-xs text-gray-500">Dedicated assistance throughout your project lifecycle.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Scalable Results</h4>
+                                <p class="text-xs text-gray-500">Designed to convert and expand your revenue stream.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="#contact" class="inline-flex items-center space-x-3 bg-emeraldBrand hover:bg-emeraldLight text-white font-bold px-8 py-3.5 rounded-xl shadow-md transition-all">
+                            <span>Get in Touch Today</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20 bg-gradient-to-b from-softGray to-emerald-50/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">Contact & Booking</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Let's Build Something Amazing Together</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Fill out the quick form below to request a service or schedule your consultation call.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                
+                <!-- Contact Information Card -->
+                <div class="lg:col-span-5 bg-emeraldBrand text-white rounded-3xl p-8 sm:p-10 shadow-xl space-y-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-2">Get in touch</h3>
+                        <p class="text-emerald-100 text-sm">We are ready to discuss your next project or freelance growth plan.</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-yellow-300 text-lg shrink-0">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-emerald-200 block uppercase font-bold">Call Us</span>
+                                <a href="tel:+919876543210" class="text-lg font-bold hover:underline">+91 884 725 9996 </a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-yellow-300 text-lg shrink-0">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-emerald-200 block uppercase font-bold">Email Us</span>
+                                <a href="mailto:support@freelancepro.com" class="text-lg font-bold hover:underline">support@</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-yellow-300 text-lg shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-emerald-200 block uppercase font-bold">Location</span>
+                                <span class="text-base font-semibold">Cyber City, Gurugram, India</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-white/20">
+                        <span class="text-xs text-emerald-200 block uppercase font-bold mb-3">Connect on Socials</span>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white hover:text-emeraldBrand flex items-center justify-center transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                            <a href="#" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white hover:text-emeraldBrand flex items-center justify-center transition-all"><i class="fa-brands fa-twitter"></i></a>
+                            <a href="#" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white hover:text-emeraldBrand flex items-center justify-center transition-all"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="#" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white hover:text-emeraldBrand flex items-center justify-center transition-all"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-100">
+                    <form id="contact-form" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-xs font-bold text-gray-700 uppercase mb-2">Your Full Name</label>
+                                <input type="text" id="name" required class="w-full bg-softGray border border-gray-200 rounded-xl px-4 py-3.5 text-gray-800 text-sm focus:outline-none focus:border-emeraldBrand focus:bg-white transition-all" placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-xs font-bold text-gray-700 uppercase mb-2">Email Address</label>
+                                <input type="email" id="email" required class="w-full bg-softGray border border-gray-200 rounded-xl px-4 py-3.5 text-gray-800 text-sm focus:outline-none focus:border-emeraldBrand focus:bg-white transition-all" placeholder="john@example.com">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="phone" class="block text-xs font-bold text-gray-700 uppercase mb-2">Phone Number</label>
+                                <input type="tel" id="phone" required class="w-full bg-softGray border border-gray-200 rounded-xl px-4 py-3.5 text-gray-800 text-sm focus:outline-none focus:border-emeraldBrand focus:bg-white transition-all" placeholder="+91 98765 43210">
+                            </div>
+                            <div>
+                                <label for="service" class="block text-xs font-bold text-gray-700 uppercase mb-2">Select Service</label>
+                                <select id="service" class="w-full bg-softGray border border-gray-200 rounded-xl px-4 py-3.5 text-gray-800 text-sm focus:outline-none focus:border-emeraldBrand focus:bg-white transition-all">
+                                    <option value="web">Web Development</option>
+                                    <option value="ui">UI/UX Design</option>
+                                    <option value="marketing">Digital Marketing</option>
+                                    <option value="consulting">General Consulting</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="message" class="block text-xs font-bold text-gray-700 uppercase mb-2">Project Details / Message</label>
+                            <textarea id="message" rows="4" required class="w-full bg-softGray border border-gray-200 rounded-xl px-4 py-3.5 text-gray-800 text-sm focus:outline-none focus:border-emeraldBrand focus:bg-white transition-all" placeholder="Tell us about your project goals and timeline..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-emeraldBrand hover:bg-emeraldLight text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-center flex items-center justify-center space-x-2">
+                            <span>Submit Request</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+
+                    <!-- Success Message Notification Box -->
+                    <div id="form-success" class="hidden mt-6 bg-emerald-50 border border-emerald-200 text-emeraldBrand p-4 rounded-xl text-center font-semibold text-sm">
+                        <i class="fa-solid fa-circle-check text-lg mr-2"></i> Thank you! Your request has been submitted successfully. We will contact you shortly.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="space-y-4 md:col-span-2">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emeraldBrand flex items-center justify-center text-white font-bold text-xl shadow-md">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <span class="text-xl font-extrabold tracking-tight text-white">Freelance<span class="text-emeraldBrand">Pro</span></span>
+                    </div>
+                    <p class="text-sm text-gray-400 max-w-md leading-relaxed">
+                        Empowering freelance professionals and businesses with top-tier web development, UI/UX design, and digital marketing strategies to achieve sustainable growth and freedom.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#services" class="hover:text-emeraldBrand transition-colors">Services</a></li>
+                        <li><a href="#portfolio" class="hover:text-emeraldBrand transition-colors">Portfolio</a></li>
+                        <li><a href="#about" class="hover:text-emeraldBrand transition-colors">About Us</a></li>
+                        <li><a href="#contact" class="hover:text-emeraldBrand transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Legal & Support</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-emeraldBrand transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-emeraldBrand transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-emeraldBrand transition-colors">Standard T&C Apply</a></li>
+                        <li><a href="#" class="hover:text-emeraldBrand transition-colors">Help Center</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
+                <p>&copy; 2026 FreelancePro. All rights reserved. Powered by independent experts.</p>
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Portfolio Filter Tabs
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active styling from all buttons
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-emeraldBrand', 'text-white', 'shadow-md');
+                    b.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                });
+                
+                // Add active styling to clicked button
+                btn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                btn.classList.add('bg-emeraldBrand', 'text-white', 'shadow-md');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                portfolioItems.forEach(item => {
+                    if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Contact Form Submission Handler (no alert() used)
+        const contactForm = document.getElementById('contact-form');
+        const formSuccess = document.getElementById('form-success');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Simulate processing
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                contactForm.reset();
+                formSuccess.classList.remove('hidden');
+
+                setTimeout(() => {
+                    formSuccess.classList.add('hidden');
+                }, 5000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
