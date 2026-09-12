@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Crafts & Gifts - Custom Gift Hampers, Handicrafts, Candles & Attars</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        aura: {
+                            DEFAULT: '#9A3412', // Warm Luxury Terracotta
+                            dark: '#7C2D12',    // Deep Terracotta
+                            light: '#C2410C',   // Bright Terracotta
+                            accent: '#D97706',  // Rich Gold
+                            gold: '#F59E0B',    // Amber Gold
+                            surface: '#FFFBEB'  // Warm Soft Cream
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-pattern {
+            background: linear-gradient(135deg, #7C2D12 0%, #9A3412 50%, #B45309 100%);
+        }
+        .aura-btn-gradient {
+            background: linear-gradient(135deg, #9A3412 0%, #D97706 100%);
+        }
+        .aura-btn-gradient:hover {
+            background: linear-gradient(135deg, #7C2D12 0%, #B45309 100%);
+        }
+    </style>
+</head>
+<body class="bg-aura-surface text-gray-800 antialiased pb-16">
+
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-orange-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="#" class="bg-aura text-white font-black text-lg sm:text-xl px-3.5 py-1.5 rounded-xl tracking-wider shadow-md flex items-center">
+                    AURA <span class="text-xs font-semibold uppercase bg-aura-accent text-white px-1.5 py-0.5 rounded ml-1.5">Crafts</span>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-600">
+                <a href="#products" class="hover:text-aura transition">Gift Hampers</a>
+                <a href="#products" class="hover:text-aura transition">Handicrafts</a>
+                <a href="#products" class="hover:text-aura transition">Scented Candles</a>
+                <a href="#products" class="hover:text-aura transition">Pure Attars</a>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleCartModal()" class="aura-btn-gradient text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-md transition transform active:scale-95 flex items-center space-x-2">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Cart (<span id="cartItemCount">0</span>)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-pattern text-white relative overflow-hidden py-16 lg:py-24">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="inline-flex items-center bg-white/15 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium text-amber-300 border border-white/20 shadow-sm">
+                    <i class="fa-solid fa-gift mr-2 text-amber-300"></i> Handcrafted Luxury & Traditional Gifting • Direct WhatsApp Orders
+                </div>
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                    Artisanal Gift Hampers & <br>
+                    <span class="text-amber-300">Traditional Fragrances</span>
+                </h1>
+                <p class="text-orange-100 text-sm sm:text-base max-w-2xl mx-auto">
+                    Explore curated gift hampers, exquisite Indian handicrafts, soy wax scented candles, and organic heritage attars. Order instantly via WhatsApp!
+                </p>
+                <div class="pt-4">
+                    <a href="#products" class="inline-block bg-white text-aura font-bold px-8 py-3.5 rounded-2xl shadow-lg hover:bg-orange-50 transition transform active:scale-95 text-sm">
+                        Explore Collections
+                    </a>
+                </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="flex flex-wrap justify-center items-center gap-6 mt-12 text-xs font-medium text-orange-200">
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-300 mr-1.5"></i> 100% Handcrafted Artisan Made</span>
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-300 mr-1.5"></i> Natural Soy Wax & Organic Oils</span>
+                <span class="flex items-center"><i class="fa-solid fa-circle-check text-amber-300 mr-1.5"></i> Instant WhatsApp Checkout</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="products" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-aura bg-orange-100 px-3 py-1 rounded-full">Curated Collections</span>
+                <h2 class="text-3xl font-extrabold text-gray-900 mt-3">Handcrafted Masterpieces</h2>
+            </div>
+            <!-- Search Bar -->
+            <div class="w-full md:w-72">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="Search hampers, candles, attars..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-orange-200 rounded-xl text-xs font-medium focus:outline-none focus:border-aura shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Item 1: Royal Festive Hamper -->
+            <div class="product-card bg-white rounded-3xl overflow-hidden shadow-sm border border-orange-100 hover:shadow-xl transition group flex flex-col justify-between" data-name="Royal Festive Gift Hamper" data-category="Gift Hamper">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=600&q=80" alt="Royal Festive Gift Hamper" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Gift+Hamper'">
+                        <span class="absolute top-3 left-3 bg-aura text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 (180)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Hamper
+                        </span>
+                    </div>
+                    <div class="p-5 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-box text-aura mr-1"></i> Custom Box</span>
+                            <span class="text-emerald-600 font-bold">In Stock</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-950">Royal Festive Gift Hamper</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Includes brass handcrafted diya, scented soy candle, pure attar bottle, and artisan dry fruits in a keepsake wooden box.</p>
+                    </div>
+                </div>
+                <div class="p-5 pt-0 border-t border-orange-50 mt-4 space-y-3">
+                    <div class="flex items-center justify-between pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black text-gray-900">₹2,499</span>
+                            <span class="text-xs text-gray-400 line-through">₹3,999</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">Free Gift Wrapping</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openDetail('Royal Festive Gift Hamper', '₹2,499', 'Includes brass handcrafted diya, scented soy candle, pure attar bottle, and artisan dry fruits in a keepsake wooden box.', 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=600&q=80', 'Gift Hamper')" class="bg-orange-100 hover:bg-orange-200 text-aura font-bold text-xs py-2 px-3 rounded-xl transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="addToCart('Royal Festive Gift Hamper', 2499)" class="aura-btn-gradient text-white font-bold text-xs py-2 px-3 rounded-xl shadow-md transition transform active:scale-95 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2: Traditional Brass Peacock Idol -->
+            <div class="product-card bg-white rounded-3xl overflow-hidden shadow-sm border border-orange-100 hover:shadow-xl transition group flex flex-col justify-between" data-name="Traditional Brass Peacock Idol" data-category="Handicraft">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=600&q=80" alt="Traditional Brass Peacock Idol" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Handicraft'">
+                        <span class="absolute top-3 left-3 bg-aura text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.8 (95)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Handicraft
+                        </span>
+                    </div>
+                    <div class="p-5 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-hammer text-aura mr-1"></i> Pure Brass</span>
+                            <span class="text-emerald-600 font-bold">In Stock</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-950">Traditional Brass Peacock Idol</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Hand-carved solid brass peacock figurine with intricate antique finish, ideal for home decor and auspicious gifting.</p>
+                    </div>
+                </div>
+                <div class="p-5 pt-0 border-t border-orange-50 mt-4 space-y-3">
+                    <div class="flex items-center justify-between pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black text-gray-900">₹1,299</span>
+                            <span class="text-xs text-gray-400 line-through">₹2,199</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">Handmade Art</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openDetail('Traditional Brass Peacock Idol', '₹1,299', 'Hand-carved solid brass peacock figurine with intricate antique finish, ideal for home decor and auspicious gifting.', 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=600&q=80', 'Handicraft')" class="bg-orange-100 hover:bg-orange-200 text-aura font-bold text-xs py-2 px-3 rounded-xl transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="addToCart('Traditional Brass Peacock Idol', 1299)" class="aura-btn-gradient text-white font-bold text-xs py-2 px-3 rounded-xl shadow-md transition transform active:scale-95 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3: Oud & Jasmine Soy Wax Candle -->
+            <div class="product-card bg-white rounded-3xl overflow-hidden shadow-sm border border-orange-100 hover:shadow-xl transition group flex flex-col justify-between" data-name="Oud & Jasmine Soy Wax Candle" data-category="Scented Candle">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80" alt="Oud & Jasmine Soy Wax Candle" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Luxury+Candle'">
+                        <span class="absolute top-3 left-3 bg-aura text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 5.0 (210)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Candle
+                        </span>
+                    </div>
+                    <div class="p-5 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-fire-flame-curved text-aura mr-1"></i> 45 Hrs Burn</span>
+                            <span class="text-emerald-600 font-bold">Soy Wax</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-950">Oud & Jasmine Soy Wax Candle</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Hand-poured organic soy wax candle infused with rich oriental oud and fresh night-blooming jasmine essential oils.</p>
+                    </div>
+                </div>
+                <div class="p-5 pt-0 border-t border-orange-50 mt-4 space-y-3">
+                    <div class="flex items-center justify-between pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black text-gray-900">₹799</span>
+                            <span class="text-xs text-gray-400 line-through">₹1,499</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">Clean Burn</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openDetail('Oud & Jasmine Soy Wax Candle', '₹799', 'Hand-poured organic soy wax candle infused with rich oriental oud and fresh night-blooming jasmine essential oils.', 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80', 'Scented Candle')" class="bg-orange-100 hover:bg-orange-200 text-aura font-bold text-xs py-2 px-3 rounded-xl transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="addToCart('Oud & Jasmine Soy Wax Candle', 799)" class="aura-btn-gradient text-white font-bold text-xs py-2 px-3 rounded-xl shadow-md transition transform active:scale-95 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4: Royal Heritage Pure Attar Gift Set -->
+            <div class="product-card bg-white rounded-3xl overflow-hidden shadow-sm border border-orange-100 hover:shadow-xl transition group flex flex-col justify-between" data-name="Royal Heritage Pure Attar Gift Set" data-category="Pure Attar">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80" alt="Royal Heritage Pure Attar Gift Set" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Pure+Attar'">
+                        <span class="absolute top-3 left-3 bg-aura text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 (150)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Attar
+                        </span>
+                    </div>
+                    <div class="p-5 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-droplet text-aura mr-1"></i> 100% Alcohol-Free</span>
+                            <span class="text-emerald-600 font-bold">In Stock</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-950">Royal Heritage Pure Attar Gift Set</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Set of 4 traditional alcohol-free botanical attars: Ruh Kewra, Shahi Rose, Royal Musk, and Oud Al-Malik in crystal bottles.</p>
+                    </div>
+                </div>
+                <div class="p-5 pt-0 border-t border-orange-50 mt-4 space-y-3">
+                    <div class="flex items-center justify-between pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black text-gray-900">₹1,899</span>
+                            <span class="text-xs text-gray-400 line-through">₹3,299</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">Long Lasting</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openDetail('Royal Heritage Pure Attar Gift Set', '₹1,899', 'Set of 4 traditional alcohol-free botanical attars: Ruh Kewra, Shahi Rose, Royal Musk, and Oud Al-Malik in crystal bottles.', 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80', 'Pure Attar')" class="bg-orange-100 hover:bg-orange-200 text-aura font-bold text-xs py-2 px-3 rounded-xl transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="addToCart('Royal Heritage Pure Attar Gift Set', 1899)" class="aura-btn-gradient text-white font-bold text-xs py-2 px-3 rounded-xl shadow-md transition transform active:scale-95 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 5: Executive Wooden Corporate Hamper -->
+            <div class="product-card bg-white rounded-3xl overflow-hidden shadow-sm border border-orange-100 hover:shadow-xl transition group flex flex-col justify-between" data-name="Executive Wooden Corporate Hamper" data-category="Gift Hamper">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80" alt="Executive Wooden Corporate Hamper" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Corporate+Hamper'">
+                        <span class="absolute top-3 left-3 bg-aura text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 (112)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Hamper
+                        </span>
+                    </div>
+                    <div class="p-5 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-box text-aura mr-1"></i> Bulk Ready</span>
+                            <span class="text-emerald-600 font-bold">In Stock</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-950">Executive Wooden Corporate Hamper</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Curated for VIP clients and employees with premium dry fruits, brass utility pen stand, and organic tea.</p>
+                    </div>
+                </div>
+                <div class="p-5 pt-0 border-t border-orange-50 mt-4 space-y-3">
+                    <div class="flex items-center justify-between pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black text-gray-900">₹3,499</span>
+                            <span class="text-xs text-gray-400 line-through">₹4,999</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">Custom Branding Available</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openDetail('Executive Wooden Corporate Hamper', '₹3,499', 'Curated for VIP clients and employees with premium dry fruits, brass utility pen stand, and organic tea.', 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80', 'Gift Hamper')" class="bg-orange-100 hover:bg-orange-200 text-aura font-bold text-xs py-2 px-3 rounded-xl transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="addToCart('Executive Wooden Corporate Hamper', 3499)" class="aura-btn-gradient text-white font-bold text-xs py-2 px-3 rounded-xl shadow-md transition transform active:scale-95 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 6: Hand-Painted Terracotta Aroma Oil Diffuser -->
+            <div class="product-card bg-white rounded-3xl overflow-hidden shadow-sm border border-orange-100 hover:shadow-xl transition group flex flex-col justify-between" data-name="Hand-Painted Terracotta Aroma Oil Diffuser" data-category="Handicraft">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80" alt="Hand-Painted Terracotta Aroma Oil Diffuser" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Diffuser'">
+                        <span class="absolute top-3 left-3 bg-aura text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.7 (84)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Handicraft
+                        </span>
+                    </div>
+                    <div class="p-5 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-hammer text-aura mr-1"></i> Terracotta</span>
+                            <span class="text-emerald-600 font-bold">In Stock</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-950">Hand-Painted Terracotta Aroma Oil Diffuser</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Hand-painted earthenware diffuser crafted by rural potters for diffusing essential oils and calming ambiance.</p>
+                    </div>
+                </div>
+                <div class="p-5 pt-0 border-t border-orange-50 mt-4 space-y-3">
+                    <div class="flex items-center justify-between pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black text-gray-900">₹649</span>
+                            <span class="text-xs text-gray-400 line-through">₹1,199</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">Artisan Craft</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openDetail('Hand-Painted Terracotta Aroma Oil Diffuser', '₹649', 'Hand-painted earthenware diffuser crafted by rural potters for diffusing essential oils and calming ambiance.', 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80', 'Handicraft')" class="bg-orange-100 hover:bg-orange-200 text-aura font-bold text-xs py-2 px-3 rounded-xl transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="addToCart('Hand-Painted Terracotta Aroma Oil Diffuser', 649)" class="aura-btn-gradient text-white font-bold text-xs py-2 px-3 rounded-xl shadow-md transition transform active:scale-95 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 7: Mysore Sandalwood Soy Wax Candle -->
+            <div class="product-card bg-white rounded-3xl overflow-hidden shadow-sm border border-orange-100 hover:shadow-xl transition group flex flex-col justify-between" data-name="Mysore Sandalwood Soy Wax Candle" data-category="Scented Candle">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80" alt="Mysore Sandalwood Soy Wax Candle" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Sandalwood+Candle'">
+                        <span class="absolute top-3 left-3 bg-aura text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 (135)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Candle
+                        </span>
+                    </div>
+                    <div class="p-5 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-fire-flame-curved text-aura mr-1"></i> 50 Hrs Burn</span>
+                            <span class="text-emerald-600 font-bold">Soy Wax</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-950">Mysore Sandalwood Soy Wax Candle</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Luxurious creamy sandalwood aroma infused into pure eco-friendly soy wax in a reusable glass jar.</p>
+                    </div>
+                </div>
+                <div class="p-5 pt-0 border-t border-orange-50 mt-4 space-y-3">
+                    <div class="flex items-center justify-between pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black text-gray-900">₹899</span>
+                            <span class="text-xs text-gray-400 line-through">₹1,599</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">Relaxing Fragrance</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openDetail('Mysore Sandalwood Soy Wax Candle', '₹899', 'Luxurious creamy sandalwood aroma infused into pure eco-friendly soy wax in a reusable glass jar.', 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80', 'Scented Candle')" class="bg-orange-100 hover:bg-orange-200 text-aura font-bold text-xs py-2 px-3 rounded-xl transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="addToCart('Mysore Sandalwood Soy Wax Candle', 899)" class="aura-btn-gradient text-white font-bold text-xs py-2 px-3 rounded-xl shadow-md transition transform active:scale-95 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 8: Ruh Khus Vetiver Pure Attar -->
+            <div class="product-card bg-white rounded-3xl overflow-hidden shadow-sm border border-orange-100 hover:shadow-xl transition group flex flex-col justify-between" data-name="Ruh Khus Vetiver Pure Attar" data-category="Pure Attar">
+                <div>
+                    <div class="relative h-60 overflow-hidden bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80" alt="Ruh Khus Vetiver Pure Attar" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Khus+Attar'">
+                        <span class="absolute top-3 left-3 bg-aura text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            <i class="fa-solid fa-star text-amber-400 mr-1"></i> 5.0 (98)
+                        </span>
+                        <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                            Attar
+                        </span>
+                    </div>
+                    <div class="p-5 space-y-2">
+                        <div class="text-xs font-semibold text-gray-400 flex items-center justify-between">
+                            <span><i class="fa-solid fa-droplet text-aura mr-1"></i> 100% Pure Vetiver</span>
+                            <span class="text-emerald-600 font-bold">In Stock</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-950">Ruh Khus Vetiver Pure Attar</h3>
+                        <p class="text-gray-500 text-xs line-clamp-2">Authentic hydro-distilled green vetiver roots aged to perfection, offering a cooling, earthy fragrance.</p>
+                    </div>
+                </div>
+                <div class="p-5 pt-0 border-t border-orange-50 mt-4 space-y-3">
+                    <div class="flex items-center justify-between pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl font-black text-gray-900">₹1,499</span>
+                            <span class="text-xs text-gray-400 line-through">₹2,499</span>
+                        </div>
+                        <div class="text-[10px] text-emerald-600 font-semibold">Traditional Distillation</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openDetail('Ruh Khus Vetiver Pure Attar', '₹1,499', 'Authentic hydro-distilled green vetiver roots aged to perfection, offering a cooling, earthy fragrance.', 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80', 'Pure Attar')" class="bg-orange-100 hover:bg-orange-200 text-aura font-bold text-xs py-2 px-3 rounded-xl transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="addToCart('Ruh Khus Vetiver Pure Attar', 1499)" class="aura-btn-gradient text-white font-bold text-xs py-2 px-3 rounded-xl shadow-md transition transform active:scale-95 text-center">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-aura-dark text-white py-16 my-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-300 bg-white/10 px-3 py-1 rounded-full">Artisanal Excellence</span>
+                <h2 class="text-3xl font-extrabold mt-3">Why Choose Aura Crafts & Gifts</h2>
+                <p class="text-orange-200 text-sm mt-2">Every hamper is carefully assembled by master artisans preserving India's rich heritage of craftsmanship and natural perfumery.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-aura-accent flex items-center justify-center text-white text-xl font-bold">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Custom Gift Hampers</h3>
+                    <p class="text-xs text-orange-200 leading-relaxed">Tailor-made hampers with personalized notes and festive packaging for weddings and corporate events.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-aura-accent flex items-center justify-center text-white text-xl font-bold">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Authentic Handicrafts</h3>
+                    <p class="text-xs text-orange-200 leading-relaxed">Sourced directly from traditional brass, wood, and pottery artisans across rural India.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-aura-accent flex items-center justify-center text-white text-xl font-bold">
+                        <i class="fa-solid fa-spa"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Natural Soy Candles</h3>
+                    <p class="text-xs text-orange-200 leading-relaxed">Non-toxic, eco-friendly soy wax candles infused with therapeutic grade botanical essential oils.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-aura-accent flex items-center justify-center text-white text-xl font-bold">
+                        <i class="fa-solid fa-spray-can-sparkles"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Heritage Pure Attars</h3>
+                    <p class="text-xs text-orange-200 leading-relaxed">Aged hydro-distilled natural floral and wood extracts following centuries-old Kannauj traditions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-orange-50/50 rounded-3xl my-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-xs font-bold uppercase tracking-widest text-aura bg-orange-100 px-3 py-1 rounded-full">Customer Love</span>
+            <h2 class="text-3xl font-extrabold text-gray-900 mt-3">Loved By Gifting Connoisseurs</h2>
+            <p class="text-gray-500 text-sm mt-2">Read real reviews from delighted customers who gifted our hampers and attars.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 space-y-4">
+                <div class="flex items-center space-x-1 text-amber-400">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-sm text-gray-600 italic">"The Royal Festive Hamper was stunning! Everyone at the wedding appreciated the brass diya and the scent of the soy candle. WhatsApp checkout was so smooth."</p>
+                <div class="flex items-center space-x-3 pt-4 border-t border-gray-100">
+                    <div class="w-10 h-10 rounded-full bg-aura text-white flex items-center justify-center font-bold text-sm">PS</div>
+                    <div>
+                        <div class="font-bold text-sm text-gray-900">Pooja Sharma</div>
+                        <div class="text-xs text-gray-400">Verified Customer, Jaipur</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 space-y-4">
+                <div class="flex items-center space-x-1 text-amber-400">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-sm text-gray-600 italic">"Pure attars are absolutely authentic and long-lasting. The packaging is premium and delivery coordination on WhatsApp was instant."</p>
+                <div class="flex items-center space-x-3 pt-4 border-t border-gray-100">
+                    <div class="w-10 h-10 rounded-full bg-aura text-white flex items-center justify-center font-bold text-sm">AK</div>
+                    <div>
+                        <div class="font-bold text-sm text-gray-900">Aditya Kulkarni</div>
+                        <div class="text-xs text-gray-400">Verified Customer, Mumbai</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 space-y-4">
+                <div class="flex items-center space-x-1 text-amber-400">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-sm text-gray-600 italic">"Ordered 25 custom corporate hampers for Diwali. Aura Crafts delivered right on time with pristine quality handicrafts. Highly recommended!"</p>
+                <div class="flex items-center space-x-3 pt-4 border-t border-gray-100">
+                    <div class="w-10 h-10 rounded-full bg-aura text-white flex items-center justify-center font-bold text-sm">SN</div>
+                    <div>
+                        <div class="font-bold text-sm text-gray-900">Sneha Nambiar</div>
+                        <div class="text-xs text-gray-400">Corporate Buyer, Bengaluru</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="bg-aura text-white font-black text-lg px-3 py-1.5 rounded-xl inline-block tracking-wider mb-4">
+                        AURA <span class="text-xs font-semibold uppercase bg-aura-accent text-white px-1.5 py-0.5 rounded ml-1">Crafts</span>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">Your premier destination for custom gift hampers, traditional handicrafts, organic soy candles, and heritage pure attars.</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-amber-300">Collections</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#products" class="hover:text-white transition">Custom Gift Hampers</a></li>
+                        <li><a href="#products" class="hover:text-white transition">Brass Handicrafts</a></li>
+                        <li><a href="#products" class="hover:text-white transition">Soy Scented Candles</a></li>
+                        <li><a href="#products" class="hover:text-white transition">Pure Heritage Attars</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-amber-300">Quick Links</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><a href="#reviews" class="hover:text-white transition">Customer Reviews</a></li>
+                        <li><a href="#products" class="hover:text-white transition">Featured Items</a></li>
+                        <li><a href="#" class="hover:text-white transition">Corporate Gifting Terms</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-amber-300">Contact & Support</h4>
+                    <p class="text-xs text-gray-400 mb-2"><i class="fa-solid fa-location-dot mr-2 text-amber-300"></i> Aura Crafts Studio, Artisans Lane, Jaipur, India</p>
+                    <p class="text-xs text-gray-400"><i class="fa-solid fa-envelope mr-2 text-amber-300"></i> support@auracrafts.com</p>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
+                &copy; 2026 Aura Crafts & Gifts. All rights reserved. Handcrafted with love across India.
+            </div>
+        </div>
+    </footer>
+
+    <div id="cartModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 relative border border-orange-100 max-h-[90vh] overflow-y-auto">
+            <button onclick="toggleCartModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="mb-4">
+                <span class="bg-orange-100 text-aura font-bold text-xs px-3 py-1 rounded-full uppercase">Your Shopping Cart</span>
+                <h3 class="text-xl font-bold text-gray-900 mt-2">Cart Summary & Checkout</h3>
+                <p class="text-xs text-gray-500">Review your selected items and send your order directly via WhatsApp.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div id="cartItemsList" class="divide-y divide-gray-100 max-h-48 overflow-y-auto">
+                    <div class="py-3 text-xs text-gray-500 text-center">Your cart is currently empty.</div>
+                </div>
+
+                <div class="bg-orange-50 p-3.5 rounded-2xl border border-orange-200 space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-aura mb-1">Your Full Name</label>
+                        <input type="text" id="customerName" placeholder="e.g. Ananya Verma" class="w-full text-xs p-2.5 bg-white border border-orange-200 rounded-xl focus:outline-none font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-aura mb-1">Delivery Address</label>
+                        <textarea id="customerAddress" placeholder="e.g. Civil Lines, Jaipur" rows="2" class="w-full text-xs p-2.5 bg-white border border-orange-200 rounded-xl focus:outline-none font-medium"></textarea>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-3.5 rounded-2xl border border-gray-200 space-y-2 text-xs">
+                    <div class="flex justify-between font-black text-sm text-gray-900">
+                        <span>Total Payable Amount:</span>
+                        <span id="cartTotalAmount" class="text-aura">₹0</span>
+                    </div>
+                </div>
+
+                <button onclick="checkoutViaWhatsApp()" class="w-full aura-btn-gradient text-white font-bold py-4 px-6 rounded-2xl shadow-xl transition transform active:scale-95 text-base flex items-center justify-center space-x-2">
+                    <i class="fa-brands fa-whatsapp text-2xl text-amber-300"></i>
+                    <span>Place Order via WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 relative border border-orange-100 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeDetail()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="detailContent" class="space-y-4">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.product-card');
+            
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                const category = card.getAttribute('data-category').toLowerCase();
+                if (name.includes(query) || category.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openDetail(name, price, description, image, category) {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            
+            content.innerHTML = `
+                <div class="relative h-64 sm:h-80 rounded-2xl overflow-hidden bg-gray-100 mb-4">
+                    <img src="${image}" alt="${name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x600/9A3412/ffffff?text=Aura+Product'">
+                    <span class="absolute top-3 right-3 bg-aura-accent text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                        ${category}
+                    </span>
+                </div>
+                <div class="space-y-2">
+                    <span class="text-xs font-bold uppercase text-aura bg-orange-100 px-3 py-1 rounded-full">${category}</span>
+                    <h3 class="text-xl font-extrabold text-gray-900">${name}</h3>
+                    <div class="text-2xl font-black text-aura">${price}</div>
+                    <p class="text-sm text-gray-600 leading-relaxed">${description}</p>
+                    <div class="pt-4 flex items-center space-x-3">
+                        <button onclick="addToCartFromDetail('${name}', '${price}')" class="flex-1 aura-btn-gradient text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition transform active:scale-95 text-sm">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeDetail() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function addToCartFromDetail(name, priceStr) {
+            const price = parseInt(priceStr.replace(/[^0-9]/g, ''));
+            addToCart(name, price);
+            closeDetail();
+        }
+
+        function addToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name: name, price: price, quantity: 1 });
+            }
+            updateCartUI();
+            
+            const countSpan = document.getElementById('cartItemCount');
+            countSpan.classList.add('scale-125');
+            setTimeout(() => countSpan.classList.remove('scale-125'), 200);
+        }
+
+        function updateCartUI() {
+            const countSpan = document.getElementById('cartItemCount');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            countSpan.innerText = totalItems;
+
+            const listContainer = document.getElementById('cartItemsList');
+            const totalAmountSpan = document.getElementById('cartTotalAmount');
+
+            if (cart.length === 0) {
+                listContainer.innerHTML = '<div class="py-3 text-xs text-gray-500 text-center">Your cart is currently empty.</div>';
+                totalAmountSpan.innerText = '₹0';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                html += `
+                    <div class="py-2.5 flex items-center justify-between text-xs">
+                        <div>
+                            <div class="font-bold text-gray-900">${item.name}</div>
+                            <div class="text-gray-500">₹${item.price.toLocaleString()} x ${item.quantity}</div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="font-black text-gray-900">₹${itemTotal.toLocaleString()}</span>
+                            <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+            totalAmountSpan.innerText = '₹' + total.toLocaleString();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function checkoutViaWhatsApp() {
+            const name = document.getElementById('customerName').value.trim();
+            const address = document.getElementById('customerAddress').value.trim();
+
+            if (!name || !address) {
+                alert("Please fill in your name and delivery address to proceed with your order!");
+                return;
+            }
+
+            if (cart.length === 0) {
+                alert("Your cart is empty! Please add some items before ordering.");
+                return;
+            }
+
+            let total = 0;
+            let message = "🎁 *New Order - Aura Crafts & Gifts* 🎁\n\n";
+            message += `👤 *Customer Name:* ${name}\n`;
+            message += `📍 *Delivery Address:* ${address}\n\n`;
+            message += `📦 *Order Items:*\n`;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                message += `${index + 1}. ${item.name} (Qty: ${item.quantity}) - ₹${itemTotal.toLocaleString()}\n`;
+            });
+
+            message += `\n----------------------------------\n`;
+            message += `💰 *Total Payable Amount:* ₹${total.toLocaleString()}\n\n`;
+            message += "Please confirm my order and share payment & dispatch details!";
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/919876543210?text=${encodedMessage}`;
+            window.open(whatsappURL, '_blank');
+        }
+    </script>
+</body>
+</html>
