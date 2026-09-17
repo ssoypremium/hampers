@@ -1,430 +1,432 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GPS Map Camera Watermark Generator</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2canvas for export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Google Fonts for Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        /* Custom scrollbar for control panel */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 9999px;
-        }
-        .watermark-overlay {
-            background-color: rgba(18, 18, 18, 0.88);
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        .grid-divider-v {
-            border-right: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        .grid-divider-h {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GPS Map Camera Lite</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font: Inter & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+    .mono-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Modal / Edit backdrop */
+    .edit-modal {
+      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.75);
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col lg:flex-row">
+<body class="min-h-screen flex flex-col justify-between select-none">
 
-    <!-- Left/Top Section: Live Preview Card Area -->
-    <main class="w-full lg:w-1/2 min-h-[50vh] lg:min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 lg:p-8 sticky top-0 z-10">
-        <div class="w-full max-w-[420px] flex flex-col items-center">
-            <div class="text-xs uppercase tracking-wider text-slate-400 mb-2 font-medium flex items-center justify-between w-full">
-                <span>Live Watermark Preview</span>
-                <span id="dimension-badge" class="bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded text-[10px]">1080 x 1440</span>
-            </div>
+  <header class="w-full bg-slate-900/90 border-b border-slate-800 px-4 py-3 flex items-center justify-between z-30">
+    <div class="flex items-center space-x-2">
+      <div class="w-3 h-3 rounded-none bg-emerald-500"></div>
+      <span class="font-semibold tracking-wider text-sm">GPS MAP CAMERA LITE</span>
+    </div>
+    <div class="flex items-center space-x-3">
+      <!-- Upload Photo Button -->
+      <label for="photoInput" class="cursor-pointer bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-100 text-xs font-medium px-3.5 py-2 rounded-none border border-slate-700 transition flex items-center space-x-1.5">
+        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+        <span>Upload Photo</span>
+      </label>
+      <input type="file" id="photoInput" accept="image/*" class="hidden">
+      
+      <!-- Download Image Button -->
+      <button id="downloadBtn" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold px-4 py-2 rounded-none transition flex items-center space-x-1.5 shadow-lg shadow-emerald-900/30">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        <span>Download Image</span>
+      </button>
+    </div>
+  </header>
 
-            <!-- WATERMARK CARD CONTAINER (Target for html2canvas) -->
-            <div id="watermark-card" class="relative w-full aspect-[3/4] bg-neutral-900 rounded-xl overflow-hidden shadow-2xl flex flex-col justify-end select-none">
-                <!-- Background Image Preview Layer -->
-                <div id="image-container" class="absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-200" style="background-image: url('https://placehold.co/1080x1440/334155/cbd5e1?text=Upload+AC+or+Photo');">
-                    <!-- Default sample image fallback mechanism via JS or gradient style -->
-                </div>
+  <main class="flex-1 flex flex-col items-center justify-center p-2 sm:p-4 w-full max-w-4xl mx-auto">
+    <div class="relative w-full aspect-[3/4] max-h-[75vh] bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl">
+      <!-- Live HTML5 Canvas -->
+      <canvas id="cameraCanvas" class="w-full h-full object-contain cursor-grab active:cursor-grabbing"></canvas>
+      
+      <!-- Tap Overlay Hint Banner -->
+      <div id="tapHint" class="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-[11px] text-slate-300 px-2.5 py-1 border border-white/10 pointer-events-none transition-opacity duration-300">
+        Tap metadata to edit • Drag badge top-right
+      </div>
+    </div>
+  </main>
 
-                <!-- GPS Map Camera Lite Logo Badge (Bottom Right above overlay or corner) -->
-                <div id="badge-container" class="absolute right-3 bottom-[calc(100%-bottom)] z-20 transition-all">
-                    <!-- Positioned dynamically or fixed nicely relative to image top portion -->
-                </div>
-
-                <!-- Floating/Bottom GPS Watermark Box matching exact reference -->
-                <div class="relative z-10 watermark-overlay text-white w-full backdrop-blur-[2px]">
-                    
-                    <!-- GPS Map Camera Lite Floating Badge Top-Right of watermark area or top photo corner -->
-                    <div id="floating-logo" class="absolute -top-9 right-3 bg-black/75 backdrop-blur-md border border-white/20 rounded-md px-2 py-1 flex items-center gap-1.5 shadow-lg">
-                        <div class="w-4 h-4 rounded bg-slate-800 flex items-center justify-center border border-white/30 text-[10px]">📍</div>
-                        <div class="text-[10px] leading-tight font-medium tracking-tight">
-                            <div class="text-white font-bold">GPS Map</div>
-                            <div class="text-slate-300 text-[8px] -mt-0.5">Camera Lite</div>
-                        </div>
-                    </div>
-
-                    <!-- Row 1: Address + Flag -->
-                    <div class="px-3 pt-2.5 pb-2 grid-divider-h flex flex-col gap-1">
-                        <div id="preview-address" class="text-[12px] sm:text-[13px] font-semibold leading-snug tracking-tight text-white drop-shadow-sm line-clamp-2">
-                            5VQV+7GP, बीर तालाब, बिर्तलब उफ़्र तालाब नीहार, पंजाब 151005, भारत
-                        </div>
-                        <div class="flex items-center gap-1.5 pt-0.5">
-                            <span class="text-sm leading-none" title="India Flag">🇮🇳</span>
-                            <span class="text-[10px] text-slate-400 font-mono tracking-tight" id="preview-country-sub">India</span>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: 2-Column Details Grid -->
-                    <div class="grid grid-cols-2 text-[10px] sm:text-[11px] leading-tight font-mono">
-                        <!-- Left Column: Latitude & Longitude -->
-                        <div class="p-2.5 flex flex-col gap-1.5 grid-divider-v justify-between">
-                            <div>
-                                <div class="text-slate-400 font-sans text-[10px] font-medium">Latitude</div>
-                                <div id="preview-lat" class="text-white font-medium tracking-tight mt-0.5">30.188207626342773°</div>
-                            </div>
-                            <div>
-                                <div class="text-slate-400 font-sans text-[10px] font-medium">Longitude</div>
-                                <div id="preview-lon" class="text-white font-medium tracking-tight mt-0.5">74.8938369750766°</div>
-                            </div>
-                        </div>
-
-                        <!-- Right Column: Local Time, GMT Time, Altitude, Date -->
-                        <div class="p-2.5 flex flex-col justify-between gap-1.5">
-                            <div class="grid grid-cols-[auto,1fr] gap-x-2">
-                                <span class="text-slate-400 font-sans text-[10px]">Local</span>
-                                <span id="preview-local-time" class="text-white text-right">09:28:56 PM</span>
-                            </div>
-                            <div class="grid grid-cols-[auto,1fr] gap-x-2">
-                                <span class="text-slate-400 font-sans text-[10px]">GMT</span>
-                                <span id="preview-gmt-time" class="text-white text-right">03:58:56 PM</span>
-                            </div>
-                            <div class="grid grid-cols-[auto,1fr] gap-x-2">
-                                <span class="text-slate-400 font-sans text-[10px]">Altitude</span>
-                                <span id="preview-altitude" class="text-white text-right">208 meters</span>
-                            </div>
-                            <div class="grid grid-cols-[auto,1fr] gap-x-2">
-                                <span class="text-slate-400 font-sans text-[10px]">Date</span>
-                                <span id="preview-date" class="text-white text-right">Wed, 16 Sep 2026</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Mobile quick helper -->
-            <p class="text-[11px] text-slate-500 mt-3 text-center lg:hidden">Customize values below and tap Download Image</p>
+  <div id="editModal" class="fixed inset-0 edit-modal z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-md p-5 rounded-none shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-semibold tracking-wider text-slate-200">EDIT METADATA OVERLAY</h3>
+        <button id="closeModalBtn" class="text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">State / Country Line</label>
+          <input type="text" id="editStateLine" class="w-full bg-slate-950 border border-slate-700 px-3 py-2 text-slate-100 rounded-none focus:outline-none focus:border-emerald-500 uppercase">
         </div>
-    </main>
-
-    <!-- Right/Bottom Section: Controls & Customization Panel -->
-    <aside class="w-full lg:w-1/2 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 p-5 lg:p-8 flex flex-col gap-6 overflow-y-auto">
-        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-            <div>
-                <h1 class="text-lg lg:text-xl font-bold text-white tracking-tight">GPS Watermark Studio</h1>
-                <p class="text-xs text-slate-400">Customize image, coordinates, and footer details live</p>
-            </div>
-            <button id="btn-quick-fill" onclick="loadSamplePreset()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition">
-                Reset Sample
-            </button>
+        <div>
+          <label class="block text-slate-400 mb-1">Street Address Line</label>
+          <input type="text" id="editStreetLine" class="w-full bg-slate-950 border border-slate-700 px-3 py-2 text-slate-100 rounded-none focus:outline-none focus:border-emerald-500 uppercase">
         </div>
-
-        <!-- 1. Image Upload Section -->
-        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
-            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                <span>1. Photo Upload / Change</span>
-                <span class="text-[10px] text-slate-500">JPG/PNG/WEBP</span>
-            </label>
-            <div class="flex flex-col sm:flex-row gap-3 items-center">
-                <label class="w-full flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-700 hover:border-slate-500 rounded-xl py-3 px-4 cursor-pointer bg-slate-900/50 transition">
-                    <span class="text-xs text-slate-300 font-medium">Click to upload photo</span>
-                    <span class="text-[10px] text-slate-500 mt-0.5">Or drag and drop here</span>
-                    <input type="file" id="image-upload" accept="image/*" class="hidden">
-                </label>
-                <button type="button" onclick="triggerSampleACImage()" class="w-full sm:w-auto px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-xl border border-slate-700 transition whitespace-nowrap">
-                    AC Reference Pic
-                </button>
-            </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1">Latitude</label>
+            <input type="text" id="editLat" class="w-full bg-slate-950 border border-slate-700 px-3 py-2 text-slate-100 mono-font rounded-none focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Longitude</label>
+            <input type="text" id="editLng" class="w-full bg-slate-950 border border-slate-700 px-3 py-2 text-slate-100 mono-font rounded-none focus:outline-none focus:border-emerald-500">
+          </div>
         </div>
-
-        <!-- 2. Address Input Section -->
-        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
-            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                2. Location Address Text (Multi-line supported)
-            </label>
-            <textarea id="input-address" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500 transition font-sans">5VQV+7GP, बीर तालाब, बिर्तलब उफ़्र तालाब नीहार, पंजाब 151005, भारत</textarea>
-            <div class="flex items-center gap-2">
-                <input type="text" id="input-country-sub" value="India" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500" placeholder="Country / Sublabel">
-                <button type="button" onclick="setHindiPresetAddress()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg border border-slate-700 transition">
-                    Use Punjabi/Hindi Default
-                </button>
-            </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1">Local Time / Zone</label>
+            <input type="text" id="editLocalTime" class="w-full bg-slate-950 border border-slate-700 px-3 py-2 text-slate-100 mono-font rounded-none focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Altitude</label>
+            <input type="text" id="editAltitude" class="w-full bg-slate-950 border border-slate-700 px-3 py-2 text-slate-100 mono-font rounded-none focus:outline-none focus:border-emerald-500">
+          </div>
         </div>
-
-        <!-- 3. Coordinates Section -->
-        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
-            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                3. Latitude & Longitude Coordinates
-            </label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                    <label class="text-[10px] text-slate-400 block mb-1">Latitude</label>
-                    <input type="text" id="input-lat" value="30.188207626342773°" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 block mb-1">Longitude</label>
-                    <input type="text" id="input-lon" value="74.8938369750766°" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500">
-                </div>
-            </div>
-            <button type="button" onclick="randomizeCoords()" class="self-start text-[11px] text-blue-400 hover:text-blue-300 font-medium">
-                ↻ Randomize coordinate decimals
-            </button>
+        <div>
+          <label class="block text-slate-400 mb-1">GMT Offset / Date</label>
+          <input type="text" id="editDateInfo" class="w-full bg-slate-950 border border-slate-700 px-3 py-2 text-slate-100 mono-font rounded-none focus:outline-none focus:border-emerald-500 uppercase">
         </div>
+      </div>
+      <div class="flex justify-end space-x-2 pt-2">
+        <button id="saveEditBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-none transition">Apply Changes</button>
+      </div>
+    </div>
+  </div>
 
-        <!-- 4. Time, Altitude, Date Section -->
-        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-                <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    4. Timestamp, Altitude & Date
-                </label>
-                <button type="button" onclick="fillCurrentDateTime()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700">
-                    Sync Live Now
-                </button>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                    <label class="text-[10px] text-slate-400 block mb-1">Local Time</label>
-                    <input type="text" id="input-local-time" value="09:28:56 PM" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 block mb-1">GMT Time</label>
-                    <input type="text" id="input-gmt-time" value="03:58:56 PM" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 block mb-1">Altitude</label>
-                    <input type="text" id="input-altitude" value="208 meters" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 block mb-1">Date</label>
-                    <input type="text" id="input-date" value="Wed, 16 Sep 2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500">
-                </div>
-            </div>
-        </div>
+  <script>
+    const canvas = document.getElementById('cameraCanvas');
+    const ctx = canvas.getContext('2d');
+    const photoInput = document.getElementById('photoInput');
+    const downloadBtn = document.getElementById('downloadBtn');
 
-        <!-- 5. Download / Export Section -->
-        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-                <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    5. High-Resolution Export
-                </label>
-                <span id="export-status" class="text-[11px] text-emerald-400 hidden">Ready!</span>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <button type="button" onclick="exportWatermark('png')" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-blue-600/20 transition flex items-center justify-center gap-1.5">
-                    <span>⬇</span> Download PNG
-                </button>
-                <button type="button" onclick="exportWatermark('jpeg')" class="w-full py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
-                    <span>⬇</span> Download JPEG
-                </button>
-            </div>
-        </div>
-    </aside>
+    // State object for metadata & badge placement
+    const state = {
+      image: null,
+      badgeX: 0.72, // normalized 0..1 relative to canvas width
+      badgeY: 0.04, // normalized 0..1 relative to canvas height
+      isDraggingBadge: false,
+      dragOffsetX: 0,
+      dragOffsetY: 0,
+      // Metadata (Uppercase standard)
+      stateLine: 'BIHAR, INDIA',
+      streetLine: 'NEAR GANDHI MAIDAN, PATNA 800001',
+      latitude: 'LAT 25.6174° N',
+      longitude: 'LONG 85.1376° E',
+      localTime: '16:52:25 IST (GMT+05:30)',
+      altitude: 'ALT 53.0 METERS',
+      dateInfo: 'THU, 17 SEP 2026'
+    };
 
-    <script>
-        // DOM Elements mapping
-        const imageUpload = document.getElementById('image-upload');
-        const imageContainer = document.getElementById('image-container');
-        const inputAddress = document.getElementById('input-address');
-        const previewAddress = document.getElementById('preview-address');
-        const inputCountrySub = document.getElementById('input-country-sub');
-        const previewCountrySub = document.getElementById('preview-country-sub');
-        const inputLat = document.getElementById('input-lat');
-        const previewLat = document.getElementById('preview-lat');
-        const inputLon = document.getElementById('input-lon');
-        const previewLon = document.getElementById('preview-lon');
-        const inputLocalTime = document.getElementById('input-local-time');
-        const previewLocalTime = document.getElementById('preview-local-time');
-        const inputGmtTime = document.getElementById('input-gmt-time');
-        const previewGmtTime = document.getElementById('preview-gmt-time');
-        const inputAltitude = document.getElementById('input-altitude');
-        const previewAltitude = document.getElementById('preview-altitude');
-        const inputDate = document.getElementById('input-date');
-        const previewDate = document.getElementById('preview-date');
-        const watermarkCard = document.getElementById('watermark-card');
-        const exportStatus = document.getElementById('export-status');
+    // Helper: auto-generate default sample high-res composition or load initial placeholder
+    function createDefaultImageSource() {
+      const offscreen = document.createElement('canvas');
+      offscreen.width = 1200;
+      offscreen.height = 1600;
+      const oCtx = offscreen.getContext('2d');
+      // Rich architectural gradient/scene representation
+      const grad = oCtx.createLinearGradient(0, 0, 0, 1600);
+      grad.addColorStop(0, '#1e293b');
+      grad.addColorStop(0.5, '#334155');
+      grad.addColorStop(1, '#0f172a');
+      oCtx.fillStyle = grad;
+      oCtx.fillRect(0, 0, 1200, 1600);
 
-        // Reference AC image placeholder or SVG/Data URL style fallback matching reference image
-        const SAMPLE_AC_IMAGE = "https://images.unsplash.com/photo-1631545936881-f3b928308466?auto=format&fit=crop&w=1080&q=80";
+      // Geometric architectural grid pattern
+      oCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      oCtx.lineWidth = 2;
+      for (let x = 0; x < 1200; x += 120) {
+        oCtx.beginPath();
+        oCtx.moveTo(x, 0);
+        oCtx.lineTo(x, 1600);
+        oCtx.stroke();
+      }
+      for (let y = 0; y < 1600; y += 120) {
+        oCtx.beginPath();
+        oCtx.moveTo(0, y);
+        oCtx.lineTo(1200, y);
+        oCtx.stroke();
+      }
 
-        // Bind Live Inputs to Preview Elements
-        function setupLiveBindings() {
-            inputAddress.addEventListener('input', () => {
-                previewAddress.textContent = inputAddress.value || 'Add location address...';
-            });
-            inputCountrySub.addEventListener('input', () => {
-                previewCountrySub.textContent = inputCountrySub.value;
-            });
-            inputLat.addEventListener('input', () => {
-                previewLat.textContent = inputLat.value;
-            });
-            inputLon.addEventListener('input', () => {
-                previewLon.textContent = inputLon.value;
-            });
-            inputLocalTime.addEventListener('input', () => {
-                previewLocalTime.textContent = inputLocalTime.value;
-            });
-            inputGmtTime.addEventListener('input', () => {
-                previewGmtTime.textContent = inputGmtTime.value;
-            });
-            inputAltitude.addEventListener('input', () => {
-                previewAltitude.textContent = inputAltitude.value;
-            });
-            inputDate.addEventListener('input', () => {
-                previewDate.textContent = inputDate.value;
-            });
-        }
+      // Center title watermark mock
+      oCtx.fillStyle = 'rgba(255,255,255,0.08)';
+      oCtx.font = 'bold 64px Inter, sans-serif';
+      oCtx.textAlign = 'center';
+      oCtx.fillText('GPS MAP CAMERA FRAME', 600, 800);
 
-        // Image file upload handler
-        imageUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imageContainer.style.backgroundImage = `url('${event.target.result}')`;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+      const img = new Image();
+      img.onload = () => {
+        state.image = img;
+        resizeCanvasToContainer();
+        renderCanvas();
+      };
+      img.src = offscreen.toDataURL('image/jpeg', 0.95);
+    }
 
-        // Drag and drop support on preview card or file label
-        const dropZone = document.getElementById('watermark-card');
-        ['dragover', 'dragenter'].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => {
-                e.preventDefault();
-                e.stopPropagation();
-            });
-        });
+    // Resize canvas resolution to match real container display pixel ratio for sharp rendering
+    function resizeCanvasToContainer() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const targetWidth = state.image ? state.image.width : 1200;
+      const targetHeight = state.image ? state.image.height : 1600;
+      
+      // Keep canvas internal bitmap native high resolution of loaded photo or crisp 3:4 default
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      renderCanvas();
+    }
 
-        dropZone.addEventListener('drop', e => {
-            e.preventDefault();
-            e.stopPropagation();
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imageContainer.style.backgroundImage = `url('${event.target.result}')`;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    window.addEventListener('resize', () => {
+      renderCanvas();
+    });
 
-        // Trigger AC reference image
-        function triggerSampleACImage() {
-            imageContainer.style.backgroundImage = `url('${SAMPLE_AC_IMAGE}')`;
-        }
+    // Pure 2D Canvas Drawing Pipeline
+    function renderCanvas() {
+      if (!state.image) return;
 
-        // Set Hindi/Punjabi default address matching reference image
-        function setHindiPresetAddress() {
-            inputAddress.value = "5VQV+7GP, बीर तालाब, बिर्तलब उफ़्र तालाब नीहार, पंजाब 151005, भारत";
-            previewAddress.textContent = inputAddress.value;
-            inputCountrySub.value = "India";
-            previewCountrySub.textContent = "India";
-        }
+      const w = canvas.width;
+      const h = canvas.height;
+      const scaleRef = w / 1200; // Scaling factor based on standard width
 
-        // Randomize coordinates with high decimal precision style
-        function randomizeCoords() {
-            const latVal = (30.0 + Math.random() * 0.4).toFixed(15) + '°';
-            const lonVal = (74.5 + Math.random() * 0.6).toFixed(15) + '°';
-            inputLat.value = latVal;
-            previewLat.textContent = latVal;
-            inputLon.value = lonVal;
-            previewLon.textContent = lonVal;
-        }
+      // 1. Draw base photo
+      ctx.drawImage(state.image, 0, 0, w, h);
 
-        // Fill current date/time synchronized
-        function fillCurrentDateTime() {
-            const now = new Date();
-            const localStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const gmtStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC' }) + ' (UTC)';
-            const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
-            
-            inputLocalTime.value = localStr;
-            previewLocalTime.textContent = localStr;
-            inputGmtTime.value = gmtStr;
-            previewGmtTime.textContent = gmtStr;
-            inputDate.value = dateStr;
-            previewDate.textContent = dateStr;
-        }
+      // 2. Draw Translucent Dark Bottom Panel (Gradient shadow + backdrop box)
+      const panelHeight = Math.round(340 * scaleRef);
+      const gradient = ctx.createLinearGradient(0, h - panelHeight - 120 * scaleRef, 0, h);
+      gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      gradient.addColorStop(0.3, 'rgba(10, 14, 23, 0.75)');
+      gradient.addColorStop(1, 'rgba(8, 12, 19, 0.92)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, h - panelHeight - 120 * scaleRef, w, panelHeight + 120 * scaleRef);
 
-        // Reset sample preset matching original user image reference card
-        function loadSamplePreset() {
-            triggerSampleACImage();
-            setHindiPresetAddress();
-            inputLat.value = "30.188207626342773°";
-            previewLat.textContent = inputLat.value;
-            inputLon.value = "74.8938369750766°";
-            previewLon.textContent = inputLon.value;
-            inputLocalTime.value = "09:28:56 PM";
-            previewLocalTime.textContent = inputLocalTime.value;
-            inputGmtTime.value = "03:58:56 PM";
-            previewGmtTime.textContent = inputGmtTime.value;
-            inputAltitude.value = "208 meters";
-            previewAltitude.textContent = inputAltitude.value;
-            inputDate.value = "Wed, 16 Sep 2026";
-            previewDate.textContent = inputDate.value;
-        }
+      // Solid lower dark panel backdrop for legibility
+      ctx.fillStyle = 'rgba(12, 18, 30, 0.88)';
+      ctx.fillRect(0, h - panelHeight, w, panelHeight);
 
-        // High resolution export using html2canvas
-        async function exportWatermark(format) {
-            exportStatus.classList.remove('hidden', 'text-emerald-400', 'text-red-400');
-            exportStatus.textContent = 'Rendering export...';
-            exportStatus.className = 'text-[11px] text-blue-400';
+      // Top accent bright hairline
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(0, h - panelHeight, w, Math.max(3, Math.round(4 * scaleRef)));
 
-            try {
-                // Ensure scale gives clean resolution (e.g. scale 2 for sharper output)
-                const canvas = await html2canvas(watermarkCard, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: null,
-                    logging: false
-                });
+      // 3. Render Top-Right Sharp-Cornered Square Badge ("GPS Map Camera Lite")
+      const badgeSize = Math.round(180 * scaleRef);
+      const bx = Math.round(state.badgeX * w);
+      const by = Math.round(state.badgeY * h);
 
-                const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png';
-                const extension = format === 'jpeg' ? 'jpg' : 'png';
-                const dataUrl = canvas.toDataURL(mimeType, 0.95);
+      // Badge Container (sharp corners: 0px radius)
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = Math.max(2, Math.round(2 * scaleRef));
+      ctx.fillRect(bx, by, badgeSize, badgeSize);
+      ctx.strokeRect(bx, by, badgeSize, badgeSize);
 
-                const link = document.createElement('a');
-                link.download = `gps-map-camera-watermark-${Date.now()}.${extension}`;
-                link.href = dataUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+      // Badge Icon / Radar crosshair symbol inside badge
+      const cx = bx + badgeSize / 2;
+      const cy = by + badgeSize * 0.38;
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = Math.max(3, Math.round(4 * scaleRef));
+      ctx.beginPath();
+      ctx.arc(cx, cy, badgeSize * 0.18, 0, Math.PI * 2);
+      ctx.stroke();
 
-                exportStatus.textContent = `Downloaded ${format.toUpperCase()}!`;
-                exportStatus.className = 'text-[11px] text-emerald-400';
-            } catch (err) {
-                console.error('Export error:', err);
-                exportStatus.textContent = 'Export failed. Try again.';
-                exportStatus.className = 'text-[11px] text-red-400';
-            }
-        }
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.arc(cx, cy, badgeSize * 0.05, 0, Math.PI * 2);
+      ctx.fill();
 
-        // Initialize listeners and set sample AC backdrop on startup
-        window.addEventListener('DOMContentLoaded', () => {
-            setupLiveBindings();
-            triggerSampleACImage();
-        });
-    </script>
+      // Badge Label text
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${Math.round(14 * scaleRef)}px Inter, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('GPS MAP', cx, by + badgeSize * 0.72);
+      ctx.fillStyle = '#34d399';
+      ctx.font = `600 ${Math.round(12 * scaleRef)}px Inter, sans-serif`;
+      ctx.fillText('CAMERA LITE', cx, by + badgeSize * 0.88);
+
+      // 4. Render Bottom Metadata Content (Uppercase + India Flag 🇮🇳)
+      const paddingX = Math.round(48 * scaleRef);
+      const startY = h - panelHeight + Math.round(52 * scaleRef);
+      const lineHeight = Math.round(38 * scaleRef);
+
+      // State / India flag line
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = `700 ${Math.round(26 * scaleRef)}px Inter, sans-serif`;
+      ctx.textAlign = 'left';
+      ctx.fillText(`🇮🇳 ${state.stateLine}`, paddingX, startY);
+
+      // Street address line
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = `500 ${Math.round(20 * scaleRef)}px Inter, sans-serif`;
+      ctx.fillText(state.streetLine, paddingX, startY + lineHeight);
+
+      // Divider line inside metadata overlay
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = Math.max(1, Math.round(1.5 * scaleRef));
+      ctx.beginPath();
+      ctx.moveTo(paddingX, startY + lineHeight + 18 * scaleRef);
+      ctx.lineTo(w - paddingX, startY + lineHeight + 18 * scaleRef);
+      ctx.stroke();
+
+      // 5. Render 2-Column Metadata Grid
+      const gridTop = startY + lineHeight * 2 + 10 * scaleRef;
+      const colWidth = (w - paddingX * 2) / 2;
+      ctx.font = `600 ${Math.round(20 * scaleRef)}px 'JetBrains Mono', monospace`;
+
+      // Column 1
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(state.latitude, paddingX, gridTop);
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillText(state.longitude, paddingX, gridTop + lineHeight);
+
+      // Column 2
+      const col2X = paddingX + colWidth;
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(state.localTime, col2X, gridTop);
+      ctx.fillStyle = '#34d399';
+      ctx.fillText(`${state.altitude} | ${state.dateInfo}`, col2X, gridTop + lineHeight);
+    }
+
+    // Photo file upload handler with auto-populate GPS/Time mock fallback
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          state.image = img;
+          // Auto-populate current realistic live IST timestamp and coordinates
+          const now = new Date();
+          const pad = (n) => String(n).padStart(2, '0');
+          state.localTime = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())} IST (GMT+05:30)`;
+          const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+          const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+          state.dateInfo = `${days[now.getDay()]}, ${pad(now.getDate())} ${months[now.getMonth()]} ${now.getFullYear()}`;
+          resizeCanvasToContainer();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Touch and Mouse Dragging for Upper-Right Badge
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function isInsideBadge(pos) {
+      const badgeSize = Math.round(180 * (canvas.width / 1200));
+      const bx = state.badgeX * canvas.width;
+      const by = state.badgeY * canvas.height;
+      return pos.x >= bx && pos.x <= bx + badgeSize && pos.y >= by && pos.y <= by + badgeSize;
+    }
+
+    function isInsideMetadataPanel(pos) {
+      const panelHeight = Math.round(340 * (canvas.width / 1200));
+      return pos.y >= canvas.height - panelHeight;
+    }
+
+    canvas.addEventListener('mousedown', (e) => handleDragStart(e));
+    canvas.addEventListener('touchstart', (e) => handleDragStart(e), { passive: false });
+
+    function handleDragStart(e) {
+      const pos = getCanvasCoordinates(e);
+      if (isInsideBadge(pos)) {
+        state.isDraggingBadge = true;
+        const bx = state.badgeX * canvas.width;
+        const by = state.badgeY * canvas.height;
+        state.dragOffsetX = pos.x - bx;
+        state.dragOffsetY = pos.y - by;
+        e.preventDefault();
+      } else if (isInsideMetadataPanel(pos)) {
+        openEditModal();
+      }
+    }
+
+    window.addEventListener('mousemove', (e) => handleDragMove(e));
+    window.addEventListener('touchmove', (e) => handleDragMove(e), { passive: false });
+
+    function handleDragMove(e) {
+      if (!state.isDraggingBadge) return;
+      const pos = getCanvasCoordinates(e);
+      const badgeSize = Math.round(180 * (canvas.width / 1200));
+      const newX = (pos.x - state.dragOffsetX) / canvas.width;
+      const newY = (pos.y - state.dragOffsetY) / canvas.height;
+      // Clamp bounds inside frame
+      state.badgeX = Math.max(0.02, Math.min(1 - badgeSize / canvas.width - 0.02, newX));
+      state.badgeY = Math.max(0.02, Math.min(0.7, newY));
+      renderCanvas();
+      e.preventDefault();
+    }
+
+    window.addEventListener('mouseup', () => { state.isDraggingBadge = false; });
+    window.addEventListener('touchend', () => { state.isDraggingBadge = false; });
+
+    // Tap-to-edit modal bindings
+    const editModal = document.getElementById('editModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const saveEditBtn = document.getElementById('saveEditBtn');
+
+    function openEditModal() {
+      document.getElementById('editStateLine').value = state.stateLine;
+      document.getElementById('editStreetLine').value = state.streetLine;
+      document.getElementById('editLat').value = state.latitude;
+      document.getElementById('editLng').value = state.longitude;
+      document.getElementById('editLocalTime').value = state.localTime;
+      document.getElementById('editAltitude').value = state.altitude;
+      document.getElementById('editDateInfo').value = state.dateInfo;
+      editModal.classList.remove('hidden');
+    }
+
+    closeModalBtn.addEventListener('click', () => editModal.classList.add('hidden'));
+
+    saveEditBtn.addEventListener('click', () => {
+      state.stateLine = document.getElementById('editStateLine').value.toUpperCase();
+      state.streetLine = document.getElementById('editStreetLine').value.toUpperCase();
+      state.latitude = document.getElementById('editLat').value.toUpperCase();
+      state.longitude = document.getElementById('editLng').value.toUpperCase();
+      state.localTime = document.getElementById('editLocalTime').value.toUpperCase();
+      state.altitude = document.getElementById('editAltitude').value.toUpperCase();
+      state.dateInfo = document.getElementById('editDateInfo').value.toUpperCase();
+      editModal.classList.add('hidden');
+      renderCanvas();
+    });
+
+    // 100% Pixel-Identical Canvas PNG Export (zero blur, zero clipping)
+    downloadBtn.addEventListener('click', () => {
+      renderCanvas();
+      const dataURL = canvas.toDataURL('image/png', 1.0);
+      const link = document.createElement('a');
+      link.download = `GPS-Map-Camera-${Date.now()}.png`;
+      link.href = dataURL;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Initial load
+    createDefaultImageSource();
+  </script>
 </body>
 </html>
