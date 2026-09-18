@@ -1,82 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Visitor Tracking Test</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visitor Tracker Page</title>
 </head>
-
 <body>
 
-    <h1>My Website</h1>
+  <h1>Welcome to my website!</h1>
+  <p>यह एक सैंपल पेज है।</p>
 
-    <p>Welcome to my website.</p>
+  <script>
+    (function() {
+      var webhookUrl = "https://script.google.com/macros/s/AKfycbwlmtGDFE8J_A-u1pf2fHXFlWDOy4nIh7zOwxbLuCAFc5RnkRGOMci588dE--j9Y687jg/exec";
+      
+      // IP पता लेने के लिए फ्री सर्विस
+      fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+          sendData(data.ip);
+        })
+        .catch(() => {
+          sendData('Unknown');
+        });
 
-
-    <script>
-
-        // ==============================
-        // GOOGLE APPS SCRIPT URL
-        // ==============================
-
-        const TRACKING_URL =
-        "https://script.google.com/macros/s/AKfycbzj5AiERlf6KCPT9kthLdWUjpSLBbG1A7-jFx9qTIT58AL9388ND0iduW0Rdy9XFF4/exec";
-
-
-        // ==============================
-        // GET VISITOR ID
-        // ==============================
-
-        let visitorId =
-            localStorage.getItem("visitor_id");
-
-
-        // ==============================
-        // CREATE ID FOR NEW VISITOR
-        // ==============================
-
-        if (!visitorId) {
-
-            visitorId =
-                "V-" +
-                Date.now() +
-                "-" +
-                Math.random()
-                .toString(36)
-                .substring(2, 10);
-
-            localStorage.setItem(
-                "visitor_id",
-                visitorId
-            );
-        }
-
-
-        // ==============================
-        // GET CURRENT PAGE
-        // ==============================
-
-        const page =
-            window.location.pathname || "/";
-
-
-        // ==============================
-        // SEND DATA TO GOOGLE SHEET
-        // ==============================
-
-        const img = new Image();
-
-        img.src =
-            TRACKING_URL +
-            "?visitor=" +
-            encodeURIComponent(visitorId) +
-            "&page=" +
-            encodeURIComponent(page);
-
-    </script>
+      function sendData(ipAddress) {
+        fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            url: window.location.href,
+            ip: ipAddress
+          }),
+          mode: "no-cors"
+        }).catch(err => console.error("Tracking error:", err));
+      }
+    })();
+  </script>
 
 </body>
 </html>
