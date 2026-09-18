@@ -48,68 +48,38 @@
 
 
   <script>
+(function () {
 
-    // ==========================================
-    // GOOGLE APPS SCRIPT URL
-    // ==========================================
+  const TRACKING_URL =
+    "https://script.google.com/macros/s/AKfycbxeoEo6gaWZYdBcuGXm9yDc3aGzeMvBVi8_9MqF67iSNcuPLbO07JpsedrZAlzAsRfbfQ/exec";
 
-    const TRACKING_URL =
-      "https://script.google.com/macros/s/AKfycbxeoEo6gaWZYdBcuGXm9yDc3aGzeMvBVi8_9MqF67iSNcuPLbO07JpsedrZAlzAsRfbfQ/exec";
+  let visitorId = localStorage.getItem("visitor_id");
 
+  if (!visitorId) {
+    visitorId =
+      "V-" +
+      Date.now().toString(36) +
+      "-" +
+      Math.random().toString(36).substring(2, 10);
 
-    // ==========================================
-    // CREATE / GET VISITOR ID
-    // ==========================================
+    localStorage.setItem("visitor_id", visitorId);
+  }
 
-    let visitorId = localStorage.getItem("my_visitor_id");
+  const page = window.location.pathname;
 
-    if (!visitorId) {
-
-      visitorId =
-        "V-" +
-        Date.now().toString(36) +
-        "-" +
-        Math.random().toString(36).substring(2, 10);
-
-      localStorage.setItem("my_visitor_id", visitorId);
-    }
-
-
-    // ==========================================
-    // CURRENT PAGE
-    // ==========================================
-
-    const currentPage =
-      window.location.pathname || "/";
-
-
-    // ==========================================
-    // SEND VISITOR DATA
-    // ==========================================
-
-    const trackingRequest =
-      TRACKING_URL +
-      "?visitorId=" +
-      encodeURIComponent(visitorId) +
-      "&page=" +
-      encodeURIComponent(currentPage);
-
-
-    // ==========================================
-    // SEND IN BACKGROUND
-    // ==========================================
-
-    fetch(trackingRequest, {
+  fetch(
+    TRACKING_URL +
+    "?visitor=" + encodeURIComponent(visitorId) +
+    "&page=" + encodeURIComponent(page),
+    {
       method: "GET",
       mode: "no-cors",
       keepalive: true
-    }).catch(function(error) {
+    }
+  ).catch(function () {});
 
-      console.log("Visitor tracking error:", error);
-
-    });
-
-  </script>
+})();
+</script>
 
 </body>
 </html>
