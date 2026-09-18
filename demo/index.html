@@ -61,6 +61,29 @@
         <h1>We'll be back soon!</h1>
         <p>Our website is currently undergoing scheduled maintenance. We are working hard to bring you an improved experience. Thank you for your patience!</p>
     </div>
+    <script>
+(function () {
+  const API = "https://script.google.com/macros/s/AKfycbxeoEo6gaWZYdBcuGXm9yDc3aGzeMvBVi8_9MqF67iSNcuPLbO07JpsedrZAlzAsRfbfQ/exec";
+
+  let visitorId = localStorage.getItem("visitor_id");
+
+  if (!visitorId) {
+    visitorId = "V-" + crypto.randomUUID();
+    localStorage.setItem("visitor_id", visitorId);
+  }
+
+  const url =
+    API +
+    "?visitorId=" + encodeURIComponent(visitorId) +
+    "&page=" + encodeURIComponent(location.pathname);
+
+  fetch(url, {
+    method: "GET",
+    mode: "no-cors",
+    keepalive: true
+  }).catch(() => {});
+})();
+</script>
 
 </body>
 </html>
