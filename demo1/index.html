@@ -3,146 +3,80 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Visitor Tracking Test</title>
 
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: Arial, sans-serif;
-            background: #f3f3f3;
-        }
-
-        .box {
-            width: 90%;
-            max-width: 500px;
-            padding: 40px 25px;
-            background: white;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.10);
-        }
-
-        h1 {
-            margin: 0 0 10px;
-        }
-
-        p {
-            margin: 0;
-            color: #666;
-        }
-
-    </style>
-
 </head>
-
 
 <body>
 
+    <h1>My Website</h1>
 
-    <div class="box">
+    <p>Welcome to my website.</p>
 
-        <h1>Welcome</h1>
-
-        <p>Visitor Tracking Test</p>
-
-    </div>
-
-
-
-    <!-- =====================================
-         AUTOMATIC VISITOR TRACKING
-         ===================================== -->
 
     <script>
 
-        (function () {
+        // ==============================
+        // GOOGLE APPS SCRIPT URL
+        // ==============================
 
-            // YOUR GOOGLE APPS SCRIPT WEB APP
-            const GOOGLE_SCRIPT_URL =
-            "https://script.google.com/macros/s/AKfycbyF-OlPNlRvjZilDDoNy8e9NoIHUm1W3gF0TDsosYah0D3GZgaJNVAMPmOTTF3ybEnc/exec";
-
-
-            // ---------------------------------
-            // GET EXISTING VISITOR ID
-            // ---------------------------------
-
-            let visitorId =
-                localStorage.getItem("visitor_id");
+        const TRACKING_URL =
+        "https://script.google.com/macros/s/AKfycbzj5AiERlf6KCPT9kthLdWUjpSLBbG1A7-jFx9qTIT58AL9388ND0iduW0Rdy9XFF4/exec";
 
 
-            // ---------------------------------
-            // CREATE NEW VISITOR ID
-            // ---------------------------------
+        // ==============================
+        // GET VISITOR ID
+        // ==============================
 
-            if (!visitorId) {
-
-                visitorId =
-                    "V-" +
-                    Date.now() +
-                    "-" +
-                    Math.random()
-                    .toString(36)
-                    .substring(2, 10);
-
-                localStorage.setItem(
-                    "visitor_id",
-                    visitorId
-                );
-
-            }
+        let visitorId =
+            localStorage.getItem("visitor_id");
 
 
-            // ---------------------------------
-            // GET CURRENT PAGE
-            // ---------------------------------
+        // ==============================
+        // CREATE ID FOR NEW VISITOR
+        // ==============================
 
-            let currentPage =
-                window.location.pathname;
+        if (!visitorId) {
 
-            if (!currentPage) {
-                currentPage = "/";
-            }
+            visitorId =
+                "V-" +
+                Date.now() +
+                "-" +
+                Math.random()
+                .toString(36)
+                .substring(2, 10);
 
-
-            // ---------------------------------
-            // CREATE TRACKING URL
-            // ---------------------------------
-
-            const trackingURL =
-                GOOGLE_SCRIPT_URL +
-                "?visitor=" +
-                encodeURIComponent(visitorId) +
-                "&page=" +
-                encodeURIComponent(currentPage);
+            localStorage.setItem(
+                "visitor_id",
+                visitorId
+            );
+        }
 
 
-            // ---------------------------------
-            // SEND TO GOOGLE SHEET
-            // ---------------------------------
+        // ==============================
+        // GET CURRENT PAGE
+        // ==============================
 
-            const tracker =
-                new Image();
-
-            tracker.src =
-                trackingURL;
+        const page =
+            window.location.pathname || "/";
 
 
-        })();
+        // ==============================
+        // SEND DATA TO GOOGLE SHEET
+        // ==============================
+
+        const img = new Image();
+
+        img.src =
+            TRACKING_URL +
+            "?visitor=" +
+            encodeURIComponent(visitorId) +
+            "&page=" +
+            encodeURIComponent(page);
 
     </script>
-
 
 </body>
 </html>
