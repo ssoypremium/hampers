@@ -1,103 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Visitor Tracking Test</title>
+    <title>Visitor Tracking Test</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-    }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+        }
 
-    .box {
-      width: 90%;
-      max-width: 500px;
-      padding: 35px 25px;
-      background: white;
-      text-align: center;
-      border-radius: 15px;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-    }
+        .box {
+            width: 90%;
+            max-width: 500px;
+            padding: 40px 25px;
+            background: white;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.10);
+        }
 
-    h1 {
-      margin: 0 0 10px;
-    }
+        h1 {
+            margin: 0 0 12px;
+        }
 
-    p {
-      color: #666;
-      margin: 0;
-    }
-  </style>
+        p {
+            margin: 0;
+            color: #666;
+        }
+    </style>
 </head>
 
 <body>
 
-  <div class="box">
-    <h1>Welcome</h1>
-    <p>Visitor Tracking Test Website</p>
-  </div>
+    <div class="box">
+        <h1>Welcome</h1>
+        <p>Visitor Tracking Test</p>
+    </div>
 
 
-  <!-- ============================= -->
-  <!-- VISITOR TRACKING SYSTEM -->
-  <!-- ============================= -->
+    <script>
 
-  <script>
-
-    (function () {
-
-      const TRACKING_URL =
+        // Google Apps Script Web App
+        const GOOGLE_SCRIPT_URL =
         "https://script.google.com/macros/s/AKfycbxeoEo6gaWZYdBcuGXm9yDc3aGzeMvBVi8_9MqF67iSNcuPLbO07JpsedrZAlzAsRfbfQ/exec";
 
 
-      // Get existing Visitor ID
-      let visitorId = localStorage.getItem("visitor_id");
+        // Test visitor information
+        const visitor = "WEBSITE_TEST";
 
 
-      // If visitor is new, create a new ID
-      if (!visitorId) {
-
-        visitorId =
-          "V-" +
-          Date.now() +
-          "-" +
-          Math.random().toString(36).substring(2, 10);
-
-        localStorage.setItem("visitor_id", visitorId);
-      }
+        // Test page
+        const page = "/";
 
 
-      // Get current page
-      const page =
-        window.location.pathname || "/";
+        // Create request URL
+        const testURL =
+            GOOGLE_SCRIPT_URL +
+            "?visitor=" +
+            encodeURIComponent(visitor) +
+            "&page=" +
+            encodeURIComponent(page);
 
 
-      // Send information to Google Sheet
-      const trackingImage = new Image();
+        // Send request
+        window.location.href = testURL;
 
-      trackingImage.src =
-        TRACKING_URL +
-        "?visitor=" +
-        encodeURIComponent(visitorId) +
-        "&page=" +
-        encodeURIComponent(page);
-
-
-    })();
-
-  </script>
+    </script>
 
 </body>
 </html>
