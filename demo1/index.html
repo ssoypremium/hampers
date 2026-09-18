@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Visitor Tracking Test</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -18,7 +21,7 @@
             align-items: center;
             justify-content: center;
             font-family: Arial, sans-serif;
-            background: #f2f2f2;
+            background: #f3f3f3;
         }
 
         .box {
@@ -28,56 +31,118 @@
             background: white;
             border-radius: 15px;
             text-align: center;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.10);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.10);
         }
 
         h1 {
-            margin: 0 0 12px;
+            margin: 0 0 10px;
         }
 
         p {
             margin: 0;
             color: #666;
         }
+
     </style>
+
 </head>
+
 
 <body>
 
+
     <div class="box">
+
         <h1>Welcome</h1>
+
         <p>Visitor Tracking Test</p>
+
     </div>
 
 
+
+    <!-- =====================================
+         AUTOMATIC VISITOR TRACKING
+         ===================================== -->
+
     <script>
 
-        // Google Apps Script Web App
-        const GOOGLE_SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbxeoEo6gaWZYdBcuGXm9yDc3aGzeMvBVi8_9MqF67iSNcuPLbO07JpsedrZAlzAsRfbfQ/exec";
+        (function () {
+
+            // YOUR GOOGLE APPS SCRIPT WEB APP
+            const GOOGLE_SCRIPT_URL =
+            "https://script.google.com/macros/s/AKfycbyF-OlPNlRvjZilDDoNy8e9NoIHUm1W3gF0TDsosYah0D3GZgaJNVAMPmOTTF3ybEnc/exec";
 
 
-        // Test visitor information
-        const visitor = "WEBSITE_TEST";
+            // ---------------------------------
+            // GET EXISTING VISITOR ID
+            // ---------------------------------
+
+            let visitorId =
+                localStorage.getItem("visitor_id");
 
 
-        // Test page
-        const page = "/";
+            // ---------------------------------
+            // CREATE NEW VISITOR ID
+            // ---------------------------------
+
+            if (!visitorId) {
+
+                visitorId =
+                    "V-" +
+                    Date.now() +
+                    "-" +
+                    Math.random()
+                    .toString(36)
+                    .substring(2, 10);
+
+                localStorage.setItem(
+                    "visitor_id",
+                    visitorId
+                );
+
+            }
 
 
-        // Create request URL
-        const testURL =
-            GOOGLE_SCRIPT_URL +
-            "?visitor=" +
-            encodeURIComponent(visitor) +
-            "&page=" +
-            encodeURIComponent(page);
+            // ---------------------------------
+            // GET CURRENT PAGE
+            // ---------------------------------
+
+            let currentPage =
+                window.location.pathname;
+
+            if (!currentPage) {
+                currentPage = "/";
+            }
 
 
-        // Send request
-        window.location.href = testURL;
+            // ---------------------------------
+            // CREATE TRACKING URL
+            // ---------------------------------
+
+            const trackingURL =
+                GOOGLE_SCRIPT_URL +
+                "?visitor=" +
+                encodeURIComponent(visitorId) +
+                "&page=" +
+                encodeURIComponent(currentPage);
+
+
+            // ---------------------------------
+            // SEND TO GOOGLE SHEET
+            // ---------------------------------
+
+            const tracker =
+                new Image();
+
+            tracker.src =
+                trackingURL;
+
+
+        })();
 
     </script>
+
 
 </body>
 </html>
