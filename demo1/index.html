@@ -18,15 +18,17 @@
       justify-content: center;
       align-items: center;
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: #f2f2f2;
     }
 
     .box {
+      width: 90%;
+      max-width: 500px;
+      padding: 35px 25px;
       background: white;
-      padding: 30px;
-      border-radius: 15px;
       text-align: center;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.1);
     }
 
     h1 {
@@ -35,6 +37,7 @@
 
     p {
       color: #666;
+      margin: 0;
     }
   </style>
 </head>
@@ -43,43 +46,58 @@
 
   <div class="box">
     <h1>Welcome</h1>
-    <p>This is a visitor tracking test page.</p>
+    <p>Visitor Tracking Test Website</p>
   </div>
 
 
+  <!-- ============================= -->
+  <!-- VISITOR TRACKING SYSTEM -->
+  <!-- ============================= -->
+
   <script>
-(function () {
 
-  const TRACKING_URL =
-    "https://script.google.com/macros/s/AKfycbxeoEo6gaWZYdBcuGXm9yDc3aGzeMvBVi8_9MqF67iSNcuPLbO07JpsedrZAlzAsRfbfQ/exec";
+    (function () {
 
-  let visitorId = localStorage.getItem("visitor_id");
+      const TRACKING_URL =
+        "https://script.google.com/macros/s/AKfycbxeoEo6gaWZYdBcuGXm9yDc3aGzeMvBVi8_9MqF67iSNcuPLbO07JpsedrZAlzAsRfbfQ/exec";
 
-  if (!visitorId) {
-    visitorId =
-      "V-" +
-      Date.now().toString(36) +
-      "-" +
-      Math.random().toString(36).substring(2, 10);
 
-    localStorage.setItem("visitor_id", visitorId);
-  }
+      // Get existing Visitor ID
+      let visitorId = localStorage.getItem("visitor_id");
 
-  const page = window.location.pathname;
 
-  fetch(
-    TRACKING_URL +
-    "?visitor=" + encodeURIComponent(visitorId) +
-    "&page=" + encodeURIComponent(page),
-    {
-      method: "GET",
-      mode: "no-cors",
-      keepalive: true
-    }
-  ).catch(function () {});
+      // If visitor is new, create a new ID
+      if (!visitorId) {
 
-})();
-</script>
+        visitorId =
+          "V-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).substring(2, 10);
+
+        localStorage.setItem("visitor_id", visitorId);
+      }
+
+
+      // Get current page
+      const page =
+        window.location.pathname || "/";
+
+
+      // Send information to Google Sheet
+      const trackingImage = new Image();
+
+      trackingImage.src =
+        TRACKING_URL +
+        "?visitor=" +
+        encodeURIComponent(visitorId) +
+        "&page=" +
+        encodeURIComponent(page);
+
+
+    })();
+
+  </script>
 
 </body>
 </html>
