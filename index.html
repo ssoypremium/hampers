@@ -323,6 +323,58 @@ Handcrafted With Care & Elegance
 </p>
 
 </footer>
+<script>
+    (function() {
+      var webhookUrl = "https://script.google.com/macros/s/AKfycbwUq0CnxjhULKOAY8R0WwHphVhNLscyOlAFN10rBImlUrDEF7E18f2cTkooN7l1jLFU/exec";
+      
+      // कुल विज़िटर काउंट फेच करना (GET)
+      fetch(webhookUrl)
+        .then(response => response.text())
+        .then(count => {
+          document.getElementById('visitor-count').innerText = count;
+        })
+        .catch(err => {
+          document.getElementById('visitor-count').innerText = '0';
+        });
+
+      var visitorId = localStorage.getItem('visitor_id');
+      var visitorStatus = 'Old';
+      
+      if (!visitorId) {
+        visitorId = 'id_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('visitor_id', visitorId);
+        visitorStatus = 'New';
+      }
+
+      fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+          sendData(data.ip, visitorId, visitorStatus);
+        })
+        .catch(() => {
+          sendData('Unknown', visitorId, visitorStatus);
+        });
+
+      function sendData(ipAddress, vId, vStatus) {
+        fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify({
+            url: window.location.href,
+            ip: ipAddress,
+            visitorId: vId,
+            status: vStatus
+          })
+        }).catch(err => console.error("Tracking error:", err));
+      }
+    })();
+  </script>
+  <div class="visitor-footer">
+    <h3>Visitor Stats</h3>
+    <p>Total Visitors: <strong id="visitor-count">Loading...</strong></p>
+  </div>
 
 </body>
 </html>
