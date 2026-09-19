@@ -19,9 +19,8 @@
 <body>
 
   <h1>Welcome to my website!</h1>
-  <p>यह एक नया ट्रैकिंग पेज है।</p>
+  <p>यह ट्रैकिंग पेज है।</p>
 
-  <!-- सबसे नीचे वाला विजिटर सेक्शन -->
   <div class="visitor-footer">
     <h3>Visitor Stats</h3>
     <p>Total Visitors: <strong id="visitor-count">Loading...</strong></p>
@@ -29,16 +28,16 @@
 
   <script>
     (function() {
-      var webhookUrl = "https://script.google.com/macros/s/AKfycbzkKdy9FhhbydhwOweA8ZrQeK9UJyMCuxPfuN-z9L43ZE075kDff8vTpCIrrfLSsZCs/exec";
+      var webhookUrl = "https://script.google.com/macros/s/AKfycbxr2ao5wXY4RZNmpKFKYqJ-GpgxhvcGMzaRbL5vI-ltUYXNEEH64yddsZ1McT8Oe4VX/exec";
       
-      // कुल विजिटर काउंट फैच करना (GET रिक्वेस्ट)
+      // कुल विज़िटर काउंट फेच करना (GET)
       fetch(webhookUrl)
         .then(response => response.text())
         .then(count => {
           document.getElementById('visitor-count').innerText = count;
         })
         .catch(err => {
-          document.getElementById('visitor-count').innerText = 'N/A';
+          document.getElementById('visitor-count').innerText = '0';
         });
 
       var visitorId = localStorage.getItem('visitor_id');
