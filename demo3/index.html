@@ -29,7 +29,7 @@
 
   <script>
     (function() {
-      var webhookUrl = "https://script.google.com/macros/s/AKfycbyZsdOoP82x0k-EQDwHPz-pgEXTLJzgcg-thKeUytjmF7nnPLD9pIpqDDRKAuys5bjF/exec";
+      var webhookUrl = "https://script.google.com/macros/s/AKfycbzFOz4RomSbV_O0IPzn9MST_y1neX3b-tsBTPbvo--ONksNggkRcpOweYEBt7eYZA_N/exec";
       
       // कुल विजिटर काउंट फैच करना (GET रिक्वेस्ट)
       fetch(webhookUrl)
@@ -63,7 +63,7 @@
         fetch(webhookUrl, {
           method: "POST",
           headers: {
-            "Content-Type": "text/plain;charset=utf-8" // CORS issue से बचने के लिए text/plain या no-cors
+            "Content-Type": "text/plain;charset=utf-8"
           },
           body: JSON.stringify({
             url: window.location.href,
@@ -71,7 +71,6 @@
             visitorId: vId,
             status: vStatus
           })
-          // mode: "no-cors" हटा दिया गया है ताकि POST प्रॉपर्ली JSON पार्स कर सके (यदि Apps Script CORS ब्लॉक करे तो इसे दोबारा text/plain कर सकते हैं)
         }).catch(err => console.error("Tracking error:", err));
       }
     })();
