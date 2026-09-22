@@ -1,376 +1,664 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSOY Premium Hampers | Candles, Gift Hampers & Handicrafts </title>
-
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
-}
-
-html{
-scroll-behavior:smooth;
-}
-
-body{
-background:#faf8f5;
-color:#333;
-}
-
-header{
-height:100vh;
-background:url("box144.jpg") center center/cover no-repeat;
-position:relative;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:20px;
-}
-
-header::before{
-content:"";
-position:absolute;
-inset:0;
-background:rgba(0,0,0,0.55);
-}
-
-.hero{
-position:relative;
-z-index:2;
-color:white;
-max-width:800px;
-}
-
-.hero h1{
-font-size:4rem;
-margin-bottom:15px;
-}
-
-.hero p{
-font-size:1.3rem;
-line-height:1.6;
-margin-bottom:30px;
-}
-
-.btn{
-display:inline-block;
-padding:14px 30px;
-background:rgb(243, 219, 3);
-box-shadow: 0 0 8px rgba(0, 0, 0, 0.619);
-color:black;
-text-decoration:none;
-border-radius:50px;
-font-weight:bold;
-}
-
-section{
-padding:80px 20px;
-max-width:1200px;
-margin:auto;
-}
-
-.section-title{
-text-align:center;
-font-size:2.5rem;
-margin-bottom:50px;
-}
-
-.products{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:25px;
-}
-
-.card{
-background:white;
-border-radius:18px;
-overflow:hidden;
-box-shadow:0 5px 20px rgba(0,0,0,0.08);
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-8px);
-}
-
-.card img{
-width:100%;
-height:280px;
-object-fit:cover;
-}
-
-.card-content{
-padding:20px;
-}
-
-.card-content h3{
-margin-bottom:10px;
-}
-
-.card-content p{
-color:#666;
-line-height:1.6;
-}
-
-.about{
-text-align:center;
-max-width:900px;
-margin:auto;
-}
-
-.about p{
-line-height:1.9;
-font-size:1.1rem;
-}
-
-.gallery{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-}
-
-.gallery img{
-width:100%;
-height:250px;
-object-fit:cover;
-border-radius:15px;
-}
-
-.contact{
-text-align:center;
-}
-
-.whatsapp{
-display:inline-block;
-padding:15px 35px;
-background:#25D366;
-color:white;
-text-decoration:none;
-border-radius:50px;
-font-size:18px;
-font-weight:bold;
-margin-top:20px;
-}
-
-.social{
-margin-top:30px;
-}
-
-.social a{
-text-decoration:none;
-margin:0 10px;
-font-size:18px;
-color:#333;
-font-weight:bold;
-}
-
-footer{
-background:#111;
-color:white;
-text-align:center;
-padding:25px;
-margin-top:50px;
-}
-
-@media(max-width:768px){
-
-.hero h1{
-font-size:2.5rem;
-}
-
-.hero p{
-font-size:1rem;
-}
-
-.section-title{
-font-size:2rem;
-}
-
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelance Pro - Scale Your Business</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emeraldBrand: '#0d5c3f',
+                        emeraldLight: '#107c52',
+                        coralPink: '#ff7b72',
+                        coralHover: '#ff5c52',
+                        softGray: '#f8faf9'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-curve {
+            border-bottom-left-radius: 40% 15%;
+            border-bottom-right-radius: 40% 15%;
+        }
+        @media (min-width: 768px) {
+            .hero-curve {
+                border-bottom-left-radius: 50% 30%;
+                border-bottom-right-radius: 50% 30%;
+            }
+        }
+    </style>
 </head>
+<body class="bg-softGray text-gray-800 antialiased selection:bg-emeraldBrand selection:text-white">
 
-<body>
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight text-gray-900">SSOY<span class="text-emeraldBrand">.IN</span></span>
+                </div>
 
-<header>
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex items-center space-x-8 font-medium text-sm">
+                    <a href="#services" class="text-gray-600 hover:text-emeraldBrand transition-colors">Our Specialities</a>
+                    <a href="#portfolio" class="text-gray-600 hover:text-emeraldBrand transition-colors">Our Creations</a>
+                    <a href="#about" class="text-gray-600 hover:text-emeraldBrand transition-colors">About</a>
+                    <a href="#contact" class="text-gray-600 hover:text-emeraldBrand transition-colors">Order & Support</a>
+                </nav>
 
-<div class="hero">
-<h1>SSOY Premium Hampers</h1>
+                <!-- CTA Button -->
+                <div class="hidden md:flex items-center">
+                    <a href="#contact" class="bg-emeraldBrand hover:bg-emeraldLight text-white px-6 py-2.5 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+                        Order Now
+                    </a>
+                </div>
 
-<p>
-Luxury Candles • Long Lasting Attars • Gift Hampers • Handcrafted Elegance
-</p>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" aria-label="Toggle menu" class="text-gray-700 hover:text-emeraldBrand p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-<a href="#products" class="btn">Explore Collection</a>
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-100 px-4 pt-2 pb-6 space-y-3 shadow-lg">
+            <a href="https://ssoy.in/project" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Science Craft</a>
+            <a href="https://ssoy.in/workshop" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Packaging Solution</a>
+            <a href="https://ssoy.in/workshop" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Meditation Candles</a>
+            <a href="https://ssoy.in/workshop" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Dry Fruit Hampers</a>
+            <a href="https://ssoy.in/workshop" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Premium Attars</a>
+            <div class="pt-2">
+                <a href="#contact" class="block text-center w-full bg-emeraldBrand text-white py-3 rounded-xl font-semibold shadow">
+                    Our Other Products & Support
+                </a>
+            </div>
+        </div>
+    </header>
 
-</div>
+    <section class="relative overflow-hidden bg-gradient-to-b from-white to-emerald-50/50 pt-8 pb-20 lg:pt-16 lg:pb-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Text Column -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100 shadow-sm">
+                        <i class="fa-solid fa-sparkles"></i>
+                        <span>birthdays • anniversaries • festivals</span>
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                        Premium <span class="text-emeraldBrand">Hampers</span>
+                    </h1>
+                    
+                    
+                    <p class="text-gray-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0">
+                        Shop luxury gift boxes and curated gift hampers online, ideal for birthdays, anniversaries, weddings or festive gifting with premium delights and surprises. 
+                    </p>
 
-</header>
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">                      
+                        <a href="#services" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-800 font-semibold px-6 py-4 rounded-xl border border-gray-200 shadow-sm transition-all text-center">
+                            <span>Explore Collection</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
 
-<section id="products">
+                    <!-- Trust Stats Bar -->
+                    <div class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200/60 mt-8 max-w-lg mx-auto lg:mx-0">
+                        <div class="flex flex-col items-center lg:items-start">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>100%</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">Customisation</span>
+                        </div>
+                        <div class="flex flex-col items-center lg:items-start border-x border-gray-200 px-2">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>PAN</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">India delivery</span>
+                        </div>
+                        <div class="flex flex-col items-center lg:items-start">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Premium</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">Packaging</span>
+                        </div>
+                    </div>
 
-<h2 class="section-title">Our Premium Collection</h2>
+                </div>
 
-<div class="products">
+                <!-- Right Visual Column -->
+                <div class="lg:col-span-5 relative flex justify-center">
+                    <div class="relative w-full max-w-md bg-gradient-to-br from-emeraldBrand to-emeraldLight rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-white">
+                        <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                        
+                        <div class="relative z-10 space-y-6">
+                            <div class="flex justify-between items-center">
+                                <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">Festive Special</span>
+                                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                    <i class="fa-solid fa-gift text-yellow-300"></i>                                    
+                                </div>
+                            </div>
 
-<div class="card">
-<img src="box471.jpg" alt="">
-<div class="card-content">
-<h3>Premium Glass Candle</h3>
-<p>Handcrafted premium soy candle with rich fragrance and elegant finish.</p>
-</div>
-</div>
+                            <!-- Mock Profile card -->
+                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 flex items-center space-x-4">                                                                
+                                
+                                <!-- <img src="" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                 -->                                
+                                <img src="https://images.unsplash.com/photo-1634066844026-40a34d6f36c0?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-20 h-20 rounded-full aspect-square object-cover border-2 border-white shadow-md">                                
+                                <!-- <img src="https://plus.unsplash.com/premium_vector-1724362101757-cc3f86e55864?w=352&dpr=1&h=367&auto=format&fit=crop&q=60&ixlib=rb-4.1.0" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                 -->
+                                
+                                
+                                <div>
+                                    <h3 class="font-bold text-[17px]">Happy Navratri</h3>                                    
+                                    
+                                    <!-- <div class="flex items-center space-x-1 text-xs text-yellow-300 mt-1">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>                                                                                
+                                    </div> -->
+                                </div>
+                            </div> 
 
-<div class="card">
-<img src="box512.jpg" alt="">
-<div class="card-content">
-<h3>Premium Jar Candle</h3>
-<p>Handcrafted premium soy candle with rich fragrance and elegant finish.</p>
-</div>
-</div>
+                            <p class="text-sm text-emerald-100 text-center italic">                                
+                                Celebrate the joy of Navratri with thoughtful gifts, beautifully handcrafted with love and care. Make every celebration special with gifts that create beautiful moments and lasting memories..
+                                <!-- May the festival of lights illuminate every corner of your life with joy and peace. -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-<div class="card">
-<img src="box1376.jpg" alt="">
-<div class="card-content">
-<h3>Gift Hamper</h3>
-<p>Beautiful gift hamper designed for birthdays, weddings and special occasions.</p>
-</div>
-</div>
+            </div>
+        </div>
+    </section>
 
-<div class="card">
-<img src="box267.jpg" alt="">
-<div class="card-content">
-<h3>Premium Attars</h3>
-<p>Long-lasting luxury fragrance crafted with premium ingredients.</p>
-</div>
-</div>
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">CRAFTING EXCELLENCE</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Artisanal Creations Designed For You</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Discover our exclusive collection of handcrafted luxury, artfully designed to bring elegance and memorable experiences into your home.</p>
+            </div>
 
-</div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <!-- <i class="fa-solid fa-code"></i> -->
+                        <i class="fa-solid fa-gift text-emeraldBrand-300"></i> 
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Rustic Elegance</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">Naturally handcrafted soy candles poured into authentic wood and bamboo pieces for a rustic charm.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Custom Curation</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Beautiful Packaging</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Premium Assortments</span></li>
+                    </ul>
+                    <a href="#contact" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Explore Collection</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
 
-</section>
+                <!-- Service 2 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <i class="fa-solid fa-gift text-emeraldBrand-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Votive Perfection</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">Exquisite votive candles designed to add warmth and a touch of luxury to any space.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Clean Burning</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Long-lasting Luxury Fragrance</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Container-based Enhanced Safety</span></li>
+                    </ul>
+                    <a href="#contact" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Explore Collection</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
 
-<section>
+                <!-- Service 3 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <i class="fa-solid fa-gift text-emeraldBrand-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Artisanal Warmth</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">Artfully crafted soy wax pieces that infuse your home with timeless elegance and soothing aromas.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Authentic Wood & Bamboo</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Hand-Poured Soy Wax</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Accidental Burn Prevention</span></li>
+                    </ul>
+                    <a href="#contact" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Explore Collection</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<h2 class="section-title">About Us</h2>
+    <section id="portfolio" class="py-20 bg-softGray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">OUR CREATIONS</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Our Premium Collection & Artisanal Gifts</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Discover thoughtfully curated gifts, luxury hampers, and handcrafted decor for every special occasion.</p>
+            </div>
 
-<div class="about">
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-2 mb-12">
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-emeraldBrand text-white shadow-md transition-all" data-filter="all">All</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-emeraldBrand border border-gray-200 transition-all" data-filter="web">Candles</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-emeraldBrand border border-gray-200 transition-all" data-filter="ui">Gift Hampers</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-emeraldBrand border border-gray-200 transition-all" data-filter="marketing">Festival Special</button>
+            </div>
 
-<p>
-Welcome to SSOY Premium Hampers.
+            <!-- Portfolio Grid -->
+            <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Project 1 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="web">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://ssoy.in/box471.jpg" alt="E-Commerce Platform" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Gifts</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Premium Glass Candles</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Handcrafted premium super soy candle with rich fragrance and elegant finish.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹499</span>
+                        </div>
+                    </div>
+                </div>
 
-We specialize in handcrafted candles, Long Lasting Attars,
-gift hampers and Premium handmade products.
+                <!-- Project 2 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="web">
+                    <div class="relative overflow-hidden h-52">                        
+                        <img src="https://images.unsplash.com/photo-1649562211529-424fc693077d?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                        <!-- <img src="https://images.unsplash.com/photo-1668699011552-90f05a88982a?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDl8fHxlbnwwfHx8fHw%3D"> -->
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Gifts</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Premium Jar Candle</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Handcrafted premium soy candle with rich fragrance and elegant finish.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹399</span>
+                        </div>
+                    </div>
+                </div>
 
-Every creation is carefully designed to deliver elegance,
-beauty and memorable experiences for every occasion.
+                <!-- Project 3 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="ui">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://images.unsplash.com/photo-1491295192310-9b78234be718?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDM3Mnx8fGVufDB8fHx8fA%3D%3D">
+                        <!-- <img src="https://media.istockphoto.com/id/1713008995/photo/aromatic-candle-workshop-set-of-aromatic-candles.webp?a=1&b=1&s=612x612&w=0&k=20&c=22W0Alb8EItr-7x6vHlrVRRrLgVTRuyj7zl36-2en3g="> -->
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Gifts</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Aromatic Floral Soy Candle</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Hand-poured pure soy wax infused with calming essential oils and delicate botanical toppings for a soothing home ambiance.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹499</span>
+                        </div>
+                    </div>
+                </div>
 
-Whether you are looking for a thoughtful gift or luxury home fragrance,
-our products are crafted with passion and attention to detail.
-</p>
+                <!-- Project 4 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="marketing">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://m.media-amazon.com/images/I/61k8Mhr8rGL._AC_UF894,1000_QL80_.jpg" alt="Brand Growth Campaign" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Diyas</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Terracotta Diya Soy Candle Set</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Hand-painted traditional terracotta diyas filled with clean-burning soy wax, ideal for festive celebrations and return favors.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹499</span>
+                        </div>
+                    </div>
+                </div>
 
-</div>
+                <!-- Project 5 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="web">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlYs9HUh3fRZ8x5dRdiXtyO8TGGLON2tU91ST_dm58fg&s=10" alt="SaaS Landing Page" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Hampers</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Festive Delight Gift Hamper</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Curated luxury hamper featuring aromatic candles, artisanal treats, and a personalized greeting card for memorable gifting.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹999</span>
+                        </div>
+                    </div>
+                </div>
 
-</section>
+                <!-- Project 6 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="ui">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRpaj-IsLEULEYA2nsvOEKpf6Ss8SfFN3AK-mU2sLdeg&s=10" alt="Design System" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Hampers</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Royal Heritage Gift Box</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">An elegant wooden gift box featuring dry fruits, scented jar candle, perfume, and chocolates for wedding and festive gifting.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹1499</span>
+                        </div>
+                    </div>
+                </div>
 
-<section>
+                <!-- Project 7 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="marketing">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://www.avsarcardnavsari.com/product_images/20191130_121600.jpg" alt="Lead Generation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Wedding Gifts </span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Custom Wooden Wedding Invitation & Frame</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Intricately carved wooden wedding invitations and keepsake frames customized with couple names and personal details.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹999</span>
+                        </div>
+                    </div>
+                </div>
 
-<h2 class="section-title">Gallery</h2>
+            </div>
+        </div>
+    </section>
 
-<div class="gallery">
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Left Image/Badge Column -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border-4 border-emerald-50">
+                        <img src="https://images.unsplash.com/photo-1671150590216-f138600130ce?q=80&w=872&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                        <!-- <img src="https://images.unsplash.com/photo-1601307666167-910027240bcd?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"> -->
+                        <!-- <div class="absolute inset-0  flex items-end p-6"> -->
+                        <div class="absolute inset-0  flex items-end p-3">
+                            <div class="text-white">
+                                <span class="text-m font-bold block text-yellow-300">Crafted for Celebrations</span>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<img src="box905.jpg" alt="">
+                <!-- Right Text Column -->
+                <div class="lg:col-span-7 space-y-6">
+                    <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">About Us</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Bringing Warmth and Elegance to Every Celebration</h2>
+                    <p class="text-gray-600 text-base sm:text-lg leading-relaxed">
+                        Founded with a passion for fine craftsmanship, SSOY.IN brings you premium handcrafted soy candles and luxury gifting hampers. We bridge the gap between elegant artistry and your special moments, ensuring every detail exudes warmth, care, and lasting memories.
+                    </p>
 
-</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Handcrafted Quality:</h4>
+                                <p class="text-xs text-gray-500"> Pure soy wax with rich, long-lasting fragrances.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Transparent Pricing</h4>
+                                <p class="text-xs text-gray-500">No hidden charges or unexpected surprise fees.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">24/7 Support</h4>
+                                <p class="text-xs text-gray-500">Dedicated assistance for your custom orders and queries.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Pan-India Delivery:</h4>
+                                <p class="text-xs text-gray-500">Safe and timely doorstep surprise delivery for your loved ones.</p>
+                            </div>
+                        </div>
+                    </div>
 
-</section>
+                    <div class="pt-4">
+                        <a href="#contact" class="inline-flex items-center space-x-3 bg-emeraldBrand hover:bg-emeraldLight text-white font-bold px-8 py-3.5 rounded-xl shadow-md transition-all">
+                            <span>Discover the Art of Gifting</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section class="contact">
+    <section id="contact" class="py-20 bg-gradient-to-b from-softGray to-emerald-50/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">CUSTOM ORDERS & GIFTS</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Let’s Craft Your Perfect Gift</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Connect with us on WhatsApp or call for bulk orders, custom hampers, or personalized soy candles.</p>
+            </div>
 
-<h2 class="section-title">Contact Us</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start justify-center">
+                
+                <!-- Center/Full Centered Action & Other Projects Card -->
+                <div class="lg:col-span-8 lg:col-start-3 space-y-6">
+                    <!-- Direct Action Card -->
+                    <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-100 flex flex-col justify-center items-center space-y-6 text-center">
+                        <div class="space-y-3">
+                            <div class="w-16 h-16 rounded-3xl bg-emerald-50 text-emeraldBrand flex items-center justify-center text-3xl mx-auto shadow-sm">
+                                <i class="fa-solid fa-gift"></i>
+                            </div>
+                            <h3 class="text-2xl font-extrabold text-gray-900">Instant Order & Support</h3>
+                            <p class="text-gray-600 text-sm max-w-md mx-auto">No long forms required. Click below for an instant phone call or WhatsApp message pre-filled with your order intent for SSOY.</p>
+                        </div>
 
-<p>
-🚚 Pan India Shipping • Secure Packaging • Premium Quality
-</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto w-full pt-2">
+                            <!-- Direct Call Button -->
+                            <a href="tel:8847259996" class="w-full bg-emeraldBrand hover:bg-emeraldLight text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-3">
+                                <i class="fa-solid fa-phone-volume text-lg"></i>
+                                <span>Call 884 725 9996</span>
+                            </a>
 
-<a class="whatsapp"
-href="https://wa.me/918847259996"
-target="_blank">
-📞 Order & Custom Requests
-</a>
+                            <!-- Direct WhatsApp Button with pre-filled message -->
+                            <a href="https://wa.me/918847259996?text=Hello,%20I%20want%20something%20in%20SSOY" target="_blank" rel="noopener noreferrer" class="w-full bg-emeraldBrand hover:bg-emeraldLight text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-3">
+                                <i class="fa-brands fa-whatsapp text-xl"></i>
+                                <span>WhatsApp Us</span>
+                            </a>
+                        </div>
 
-<div class="social">
+                        <div class="pt-4 border-t border-gray-100 text-xs text-gray-400">
+                            Available Monday to Saturday, 9:00 AM – 7:00 PM IST
+                        </div>
+                    </div>
 
-<a href="https://instagram.com/">Instagram</a>
+                    <!-- Other Projects / Ventures Declaration Box -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-gray-100 space-y-4">
+                        <div class="flex items-center justify-center space-x-2 text-emeraldBrand font-bold text-m uppercase tracking-wider">                            
+                            <i class="fa-solid fa-gift"></i>
+                            <span>Our Other Products</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Science Craft -->
+                            <a href="https://ssoy.in/project" target="_blank" rel="noopener noreferrer" class="bg-softGray hover:bg-emerald-50/50 border border-gray-200/80 rounded-2xl p-4 transition-all group flex flex-col justify-between">
+                                <div>
+                                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center mb-3 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                                        <i class="fa-solid fa-flask"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-900 text-sm group-hover:text-emeraldBrand transition-colors">Science Craft</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Creative science models & crafting</p>
+                                </div>
+                                <span class="text-xs font-bold text-emeraldBrand mt-4 flex items-center space-x-1">
+                                    <span>Visit</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </span>
+                            </a>
 
-</div>
+                            <!-- Packaging Solution -->
+                            <a href="https://ssoy.in/packing" target="_blank" rel="noopener noreferrer" class="bg-softGray hover:bg-emerald-50/50 border border-gray-200/80 rounded-2xl p-4 transition-all group flex flex-col justify-between">
+                                <div>
+                                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center mb-3 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                                        <i class="fa-solid fa-box-open"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-900 text-sm group-hover:text-emeraldBrand transition-colors">Packaging Solution</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Custom boxes & branding packages</p>
+                                </div>
+                                <span class="text-xs font-bold text-emeraldBrand mt-4 flex items-center space-x-1">
+                                    <span>Visit</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </span>
+                            </a>
 
-</section>
+                            <!-- Meditation Candles -->
+                            <a href="https://ssoy.in/meditation" target="_blank" rel="noopener noreferrer" class="bg-softGray hover:bg-emerald-50/50 border border-gray-200/80 rounded-2xl p-4 transition-all group flex flex-col justify-between">
+                                <div>
+                                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center mb-3 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                                        <i class="fa-solid fa-spa"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-900 text-sm group-hover:text-emeraldBrand transition-colors">Meditation Candles</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Aromatic & calming wellness candles</p>
+                                </div>
+                                <span class="text-xs font-bold text-emeraldBrand mt-4 flex items-center space-x-1">
+                                    <span>Visit</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-<footer>
+            </div>
+        </div>
+    </section>
 
-<p>
-© 2026 SSOY Premium Hampers
-</p>
+    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="space-y-4 md:col-span-2">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emeraldBrand flex items-center justify-center text-white font-bold text-xl shadow-md">
+                            <i class="fa-solid fa-gift"></i>
+                        </div>
+                        <span class="text-xl font-extrabold tracking-tight text-yellow-300">SSOY<span class="text">.IN</span></span>
+                    </div>
+                    <p class="text-sm text-gray-400 max-w-md leading-relaxed">
+                        Artisanal soy candles, luxury jars, and curated festive hampers designed to light up your celebrations with clean, long-lasting warmth.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#services" class="hover:text-emeraldBrand transition-colors">Our Products</a></li>
+                        <li><a href="#portfolio" class="hover:text-emeraldBrand transition-colors">Festive Hampers</a></li>
+                        <li><a href="#about" class="hover:text-emeraldBrand transition-colors">Our Story</a></li>
+                        <li><a href="#contact" class="hover:text-emeraldBrand transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Legal & Support</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-emeraldBrand transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-emeraldBrand transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-emeraldBrand transition-colors">Standard T&C Apply</a></li>
+                        <li><a href="#" class="hover:text-emeraldBrand transition-colors">Help Center / Shipping & Returns</a></li>
+                    </ul>
+                </div>
+            </div>
 
-<p>
-Handcrafted With Care & Elegance
-</p>
-<p>Current Visitors: <strong id="visitor-count">Loading...</strong></p>
+            <div class="pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
+                <p>&copy; 2026 ssoy.in | All Rights Reserved. Created and maintained by the founder.</p>
+                <!-- <p>&copy; 2026 ssoy.in | All Rights Reserved. Developed by honey arora.</p> -->
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-</footer>
-<script>
-    (function() {
-      var webhookUrl = "https://script.google.com/macros/s/AKfycbwUq0CnxjhULKOAY8R0WwHphVhNLscyOlAFN10rBImlUrDEF7E18f2cTkooN7l1jLFU/exec";
-      
-      // कुल विज़िटर काउंट फेच करना (GET)
-      fetch(webhookUrl)
-        .then(response => response.text())
-        .then(count => {
-          document.getElementById('visitor-count').innerText = count;
-        })
-        .catch(err => {
-          document.getElementById('visitor-count').innerText = '0';
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
         });
 
-      var visitorId = localStorage.getItem('visitor_id');
-      var visitorStatus = 'Old';
-      
-      if (!visitorId) {
-        visitorId = 'id_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('visitor_id', visitorId);
-        visitorStatus = 'New';
-      }
-
-      fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-          sendData(data.ip, visitorId, visitorStatus);
-        })
-        .catch(() => {
-          sendData('Unknown', visitorId, visitorStatus);
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
         });
 
-      function sendData(ipAddress, vId, vStatus) {
-        fetch(webhookUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify({
-            url: window.location.href,
-            ip: ipAddress,
-            visitorId: vId,
-            status: vStatus
-          })
-        }).catch(err => console.error("Tracking error:", err));
-      }
-    })();
-  </script> 
+        // Portfolio Filter Tabs
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-emeraldBrand', 'text-white', 'shadow-md');
+                    b.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                });
+                
+                btn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                btn.classList.add('bg-emeraldBrand', 'text-white', 'shadow-md');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                portfolioItems.forEach(item => {
+                    if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
