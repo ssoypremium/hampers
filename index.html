@@ -164,27 +164,15 @@
                                 
                                 <!-- <img src="" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                                                 -->
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn9eB8WOua-p2o0D8k9FP3GMTx4IW7vdNPcN68a7IsuA&s" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                                                
-                                <!-- <img src="https://images.unsplash.com/photo-1662306616121-34a330735f2c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTJ8fGdhbnBhdGl8ZW58MHx8MHx8fDA%3D" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                                                 -->
-                                <!-- <img src="https://plus.unsplash.com/premium_photo-1682090811844-e0a89fb2c780?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGluZGlhbiUyMGZlc3RpdmV8ZW58MHx8MHx8fDA%3D" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                                                 -->
+                                <!-- <img src="https://images.unsplash.com/photo-1662306616121-34a330735f2c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTJ8fGdhbnBhdGl8ZW58MHx8MHx8fDA%3D" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                                                                                 -->
                                 <!-- <img src="https://plus.unsplash.com/premium_photo-1682090798009-4c7fe8ea64b6?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8aW5kaWFuJTIwZmVzdGl2ZXxlbnwwfHwwfHx8MA%3D%3D" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                                                 -->
                                 <!-- <img src="https://media.istockphoto.com/id/1468559000/photo/beautiful-indian-women-in-saris-decorating-rangoli-with-oil-lamps-sitting-at-the-entrance-of.webp?a=1&b=1&s=612x612&w=0&k=20&c=0VlxddEjv5ky2VHF-KMJ8-0XQxH-VbhdNAaCJOItruc=" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                                                 -->
                                 <!-- <img src="https://images.unsplash.com/photo-1634066844026-40a34d6f36c0?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-20 h-20 rounded-full aspect-square object-cover border-2 border-white shadow-md">                                 -->
                                 <!-- <img src="https://plus.unsplash.com/premium_vector-1724362101757-cc3f86e55864?w=352&dpr=1&h=367&auto=format&fit=crop&q=60&ixlib=rb-4.1.0" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">                                 -->
                                 
                                 
-                                <div>
-                                    <!-- <h3 class="font-bold text-[13px]">Moments to Celebrate</h3>                                     -->
-                                    <!-- <h3 class="font-bold text-[17px]">PURE VIBES</h3>                                     -->
-                                    <!-- <h3 class="font-bold text-[17px]">Festive Magic</h3>                                     -->
-                                    <!-- <h3 class="font-bold text-[17px]">Celebration Joy</h3>                                     -->
-                                    <!-- <h3 class="font-bold text-[13px]">CELEBRATION GIFTS</h3>                                     -->
-                                    <!-- <h3 class="font-bold text-[17px]">Gifting Joy</h3>                                     -->
-                                    <!-- <h3 class="font-bold text-[17px]">Pure Happiness</h3>                                     -->
-                                    <!-- <h3 class="font-bold text-[17px]">Specal Gifting</h3>                                     -->
-                                    <!-- <h3 class="font-bold text-[16px]">"Pure Vibrations"</h3>           --> 
-                                    <h3 class="font-bold text-[16px]">"Feel Pure Vibes"</h3>
-                                    <!-- <h3 class="font-bold text-[16px]">"Happy Gifting"</h3>                                                                         -->
-                                    <!-- <h3 class="font-bold text-[16px]">"Happy Gifting"</h3>                                                                         -->
+                                <div>                                    
+                                    <h3 class="font-bold text-[16px] text-yellow-300">Feel Pure Vibes</h3>                   
                                     
                                     <!-- <div class="flex items-center space-x-1 text-xs text-yellow-300 mt-1">
                                         <i class="fa-solid fa-star"></i>
@@ -676,5 +664,19 @@
             });
         });
     </script>
+    <script>
+        // Disable Right Click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Disable F12, Ctrl+U, Ctrl+Shift+I, Ctrl+Shift+J
+        document.onkeydown = function (e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        };
+    </script>
+    
 </body>
 </html>
