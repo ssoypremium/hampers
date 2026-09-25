@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>science Craft</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emeraldBrand: '#0d5c3f',
+                        emeraldLight: '#107c52',
+                        coralPink: '#ff7b72',
+                        coralHover: '#ff5c52',
+                        softGray: '#f8faf9'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-curve {
+            border-bottom-left-radius: 40% 15%;
+            border-bottom-right-radius: 40% 15%;
+        }
+        @media (min-width: 768px) {
+            .hero-curve {
+                border-bottom-left-radius: 50% 30%;
+                border-bottom-right-radius: 50% 30%;
+            }
+        }
+    </style>
+</head>
+<body class="bg-softGray text-gray-800 antialiased selection:bg-emeraldBrand selection:text-white">
+
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight text-gray-900">Science<span class="text-emeraldBrand">Craft</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex items-center space-x-8 font-medium text-sm">
+                    <a href="#services" class="text-gray-600 hover:text-emeraldBrand transition-colors">Our Specialities</a>
+                    <a href="#portfolio" class="text-gray-600 hover:text-emeraldBrand transition-colors">Our Creations</a>
+                    <a href="#school-projects" class="text-gray-600 hover:text-emeraldBrand transition-colors">School Projects</a>
+                    <a href="#about" class="text-gray-600 hover:text-emeraldBrand transition-colors">About</a>
+                    <a href="#contact" class="text-gray-600 hover:text-emeraldBrand transition-colors">Order & Support</a>
+                </nav>
+
+                <!-- CTA Button -->
+                <div class="hidden md:flex items-center">
+                    <a href="#contact" class="bg-emeraldBrand hover:bg-emeraldLight text-white px-6 py-2.5 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+                        Order Now
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" aria-label="Toggle menu" class="text-gray-700 hover:text-emeraldBrand p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-100 px-4 pt-2 pb-6 space-y-3 shadow-lg">
+            <a href="#https://ssoy.in" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Premium Hampers</a>
+            <a href="https://ssoy.in/sciencecraft" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Packaging Solution</a>
+            <a href="https://ssoy.in/sciencecraft" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Meditation Candles</a>
+            <a href="https://ssoy.in/sciencecraft" class="block py-2 text-gray-700 font-medium hover:text-emeraldBrand">Premium Attars</a>
+            <div class="pt-2">
+                <a href="#portfolio" class="block text-center w-full bg-emeraldBrand text-white py-3 rounded-xl font-semibold shadow">
+                    Our Other Products & Support
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-gradient-to-b from-white to-emerald-50/50 pt-8 pb-20 lg:pt-16 lg:pb-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Text Column -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100 shadow-sm">
+                        <i class="fa-solid fa-sparkles"></i>
+                        <!-- <span>Educational Excellence</span> -->
+                        <span>Discover Hands-on Learning
+</span>
+                    </div>
+                    
+                    <!-- <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight"> -->
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                        <!-- Science <span class="text-emeraldBrand">Craft</span> -->
+                        <!-- Discover <span class="text-emeraldBrand">& </span> Do -->
+                        LIVE<span class="text-emeraldBrand"> PROTOTYPES </span>                         
+                        <!-- STEM<span class="text-emeraldBrand"> PROTOTYPES</span>  -->
+                    </h1>
+                    
+                    <p class="text-gray-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0">
+                        Complete Science & Educational Project Solutions. Explore telescopes, microscopes, STEM projects,charts, Still, Working models & 300+ science project libraries 
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">                      
+                        
+                        <a href="#school-projects" class="w-full sm:w-auto bg-emeraldBrand hover:bg-emeraldLight text-white font-semibold px-6 py-4 rounded-xl shadow-md transition-all text-center">
+                            <i class="fa-solid fa-flask mr-2"></i>
+                            <span>300+ School Projects</span>
+                        </a>
+                    </div>
+
+                    <!-- Trust Stats Bar -->
+                    <div class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200/60 mt-8 max-w-lg mx-auto lg:mx-0">
+                        <div class="flex flex-col items-center lg:items-start">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Premium</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">Quality</span>
+                        </div>
+                        <div class="flex flex-col items-center lg:items-start border-x border-gray-200 px-2">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>STEM</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">Solutions</span>
+                        </div>
+                        <div class="flex flex-col items-center lg:items-start">
+                            <div class="flex items-center space-x-1 text-emeraldBrand font-bold text-lg sm:text-xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Expert</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-medium">Guidances</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Visual Column (Image Container) -->
+                <div class="lg:col-span-5 relative flex justify-center">
+                    <div class="relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border-4 border-white">
+                        <!-- <img src="https://images.unsplash.com/photo-1589254066213-a0c9dc853511?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Premium Gift Hamper" class="w-full h-80 sm:h-96 object-cover">                         -->
+                        <img src="https://images.unsplash.com/photo-1707948952416-67f9dd252265?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Premium Gift Hamper" class="w-full h-80 sm:h-96 object-cover">                                                            
+                        
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">INNOVATIVE LEARNING</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Interactive Models Crafted For Sucess</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Explore our working models and science projects, expertly crafted to bring hands-on learning and practical experience right to your students.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <i class="fa-solid fa-flask"></i> 
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Custom Working Models</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">Expertly crafted working models and STEM projects designed to bring concepts to life for students.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>MDF & Eco Materials</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Custom Designs</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Project Guidance</span></li>
+                    </ul>
+                    <a href="#portfolio" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Explore</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">STEM & Educational Kits</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">Description: Interactive DIY science kits designed for hands-on learning and practical experimentation.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Complete DIY Materials</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Easy Assembly Guides</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Safe & Student-Friendly
+</span></li>
+                    </ul>
+                    <a href="#portfolio" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Explore</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="bg-softGray hover:bg-emerald-50/40 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Custom Charts</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">Detailed visual charts combining hand-drawn illustrations and explanatory notes for all STEM projects.</p>
+                    <ul class="space-y-2 text-xs font-medium text-gray-700 mb-6">
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Hand-Drawn & Printed Diagrams</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Explanatory Written Notes</span></li>
+                        <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emeraldBrand"></i><span>Durable Laminated Finish</span></li>
+                    </ul>
+                    <a href="#portfolio" class="inline-flex items-center space-x-2 text-emeraldBrand font-bold text-sm hover:underline">
+                        <span>Explore</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-20 bg-softGray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">OUR CREATIONS</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Explore Our STEM Projects & Educational Materials</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Discover custom working models, hands-on STEM kits, visual charts, and educational supplies crafted for student success.</p>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-2 mb-12">
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-emeraldBrand text-white shadow-md transition-all" data-filter="all">All</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-emeraldBrand border border-gray-200 transition-all" data-filter="candle">Working Models</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-emeraldBrand border border-gray-200 transition-all" data-filter="hamper">STEM Modules</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-emeraldBrand border border-gray-200 transition-all" data-filter="festival">Custom Charts</button>
+                <button class="filter-btn px-6 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-600 hover:bg-emeraldBrand border border-gray-200 transition-all" data-filter="handicraft">Paper Craft</button>
+            </div>
+
+            <!-- Portfolio Grid -->
+            <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Project 1 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="candle">
+                    <div class="relative overflow-hidden h-52">
+                        <img src="https://images.unsplash.com/photo-1745688810809-5040dc0cd002?q=80&w=473&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="E-Commerce Platform" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">                        
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Gifts</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Premium Glass Candles</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Handcrafted premium super soy candle with rich fragrance and elegant finish.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹499</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="candle">
+                    <div class="relative overflow-hidden h-52">                        
+                        <img src="https://images.unsplash.com/photo-1581916102388-eae1149ca53f?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="E-Commerce Platform" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Gifts</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Premium Jar Candle</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Handcrafted premium soy candle with rich fragrance and elegant finish.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹399</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="candle">
+                    <div class="relative overflow-hidden h-52">
+                        <!-- <img src="https://lh3.googleusercontent.com/d/1LDwBsx8fpBzbt18LWKAmmQb6RIZxrPFk"> -->
+                         <img src="https://images.unsplash.com/photo-1737228813532-9cd720824ba7?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjE2fHxyb2JvdGljfGVufDB8fDB8fHww" alt="Lead Generation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Gifts</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Aromatic Floral Soy Candle</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Hand-poured pure soy wax infused with calming essential oils and delicate botanical toppings for a soothing home ambiance.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹499</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="festival">
+                    <div class="relative overflow-hidden h-52">                        
+                        <img src="https://images.unsplash.com/photo-1716929157559-d86a11b7b786?q=80&w=399&auto=format&fit=crop" alt="Brand Growth Campaign" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">                         
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Diyas</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Terracotta Diya Soy Candle Set</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Hand-painted traditional terracotta diyas filled with clean-burning soy wax, ideal for festive celebrations and return favors.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹499</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 5 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="hamper">
+                    <div class="relative overflow-hidden h-52">
+                        <!-- <img src="https://images.unsplash.com/photo-1779219667857-cb0a92399223?q=80&w=387&auto=format&fit=crop" alt="Premium Gift Hamper" class="w-full h-80 sm:h-96 object-cover"> -->
+                        <img src="https://images.unsplash.com/photo-1524234107056-1c1f48f64ab8?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Premium Gift Hamper" class="w-full h-80 sm:h-96 object-cover">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Hampers</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Festive Delight Gift Hamper</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Curated luxury hamper featuring aromatic candles, artisanal treats, and a personalized greeting card for memorable gifting.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹999</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 6 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="hamper">
+                    <div class="relative overflow-hidden h-52">                        
+                        <img src="https://images.unsplash.com/photo-1602624511769-6a3487e64934?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Design System" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Premium Hampers</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Royal Heritage Gift Box</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">An elegant wooden gift box featuring dry fruits, scented jar candle, perfume, and chocolates for wedding and festive gifting.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹1499</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 7 -->
+                <div class="portfolio-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group" data-category="handicraft">
+                    <div class="relative overflow-hidden h-52">                        
+                        
+                        <img src="https://lh3.googleusercontent.com/d/1LDwBsx8fpBzbt18LWKAmmQb6RIZxrPFk">
+                        <span class="absolute top-4 left-4 bg-emeraldBrand text-white text-xs font-bold px-3 py-1 rounded-full">Wedding Gifts </span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="text-xl font-bold text-gray-900">Custom Wooden Wedding Invitation & Frame</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Intricately carved wooden wedding invitations and keepsake frames customized with couple names and personal details.</p>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-semibold text-emeraldBrand">Customization Available</span>
+                            <span class="text-xs text-gray-400 font-medium">Starting From ₹999</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ENHANCED SECTION: School Projects Directory -->
+    <section id="school-projects" class="py-20 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">SCIENCE CRAFT & MODELS</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">300+ School Projects Directory</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Apne required topic ya category ke hisab se projects search karein:</p>
+            </div>
+
+            <!-- Search & Filter Controls Card -->
+            <div class="bg-gradient-to-r from-softGray via-emerald-50/20 to-softGray p-6 rounded-3xl border border-gray-200/80 mb-10 max-w-5xl mx-auto shadow-sm space-y-5">
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <!-- Search Input Box -->
+                    <div class="relative flex-1 w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-emeraldBrand"></i>
+                        <input type="text" id="projectSearch" onkeyup="filterProjects()" placeholder="Search project (e.g., Solar, Hydraulic, Heart, Robot)..." class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emeraldBrand text-sm shadow-sm transition-all">
+                    </div>
+
+                    <!-- Category Filter Pills -->
+                    <div class="flex flex-wrap gap-2 items-center justify-center md:justify-end w-full md:w-auto">
+                        <button onclick="filterCategory('all', this)" class="cat-btn active-cat px-4 py-2.5 text-xs font-bold rounded-xl bg-emeraldBrand text-white shadow-sm transition-all">All</button>
+                        <button onclick="filterCategory('physics', this)" class="cat-btn px-4 py-2.5 text-xs font-bold rounded-xl bg-white text-gray-600 border border-gray-200 hover:border-emeraldBrand hover:text-emeraldBrand transition-all">Physics</button>
+                        <button onclick="filterCategory('biology', this)" class="cat-btn px-4 py-2.5 text-xs font-bold rounded-xl bg-white text-gray-600 border border-gray-200 hover:border-emeraldBrand hover:text-emeraldBrand transition-all">Biology</button>
+                        <button onclick="filterCategory('eco', this)" class="cat-btn px-4 py-2.5 text-xs font-bold rounded-xl bg-white text-gray-600 border border-gray-200 hover:border-emeraldBrand hover:text-emeraldBrand transition-all">Eco & Energy</button>
+                        <button onclick="filterCategory('robotics', this)" class="cat-btn px-4 py-2.5 text-xs font-bold rounded-xl bg-white text-gray-600 border border-gray-200 hover:border-emeraldBrand hover:text-emeraldBrand transition-all">Robotics</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion List Container -->
+            <div class="space-y-5 max-w-5xl mx-auto" id="accordionContainer">
+
+                <!-- Category 1: Physics & Mechanics -->
+                <div class="accordion-item bg-white border border-gray-200/90 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" data-category="physics">
+                    <button onclick="toggleAccordion(this)" class="w-full px-6 py-5 flex items-center justify-between text-left font-bold text-gray-900 bg-gray-50/70 hover:bg-emerald-50/50 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100/80 text-emeraldBrand flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-gear"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-bold">Physics & Mechanical Models</h3>
+                                <span class="text-xs text-gray-500 font-normal">Working gear mechanisms, hydraulics & principles</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-emerald-50 border border-emerald-200 text-emeraldBrand text-xs font-semibold px-3 py-1 rounded-full">100+ Models</span>
+                            <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                        </div>
+                    </button>
+
+                    <div class="accordion-content hidden p-6 border-t border-gray-100 bg-white">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            
+                            <!-- Enhanced Project Card Item -->
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Hydraulic City Bridge Working Model</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100 shrink-0">Working</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Pascal's law mechanism with syringe-based hydraulic movement for school science fairs.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Ready Kit / Made Model</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Hydraulic%20City%20Bridge%20Model.%20Could%20you%20please%20provide%20more%20details%20and%20the%20pricing%20for%20this%20product." target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Electromagnetic Crane Model</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100 shrink-0">Working</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Demonstrates electromagnetism principles with controllable magnet pick and drop.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Ready Kit / Made Model</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Electromagnetic%20Crane" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Newton's Cradle Energy Conservation</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-600 border border-purple-100 shrink-0">Still / Demo</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Demonstration of momentum conservation and energy transformation.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Ready Kit / Made Model</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Newtons%20Cradle" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Hydroelectric Power Generation Model</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100 shrink-0">Working</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Turbine rotation driven by water flow generating clean electrical current.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Ready Kit / Made Model</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Hydroelectric%20Model" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 2: Eco & Renewable Energy -->
+                <div class="accordion-item bg-white border border-gray-200/90 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" data-category="eco">
+                    <button onclick="toggleAccordion(this)" class="w-full px-6 py-5 flex items-center justify-between text-left font-bold text-gray-900 bg-gray-50/70 hover:bg-emerald-50/50 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100/80 text-emeraldBrand flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-bold">Renewable Energy & Environment</h3>
+                                <span class="text-xs text-gray-500 font-normal">Solar, wind power, and eco-friendly conservation ideas</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-emerald-50 border border-emerald-200 text-emeraldBrand text-xs font-semibold px-3 py-1 rounded-full">80+ Models</span>
+                            <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                        </div>
+                    </button>
+
+                    <div class="accordion-content hidden p-6 border-t border-gray-100 bg-white">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Automatic Solar Tracking Panel System</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100 shrink-0">Smart Eco</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">LDR sensor based panel tracking light for maximum energy efficiency.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Ready Kit / Custom Built</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Solar%20Tracker" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Wind Turbine Generator Working Setup</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100 shrink-0">Working</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Converts wind motion to electrical LED lighting output.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Ready Kit / Custom Built</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Wind%20Turbine" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Smart Rainwater Harvesting & Filter Model</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100 shrink-0">Smart Eco</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Multi-stage filtration tank setup with rainwater recycling demonstration.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Ready Kit / Custom Built</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Rainwater%20Harvesting" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 3: Biology & Health Sciences -->
+                <div class="accordion-item bg-white border border-gray-200/90 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" data-category="biology">
+                    <button onclick="toggleAccordion(this)" class="w-full px-6 py-5 flex items-center justify-between text-left font-bold text-gray-900 bg-gray-50/70 hover:bg-emerald-50/50 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100/80 text-emeraldBrand flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-bold">Biology & Health Sciences</h3>
+                                <span class="text-xs text-gray-500 font-normal">Human body systems, plant biology & agriculture setups</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-emerald-50 border border-emerald-200 text-emeraldBrand text-xs font-semibold px-3 py-1 rounded-full">70+ Models</span>
+                            <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                        </div>
+                    </button>
+
+                    <div class="accordion-content hidden p-6 border-t border-gray-100 bg-white">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Working Model of Human Heart Pumping</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-red-50 text-red-600 border border-red-100 shrink-0">Bio Model</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Fluid circulation setup showing oxygenated vs deoxygenated flow.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">3D Model / Liquid Flow</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Human%20Heart%20Model" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Human Lungs Respiration Working Model</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-red-50 text-red-600 border border-red-100 shrink-0">Bio Model</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Vacuum diaphragm mechanism showing lung expansion and contraction.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Interactive Working</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Lungs%20Model" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Drip Irrigation System Setup</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100 shrink-0">Agri Tech</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Efficient crop watering demonstration model for modern farming.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Ready Model</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Drip%20Irrigation" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 4: Robotics & Smart Technology -->
+                <div class="accordion-item bg-white border border-gray-200/90 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" data-category="robotics">
+                    <button onclick="toggleAccordion(this)" class="w-full px-6 py-5 flex items-center justify-between text-left font-bold text-gray-900 bg-gray-50/70 hover:bg-emerald-50/50 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100/80 text-emeraldBrand flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-bold">Robotics, Arduino & Smart Innovations</h3>
+                                <span class="text-xs text-gray-500 font-normal">Sensor-based robotics, IoT and automation systems</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-emerald-50 border border-emerald-200 text-emeraldBrand text-xs font-semibold px-3 py-1 rounded-full">50+ Models</span>
+                            <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                        </div>
+                    </button>
+
+                    <div class="accordion-content hidden p-6 border-t border-gray-100 bg-white">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Obstacle Avoiding Robot with Ultrasonics</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 border border-indigo-100 shrink-0">Robotics</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Arduino driven robot that detects wall obstacles and redirects automatically.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Arduino / Pre-programmed</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Obstacle%20Avoiding%20Robot" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="project-item p-4 rounded-2xl border border-gray-100 bg-softGray/50 hover:bg-white hover:border-emeraldBrand/40 hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                                <div class="flex justify-between items-start gap-2">
+                                    <span class="font-bold text-sm text-gray-800">Smart Dustbin with IR Sensor Automation</span>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 border border-indigo-100 shrink-0">Smart Tech</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Touchless lid opening using IR proximity sensor for touch-free hygiene.</p>
+                                <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400 font-medium">Working Model Kit</span>
+                                    <a href="https://wa.me/918847259996?text=Interested%20in%20Smart%20Dustbin" target="_blank" class="inline-flex items-center space-x-1.5 text-xs font-bold text-emeraldBrand bg-emerald-50 hover:bg-emeraldBrand hover:text-white px-3 py-1.5 rounded-xl transition-all">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Inquire Now</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Left Image/Badge Column -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border-4 border-emerald-50">
+                        <img src="https://images.unsplash.com/photo-1604590003050-14c5b8521015?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                        <div class="absolute inset-0 flex items-end p-3">
+                            <div class="text-white">
+                                <span class="text-m font-bold block text-yellow-300">Crafted for Celebrations</span>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Text Column -->
+                <div class="lg:col-span-7 space-y-6">
+                    <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">About Us</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Bringing Warmth and Elegance to Every Celebration</h2>
+                    <p class="text-gray-600 text-base sm:text-lg leading-relaxed">
+                        Founded with a passion for fine craftsmanship, SSOY.IN brings you premium handcrafted soy candles and luxury gifting hampers. We bridge the gap between elegant artistry and your special moments, ensuring every detail exudes warmth, care, and lasting memories.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Handcrafted Quality:</h4>
+                                <p class="text-xs text-gray-500"> Pure soy wax with rich, long-lasting fragrances.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Transparent Pricing</h4>
+                                <p class="text-xs text-gray-500">No hidden charges or unexpected surprise fees.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">24/7 Support</h4>
+                                <p class="text-xs text-gray-500">Dedicated assistance for your custom orders and queries.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emeraldBrand flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Pan-India Delivery:</h4>
+                                <p class="text-xs text-gray-500">Safe and timely doorstep surprise delivery for your loved ones.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="#contact" class="inline-flex items-center space-x-3 bg-emeraldBrand hover:bg-emeraldLight text-white font-bold px-8 py-3.5 rounded-xl shadow-md transition-all">
+                            <span>Get in Touch</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gradient-to-b from-softGray to-emerald-50/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="bg-emerald-50 text-emeraldBrand px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-100">CUSTOM ORDERS & GIFTS</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Let’s Craft Your Perfect Gift</h2>
+                <p class="text-gray-600 text-base sm:text-lg">Connect with us on WhatsApp or call for bulk orders, custom hampers, or personalized soy candles.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start justify-center">
+                
+                <!-- Center/Full Centered Action & Other Projects Card -->
+                <div class="lg:col-span-8 lg:col-start-3 space-y-6">
+                    <!-- Direct Action Card -->
+                    <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-100 flex flex-col justify-center items-center space-y-6 text-center">
+                        <div class="space-y-3">
+                            <div class="w-16 h-16 rounded-3xl bg-emerald-50 text-emeraldBrand flex items-center justify-center text-3xl mx-auto shadow-sm">
+                                <i class="fa-solid fa-flask"></i>
+                            </div>
+                            <h3 class="text-2xl font-extrabold text-gray-900">Instant Order & Support</h3>
+                            <p class="text-gray-600 text-sm max-w-md mx-auto">No long forms required. Click below for an instant phone call or WhatsApp message pre-filled with your order intent for SSOY.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto w-full pt-2">
+                            <!-- Direct Call Button -->
+                            <a href="tel:8847259996" class="w-full bg-emeraldBrand hover:bg-emeraldLight text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-3">
+                                <i class="fa-solid fa-phone-volume text-lg"></i>
+                                <span>Call 884 725 9996</span>
+                            </a>
+
+                            <!-- Direct WhatsApp Button with pre-filled message -->
+                            <a href="https://wa.me/918847259996?text=Hello,%20I%20want%20something%20in%20SSOY" target="_blank" rel="noopener noreferrer" class="w-full bg-emeraldBrand hover:bg-emeraldLight text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-3">
+                                <i class="fa-brands fa-whatsapp text-xl"></i>
+                                <span>WhatsApp Us</span>
+                            </a>
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-100 text-xs text-gray-400">
+                            Available Monday to Saturday, 9:00 AM – 7:00 PM IST
+                        </div>
+                    </div>
+
+                    <!-- Other Projects / Ventures Declaration Box -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-gray-100 space-y-4">
+                        <div class="flex items-center justify-center space-x-2 text-emeraldBrand font-bold text-m uppercase tracking-wider">                            
+                            <i class="fa-solid fa-flask"></i>
+                            <span>Our Other Products</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Science Craft -->
+                            <a href="https://ssoy.in" class="bg-softGray hover:bg-emerald-50/50 border border-gray-200/80 rounded-2xl p-4 transition-all group flex flex-col justify-between">
+                                <div>
+                                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center mb-3 group-hover:bg-emeraldBrand group-hover:text-white transition-all">                                        
+                                        <i class="fa-solid fa-gift"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-900 text-sm group-hover:text-emeraldBrand transition-colors">Premium Hampers</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Let's Craft Your Perfect Gift</p>
+                                </div>
+                                <span class="text-xs font-bold text-emeraldBrand mt-4 flex items-center space-x-1">
+                                    <span>Visit</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </span>
+                            </a>
+
+                            <!-- Packaging Solution -->
+                            <a href="https://ssoy.in" target="_blank" rel="noopener noreferrer" class="bg-softGray hover:bg-emerald-50/50 border border-gray-200/80 rounded-2xl p-4 transition-all group flex flex-col justify-between">
+                                <div>
+                                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center mb-3 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                                        <i class="fa-solid fa-box-open"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-900 text-sm group-hover:text-emeraldBrand transition-colors">Packaging Solution</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Custom boxes & branding packages</p>
+                                </div>
+                                <span class="text-xs font-bold text-emeraldBrand mt-4 flex items-center space-x-1">
+                                    <span>Visit</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </span>
+                            </a>
+
+                            <!-- Meditation Candles -->
+                            <a href="https://ssoy.in" target="_blank" rel="noopener noreferrer" class="bg-softGray hover:bg-emerald-50/50 border border-gray-200/80 rounded-2xl p-4 transition-all group flex flex-col justify-between">
+                                <div>
+                                    <div class="w-10 h-10 rounded-xl bg-emeraldBrand/10 text-emeraldBrand flex items-center justify-center mb-3 group-hover:bg-emeraldBrand group-hover:text-white transition-all">
+                                        <i class="fa-solid fa-spa"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-900 text-sm group-hover:text-emeraldBrand transition-colors">Meditation Candles</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Aromatic & calming wellness candles</p>
+                                </div>
+                                <span class="text-xs font-bold text-emeraldBrand mt-4 flex items-center space-x-1">
+                                    <span>Visit</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="space-y-4 md:col-span-2">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emeraldBrand flex items-center justify-center text-white font-bold text-xl shadow-md">
+                            <i class="fa-solid fa-flask"></i>
+                        </div>
+                        <span class="text-xl font-extrabold tracking-tight text-yellow-300">SSOY<span class="text">.IN</span></span>
+                    </div>
+                    <p class="text-sm text-gray-400 max-w-md leading-relaxed">
+                        Complete Science & Educational Project Solutions. Explore telescopes, microscopes, STEM projects,charts, Still, Working models & 300+ science project libraries 
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#portfolio" class="hover:text-emeraldBrand transition-colors">Our Products</a></li>
+                        <li><a href="#school-projects" class="hover:text-emeraldBrand transition-colors">School Projects Directory</a></li>
+                        <li><a href="#about" class="hover:text-emeraldBrand transition-colors">Our Story</a></li>
+                        <li><a href="#contact" class="hover:text-emeraldBrand transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Legal & Support</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#about" class="hover:text-emeraldBrand transition-colors">Privacy Policy</a></li>
+                        <li><a href="#about" class="hover:text-emeraldBrand transition-colors">Terms of Service</a></li>
+                        <li><a href="#about" class="hover:text-emeraldBrand transition-colors">Standard T&C Apply</a></li>
+                        <li><a href="#about" class="hover:text-emeraldBrand transition-colors">Help Center / Shipping & Returns</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
+                <p>&copy; 2026 ssoy.in | All Rights Reserved. Created and maintained by the founder.</p>
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Portfolio Filter Tabs
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-emeraldBrand', 'text-white', 'shadow-md');
+                    b.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                });
+                
+                btn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                btn.classList.add('bg-emeraldBrand', 'text-white', 'shadow-md');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                portfolioItems.forEach(item => {
+                    if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Toggle Accordion Collapse
+        function toggleAccordion(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.fa-chevron-down');
+            
+            content.classList.toggle('hidden');
+            if (icon) {
+                icon.classList.toggle('rotate-180');
+            }
+        }
+
+        // Live Search Filter Across All Categories
+        function filterProjects() {
+            const input = document.getElementById('projectSearch').value.toLowerCase();
+            const projectItems = document.querySelectorAll('.project-item');
+            const accordions = document.querySelectorAll('.accordion-item');
+
+            projectItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(input)) {
+                    item.style.display = "flex";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+
+            // Auto-expand accordions during search if search text is typed
+            accordions.forEach(acc => {
+                const content = acc.querySelector('.accordion-content');
+                const visibleItems = acc.querySelectorAll('.project-item[style*="display: flex"]');
+                
+                if (input.length > 0) {
+                    if (visibleItems.length > 0) {
+                        acc.style.display = "block";
+                        content.classList.remove('hidden');
+                    } else {
+                        acc.style.display = "none";
+                    }
+                } else {
+                    acc.style.display = "block flex";
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        // Category Filter Function for School Projects
+        function filterCategory(category, element) {
+            const accordions = document.querySelectorAll('.accordion-item');
+            const filterBtns = document.querySelectorAll('.cat-btn');
+
+            // Reset Search Input
+            document.getElementById('projectSearch').value = "";
+            document.querySelectorAll('.project-item').forEach(i => i.style.display = "flex");
+
+            // Toggle category active styles
+            filterBtns.forEach(btn => {
+                btn.classList.remove('bg-emeraldBrand', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+            });
+
+            if(element) {
+                element.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                element.classList.add('bg-emeraldBrand', 'text-white', 'shadow-sm');
+            }
+
+            accordions.forEach(acc => {
+                const content = acc.querySelector('.accordion-content');
+                if (category === 'all' || acc.getAttribute('data-category') === category) {
+                    acc.style.display = "block";
+                    if(category !== 'all') {
+                        content.classList.remove('hidden');
+                    }
+                } else {
+                    acc.style.display = "none";
+                }
+            });
+        }
+    </script>
+    <script>
+        // Disable Right Click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Disable F12, Ctrl+U, Ctrl+Shift+I, Ctrl+Shift+J
+        document.onkeydown = function (e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        };
+    </script>
+    <script>
+        (function() {
+          var webhookUrl = "https://script.google.com/macros/s/AKfycbwUq0CnxjhULKOAY8R0WwHphVhNLscyOlAFN10rBImlUrDEF7E18f2cTkooN7l1jLFU/exec";
+        
+          
+          fetch(webhookUrl)
+            .then(response => response.text())
+            .then(count => {
+              document.getElementById('visitor-count').innerText = count;
+            })
+            .catch(err => {
+              document.getElementById('visitor-count').innerText = '0';
+            });
+        
+          var visitorId = localStorage.getItem('visitor_id');
+          var visitorStatus = 'Old';
+        
+          if (!visitorId) {
+            visitorId = 'id_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('visitor_id', visitorId);
+            visitorStatus = 'New';
+          }
+      
+          fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+              sendData(data.ip, visitorId, visitorStatus);
+            })
+            .catch(() => {
+              sendData('Unknown', visitorId, visitorStatus);
+            });
+        
+          function sendData(ipAddress, vId, vStatus) {
+            fetch(webhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+              },
+              body: JSON.stringify({
+                url: window.location.href,
+                ip: ipAddress,
+                visitorId: vId,
+                status: vStatus
+              })
+            }).catch(err => console.error("Tracking error:", err));
+          }
+        })();
+  </script>   
+      <script>
+        // Disable Right Click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Disable F12, Ctrl+U, Ctrl+Shift+I, Ctrl+Shift+J
+        document.onkeydown = function (e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        };
+    </script>
+    <script>
+        (function() {
+          var webhookUrl = "https://script.google.com/macros/s/AKfycbwUq0CnxjhULKOAY8R0WwHphVhNLscyOlAFN10rBImlUrDEF7E18f2cTkooN7l1jLFU/exec";
+        
+          
+          fetch(webhookUrl)
+            .then(response => response.text())
+            .then(count => {
+              document.getElementById('visitor-count').innerText = count;
+            })
+            .catch(err => {
+              document.getElementById('visitor-count').innerText = '0';
+            });
+        
+          var visitorId = localStorage.getItem('visitor_id');
+          var visitorStatus = 'Old';
+        
+          if (!visitorId) {
+            visitorId = 'id_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('visitor_id', visitorId);
+            visitorStatus = 'New';
+          }
+      
+          fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+              sendData(data.ip, visitorId, visitorStatus);
+            })
+            .catch(() => {
+              sendData('Unknown', visitorId, visitorStatus);
+            });
+        
+          function sendData(ipAddress, vId, vStatus) {
+            fetch(webhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+              },
+              body: JSON.stringify({
+                url: window.location.href,
+                ip: ipAddress,
+                visitorId: vId,
+                status: vStatus
+              })
+            }).catch(err => console.error("Tracking error:", err));
+          }
+        })();
+    </script>     
+</body>
