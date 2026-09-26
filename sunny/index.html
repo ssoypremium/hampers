@@ -1,0 +1,739 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SSOY.IN — luxury handcrafted candles, Mandala art, coasters, wall décor, decorative light paintings and custom laser engraved wooden frames.">
+  <meta name="theme-color" content="#111111">
+  <title>SSOY.IN — Handcrafted Luxury | Cosmo</title>
+
+  <!-- Bootswatch Cosmo = Bootstrap 5 theme -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/cosmo/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --ink:#151515;
+      --muted:#6f6b66;
+      --paper:#f8f6f1;
+      --cream:#eee9df;
+      --gold:#b18a48;
+      --gold-dark:#8f6d37;
+      --line:rgba(21,21,21,.10);
+      --radius:24px;
+      --shadow:0 20px 60px rgba(20,16,10,.10);
+    }
+
+    html{scroll-behavior:smooth}
+    body{background:#fff;color:var(--ink);overflow-x:hidden}
+    a{text-decoration:none}
+    .letter-space{letter-spacing:.18em}
+    .text-gold{color:var(--gold)!important}
+    .bg-paper{background:var(--paper)}
+    .section-pad{padding:92px 0}
+    .min-vh-75{min-height:75vh}
+
+    /* Navbar */
+    #mainNav{transition:.25s ease}
+    #mainNav.scrolled{box-shadow:0 8px 30px rgba(0,0,0,.07)}
+    .brand-mark{
+      width:40px;height:40px;border:1px solid var(--ink);border-radius:50%;
+      display:inline-grid;place-items:center;font-size:.78rem;
+    }
+    .navbar-brand{font-size:1.15rem;letter-spacing:.18em}
+    .nav-link{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+    .navbar-toggler:focus{box-shadow:none}
+
+    /* Hero */
+    .hero{
+      min-height:calc(100vh - 78px);
+      background:
+        radial-gradient(circle at 85% 25%, rgba(177,138,72,.20), transparent 28%),
+        radial-gradient(circle at 10% 85%, rgba(177,138,72,.10), transparent 25%),
+        linear-gradient(135deg,#fbfaf7 0%,#f0ebe1 100%);
+      position:relative;
+      isolation:isolate;
+    }
+    .hero:before{
+      content:"";position:absolute;inset:0;z-index:-1;opacity:.35;
+      background-image:radial-gradient(rgba(0,0,0,.13) .6px,transparent .6px);
+      background-size:8px 8px;mask-image:linear-gradient(90deg,black,transparent 80%);
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:10px;
+      color:var(--gold-dark);font-size:.72rem;font-weight:700;letter-spacing:.2em;
+    }
+    .eyebrow:before{content:"";width:32px;height:1px;background:var(--gold)}
+    .hero h1{font-size:clamp(3.1rem,7vw,6.8rem);letter-spacing:-.045em}
+    .hero-copy{max-width:600px;color:#625e58;font-size:1.08rem;line-height:1.9}
+    .hero-actions .btn{padding:.9rem 1.5rem}
+    .hero-art{
+      min-height:520px;position:relative;display:grid;place-items:center;
+    }
+    .art-frame{
+      width:min(410px,78vw);aspect-ratio:4/5;background:#25221e;
+      border:13px solid #171512;border-radius:9px;box-shadow:var(--shadow);
+      transform:rotate(3deg);overflow:hidden;position:relative;
+    }
+    .art-frame:after{
+      content:"";position:absolute;inset:12px;border:1px solid rgba(255,255,255,.25);
+      pointer-events:none;
+    }
+    .mandala{
+      position:absolute;inset:0;display:grid;place-items:center;
+      background:
+        radial-gradient(circle,#c9a86b 0 2%,transparent 2.5% 9%,#c9a86b 9.5% 10%,transparent 10.5% 18%,#8f6d37 18.5% 19%,transparent 19.5% 28%,#c9a86b 28.5% 29%,transparent 29.5% 39%,#8f6d37 39.5% 40%,transparent 40.5% 50%,#c9a86b 50.5% 51%,transparent 51.5%);
+      background-color:#171512;
+    }
+    .mandala:before,.mandala:after{
+      content:"";position:absolute;width:78%;aspect-ratio:1;border:2px solid #c9a86b;
+      border-radius:50%;transform:rotate(22.5deg);
+      box-shadow:0 0 0 22px transparent, inset 0 0 0 2px rgba(201,168,107,.65);
+    }
+    .mandala:after{transform:rotate(67.5deg)}
+    .hero-badge{
+      position:absolute;bottom:20px;left:0;background:#fff;padding:16px 20px;
+      border-radius:18px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;
+    }
+
+    /* Cards */
+    .section-kicker{font-size:.7rem;font-weight:700;letter-spacing:.2em;color:var(--gold-dark)}
+    .section-title{font-size:clamp(2rem,4vw,3.7rem);letter-spacing:-.035em}
+    .product-card{
+      border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+      background:#fff;height:100%;transition:.3s ease;box-shadow:0 6px 25px rgba(0,0,0,.035);
+    }
+    .product-card:hover{transform:translateY(-8px);box-shadow:var(--shadow)}
+    .product-image{aspect-ratio:1/1;position:relative;overflow:hidden;background:#eee}
+    .product-image img{width:100%;height:100%;object-fit:cover;transition:.5s ease}
+    .product-card:hover .product-image img{transform:scale(1.06)}
+    .product-tag{
+      position:absolute;top:15px;left:15px;background:rgba(255,255,255,.92);
+      padding:7px 11px;border-radius:999px;font-size:.65rem;font-weight:700;letter-spacing:.08em;
+    }
+    .product-body{padding:22px}
+    .price{font-weight:700}
+    .product-meta{color:var(--muted);font-size:.86rem}
+    .filter-btn{border-radius:999px!important;font-size:.72rem!important;letter-spacing:.06em}
+
+    /* Feature strip */
+    .feature{padding:24px;border:1px solid var(--line);border-radius:20px;background:#fff}
+    .feature i{font-size:1.45rem;color:var(--gold)}
+
+    /* Custom */
+    .custom-panel{
+      border-radius:32px;background:#181715;color:#fff;overflow:hidden;position:relative;
+    }
+    .custom-panel:after{
+      content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(255,255,255,.12);
+      border-radius:50%;right:-160px;top:-180px;box-shadow:0 0 0 60px rgba(255,255,255,.025),0 0 0 120px rgba(255,255,255,.018);
+    }
+    .step{display:flex;gap:15px;align-items:flex-start}
+    .step-no{
+      flex:0 0 34px;width:34px;height:34px;border:1px solid rgba(255,255,255,.3);
+      border-radius:50%;display:grid;place-items:center;font-size:.75rem;color:#e0c58d;
+    }
+    .custom-preview{
+      min-height:440px;display:grid;place-items:center;position:relative;
+      background:linear-gradient(145deg,#302b24,#171512);
+    }
+    .wood{
+      width:min(320px,75%);aspect-ratio:4/5;background:
+        linear-gradient(105deg,rgba(255,255,255,.07) 0 1px,transparent 1px 28px),
+        linear-gradient(20deg,#6c4525,#b67c43 48%,#704523);
+      border:12px solid #432918;border-radius:8px;box-shadow:0 25px 50px rgba(0,0,0,.4);
+      display:grid;place-items:center;
+    }
+    .engrave{
+      width:76%;aspect-ratio:1;border:2px solid rgba(255,230,170,.65);border-radius:50%;
+      display:grid;place-items:center;text-align:center;color:#f0d39b;
+      box-shadow:inset 0 0 30px rgba(255,215,130,.08),0 0 30px rgba(255,205,120,.08);
+    }
+    .engrave i{font-size:4.5rem}
+    .engrave small{display:block;letter-spacing:.2em;margin-top:-10px}
+
+    /* Story */
+    .story-card{border-radius:28px;background:var(--paper);padding:38px}
+    .stat{font-size:2.1rem;font-weight:700}
+    .quote{font-size:1.2rem;line-height:1.8;color:#514d47}
+
+    /* Contact */
+    .contact-box{border:1px solid var(--line);border-radius:28px;padding:34px;background:#fff}
+    .form-control,.form-select{border-radius:12px!important;padding:.9rem 1rem}
+    .form-control:focus,.form-select:focus{border-color:var(--gold);box-shadow:0 0 0 .2rem rgba(177,138,72,.12)}
+
+    /* Footer */
+    footer{background:#151412;color:#aaa}
+    footer a{color:#bbb}
+    footer a:hover{color:#fff}
+    .social{
+      width:38px;height:38px;border:1px solid rgba(255,255,255,.15);border-radius:50%;
+      display:grid;place-items:center;
+    }
+
+    /* Floating CTA */
+    .floating-cta{
+      position:fixed;right:18px;bottom:18px;z-index:1040;
+      border-radius:999px;box-shadow:0 12px 35px rgba(0,0,0,.2);
+    }
+
+    /* Modal */
+    .modal-content{border:0;border-radius:24px;overflow:hidden}
+    .modal-image{height:100%;min-height:360px;object-fit:cover}
+
+    @media(max-width:991.98px){
+      .hero-art{min-height:440px}
+      .section-pad{padding:70px 0}
+      .navbar-collapse{padding-top:15px}
+      .nav-item .btn{margin-top:8px;width:100%}
+    }
+    @media(max-width:575.98px){
+      .hero{min-height:auto}
+      .hero h1{font-size:3.2rem}
+      .hero-art{min-height:390px}
+      .art-frame{width:270px}
+      .hero-badge{left:8px;bottom:0}
+      .section-pad{padding:58px 0}
+      .custom-preview{min-height:350px}
+      .floating-cta{right:12px;bottom:12px}
+      .floating-cta span{display:none}
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top" id="mainNav">
+  <div class="container py-2">
+    <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#home">
+      <span class="brand-mark">S</span> SSOY<span class="text-gold">.IN</span>
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+      aria-controls="navMenu" aria-expanded="false" aria-label="Toggle menu">
+      <i class="bi bi-list fs-2"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#collections">Collections</a></li>
+        <li class="nav-item"><a class="nav-link" href="#custom">Custom Engraving</a></li>
+        <li class="nav-item"><a class="nav-link" href="#story">Our Story</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        <li class="nav-item ms-lg-2"><a class="btn btn-dark rounded-pill px-4" href="#collections">Shop Collection</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section class="hero d-flex align-items-center" id="home">
+    <div class="container py-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <div class="eyebrow mb-3">CRAFTED WITH CHARACTER</div>
+          <h1 class="fw-bold mb-4">Art that makes a <span class="text-gold">space</span> feel yours.</h1>
+          <p class="hero-copy mb-4">
+            Luxury handcrafted pieces for homes, gifting and meaningful moments —
+            from scented candles and Mandala art to statement décor and personalised wooden engravings.
+          </p>
+          <div class="hero-actions d-flex flex-wrap gap-2">
+            <a class="btn btn-dark rounded-pill" href="#collections">Explore Collection <i class="bi bi-arrow-right ms-2"></i></a>
+            <a class="btn btn-outline-dark rounded-pill" href="#custom">Create Custom Piece</a>
+          </div>
+
+          <div class="d-flex flex-wrap gap-4 mt-5 small text-secondary">
+            <span><i class="bi bi-check2-circle text-gold me-2"></i>Hand-finished</span>
+            <span><i class="bi bi-check2-circle text-gold me-2"></i>Gift-ready</span>
+            <span><i class="bi bi-check2-circle text-gold me-2"></i>Custom orders</span>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="hero-art">
+            <div class="art-frame">
+              <div class="mandala"></div>
+            </div>
+            <div class="hero-badge">
+              <i class="bi bi-stars text-gold fs-4"></i>
+              <div>
+                <strong class="d-block">Made to feel special</strong>
+                <small class="text-secondary">Small-batch handcrafted décor</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="py-4 border-bottom bg-white">
+    <div class="container">
+      <div class="row g-3">
+        <div class="col-6 col-lg-3">
+          <div class="feature h-100"><i class="bi bi-hand-index-thumb"></i><strong class="d-block mt-2">Handcrafted</strong><small class="text-secondary">Finished with care</small></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="feature h-100"><i class="bi bi-gift"></i><strong class="d-block mt-2">Gift Ready</strong><small class="text-secondary">Beautifully presented</small></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="feature h-100"><i class="bi bi-pencil-square"></i><strong class="d-block mt-2">Personalised</strong><small class="text-secondary">Names &amp; messages</small></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="feature h-100"><i class="bi bi-box-seam"></i><strong class="d-block mt-2">Careful Packing</strong><small class="text-secondary">Made for safe delivery</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTIONS -->
+  <section class="section-pad" id="collections">
+    <div class="container">
+      <div class="row align-items-end g-4 mb-5">
+        <div class="col-lg-7">
+          <div class="section-kicker mb-2">THE COLLECTION</div>
+          <h2 class="section-title fw-bold mb-0">Handmade pieces, modern mood.</h2>
+        </div>
+        <div class="col-lg-5">
+          <p class="text-secondary mb-0">A curated range of decorative and gifting pieces designed to bring warmth, personality and a little luxury into everyday spaces.</p>
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mb-4" id="filters">
+        <button class="btn btn-dark filter-btn px-4" data-filter="all">All</button>
+        <button class="btn btn-outline-dark filter-btn px-4" data-filter="candles">Candles</button>
+        <button class="btn btn-outline-dark filter-btn px-4" data-filter="mandala">Mandala Art</button>
+        <button class="btn btn-outline-dark filter-btn px-4" data-filter="coasters">Coasters</button>
+        <button class="btn btn-outline-dark filter-btn px-4" data-filter="decor">Wall Décor</button>
+        <button class="btn btn-outline-dark filter-btn px-4" data-filter="engraving">Laser Engraving</button>
+      </div>
+
+      <div class="row g-4" id="productGrid"></div>
+    </div>
+  </section>
+
+  <!-- CUSTOM -->
+  <section class="section-pad bg-paper" id="custom">
+    <div class="container">
+      <div class="custom-panel">
+        <div class="row g-0 align-items-stretch">
+          <div class="col-lg-6 p-4 p-md-5 p-xl-6">
+            <div class="section-kicker mb-3">PERSONALISED ART</div>
+            <h2 class="display-5 fw-bold mb-4">Turn a meaningful image into a wooden keepsake.</h2>
+            <p class="text-white-50 mb-5">
+              Send us your preferred dharmik image, family artwork, name or message.
+              We prepare a custom laser-engraved wooden frame for your space or gifting occasion.
+            </p>
+
+            <div class="d-grid gap-4">
+              <div class="step">
+                <span class="step-no">01</span>
+                <div><strong>Share your idea</strong><p class="small text-white-50 mb-0 mt-1">Image, name, quote or reference.</p></div>
+              </div>
+              <div class="step">
+                <span class="step-no">02</span>
+                <div><strong>Approve the design</strong><p class="small text-white-50 mb-0 mt-1">We prepare a preview before production.</p></div>
+              </div>
+              <div class="step">
+                <span class="step-no">03</span>
+                <div><strong>We craft &amp; pack it</strong><p class="small text-white-50 mb-0 mt-1">Laser engraving + careful finishing.</p></div>
+              </div>
+            </div>
+
+            <a href="#contact" class="btn btn-light rounded-pill mt-5 px-4">Start a Custom Order <i class="bi bi-arrow-right ms-2"></i></a>
+          </div>
+
+          <div class="col-lg-6 custom-preview">
+            <div class="wood">
+              <div class="engrave">
+                <div>
+                  <i class="bi bi-flower1"></i>
+                  <small>YOUR DESIGN</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="section-pad" id="story">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5">
+          <div class="section-kicker mb-2">WHY SSOY</div>
+          <h2 class="section-title fw-bold mb-4">Crafted for homes with a story.</h2>
+          <p class="text-secondary">
+            SSOY brings together handcrafted art, functional décor and personalised pieces
+            with a clean, contemporary presentation. Every collection is made to feel personal,
+            giftable and worth keeping.
+          </p>
+          <div class="row g-4 mt-2">
+            <div class="col-4"><div class="stat">01</div><small class="text-secondary">Curated</small></div>
+            <div class="col-4"><div class="stat">02</div><small class="text-secondary">Hand-finished</small></div>
+            <div class="col-4"><div class="stat">03</div><small class="text-secondary">Custom</small></div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="story-card">
+            <i class="bi bi-quote text-gold fs-1"></i>
+            <p class="quote mt-3 mb-4">
+              “The best décor isn't just beautiful. It carries a feeling — a memory,
+              a belief, a celebration or simply the joy of making a room your own.”
+            </p>
+            <div class="d-flex align-items-center gap-3">
+              <div class="brand-mark">S</div>
+              <div><strong>SSOY.IN</strong><small class="d-block text-secondary">Handcrafted collection</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section-pad bg-paper" id="contact">
+    <div class="container">
+      <div class="row g-5 align-items-start">
+        <div class="col-lg-5">
+          <div class="section-kicker mb-2">LET'S CREATE</div>
+          <h2 class="section-title fw-bold mb-4">Have a product or custom idea?</h2>
+          <p class="text-secondary mb-4">
+            Tell us what you are looking for. Use the form and we'll prepare an enquiry message for you.
+          </p>
+          <div class="d-grid gap-3">
+            <div class="d-flex gap-3 align-items-center">
+              <i class="bi bi-chat-dots text-gold fs-4"></i>
+              <div><strong>Custom enquiries</strong><small class="d-block text-secondary">Names, sizes, colours &amp; designs</small></div>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+              <i class="bi bi-box2-heart text-gold fs-4"></i>
+              <div><strong>Bulk / gifting orders</strong><small class="d-block text-secondary">Ask about larger quantities</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="contact-box">
+            <form id="enquiryForm" class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small">Your Name</label>
+                <input class="form-control" id="name" required placeholder="Enter your name">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small">Phone / WhatsApp</label>
+                <input class="form-control" id="phone" required placeholder="+91 ...">
+              </div>
+              <div class="col-12">
+                <label class="form-label small">What are you looking for?</label>
+                <select class="form-select" id="interest">
+                  <option>Luxury Candles</option>
+                  <option>Mandala Painting</option>
+                  <option>Cup Coasters</option>
+                  <option>Wall Decorative Light / Painting</option>
+                  <option>Laser Engraved Wooden Frame</option>
+                  <option>Custom / Bulk Order</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label small">Message</label>
+                <textarea class="form-control" id="message" rows="4" placeholder="Tell us your preferred size, quantity, design, budget, etc."></textarea>
+              </div>
+              <div class="col-12 d-flex flex-wrap gap-2 align-items-center">
+                <button class="btn btn-dark rounded-pill px-4" type="submit">
+                  Prepare Enquiry <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+                <small class="text-secondary">No payment required for an enquiry.</small>
+              </div>
+              <div class="col-12">
+                <div class="alert alert-success d-none mb-0" id="formResult"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="pt-5 pb-4">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-5">
+        <a href="#home" class="text-white fw-bold fs-5 letter-space">SSOY<span class="text-gold">.IN</span></a>
+        <p class="mt-3 mb-0 small">Handcrafted luxury for gifting, homes and meaningful spaces.</p>
+      </div>
+      <div class="col-6 col-lg-2">
+        <strong class="text-white small">Explore</strong>
+        <div class="d-grid gap-2 mt-3 small">
+          <a href="#collections">Collections</a>
+          <a href="#custom">Custom</a>
+          <a href="#story">Our Story</a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <strong class="text-white small">Categories</strong>
+        <div class="d-grid gap-2 mt-3 small">
+          <a href="#collections">Candles</a>
+          <a href="#collections">Mandala</a>
+          <a href="#collections">Coasters</a>
+          <a href="#collections">Wood Décor</a>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <strong class="text-white small">Follow / Enquire</strong>
+        <div class="d-flex gap-2 mt-3">
+          <a class="social" href="#contact" aria-label="Contact"><i class="bi bi-chat"></i></a>
+          <a class="social" href="#contact" aria-label="Email"><i class="bi bi-envelope"></i></a>
+          <a class="social" href="#contact" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <hr class="border-secondary opacity-25 my-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between gap-2 small">
+      <span>© <span id="year"></span> SSOY.IN. All rights reserved.</span>
+      <span>Handmade • Personal • Timeless</span>
+    </div>
+  </div>
+</footer>
+
+<!-- PRODUCT MODAL -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="row g-0">
+        <div class="col-md-6">
+          <img id="modalImage" class="modal-image w-100" alt="">
+        </div>
+        <div class="col-md-6 p-4 p-lg-5 d-flex flex-column">
+          <div class="section-kicker mb-2" id="modalCategory"></div>
+          <h3 class="fw-bold" id="modalTitle"></h3>
+          <p class="text-secondary flex-grow-1" id="modalDescription"></p>
+          <div class="h4 mb-3" id="modalPrice"></div>
+          <a href="#contact" data-bs-dismiss="modal" class="btn btn-dark rounded-pill">Enquire About This <i class="bi bi-arrow-right ms-2"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating enquiry -->
+<a class="floating-cta btn btn-dark px-4 py-3" href="#contact">
+  <i class="bi bi-chat-dots me-2"></i><span>Enquire Now</span>
+</a>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  "use strict";
+
+  /*
+    SSOY.IN — single-file storefront
+    ---------------------------------
+    Product images below are demo images. Replace the image URLs with your own
+    product photographs when you are ready.
+  */
+
+  const products = [
+    {
+      id: 1,
+      category: "candles",
+      label: "Candles",
+      title: "Amber Glow Luxury Candle",
+      price: "₹799",
+      image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=900&q=85",
+      description: "A warm, elegant candle designed for slow evenings, gifting and premium home styling."
+    },
+    {
+      id: 2,
+      category: "mandala",
+      label: "Mandala Art",
+      title: "Hand-painted Mandala",
+      price: "₹1,499",
+      image: "https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=900&q=85",
+      description: "Intricate circular artwork with a meditative, statement-making character for walls and gifting."
+    },
+    {
+      id: 3,
+      category: "coasters",
+      label: "Coasters",
+      title: "Artisan Coaster Set",
+      price: "₹499",
+      image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=900&q=85",
+      description: "Decorative coasters made to add a handcrafted touch to coffee tables and dining spaces."
+    },
+    {
+      id: 4,
+      category: "decor",
+      label: "Wall Décor",
+      title: "Decorative Light Art",
+      price: "₹2,499",
+      image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=85",
+      description: "Ambient decorative wall art that creates a warm focal point when the lights go down."
+    },
+    {
+      id: 5,
+      category: "engraving",
+      label: "Laser Engraving",
+      title: "Sacred Wooden Frame",
+      price: "From ₹1,299",
+      image: "https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&w=900&q=85",
+      description: "Personalised wooden artwork with laser-engraved religious or meaningful imagery."
+    },
+    {
+      id: 6,
+      category: "mandala",
+      label: "Mandala Art",
+      title: "Monochrome Mandala Panel",
+      price: "₹1,899",
+      image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=900&q=85",
+      description: "A contemporary monochrome Mandala panel for modern interiors and calm corners."
+    },
+    {
+      id: 7,
+      category: "candles",
+      label: "Candles",
+      title: "Sculptural Floral Candle",
+      price: "₹649",
+      image: "https://images.unsplash.com/photo-1602874801006-e26d2f4b4a8b?auto=format&fit=crop&w=900&q=85",
+      description: "A decorative candle that works equally well as a centrepiece or a thoughtful gift."
+    },
+    {
+      id: 8,
+      category: "engraving",
+      label: "Laser Engraving",
+      title: "Name & Quote Frame",
+      price: "From ₹999",
+      image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=85",
+      description: "Custom wooden frame engraved with a name, date, quote or special message."
+    }
+  ];
+
+  const grid = document.getElementById("productGrid");
+  const filters = document.getElementById("filters");
+  const modalElement = document.getElementById("productModal");
+  const productModal = new bootstrap.Modal(modalElement);
+
+  function renderProducts(filter = "all") {
+    const visible = filter === "all" ? products : products.filter(product => product.category === filter);
+
+    grid.innerHTML = visible.map(product => `
+      <div class="col-sm-6 col-lg-3 product-item">
+        <article class="product-card">
+          <button
+            class="product-image border-0 p-0 w-100 text-start"
+            type="button"
+            data-product-id="${product.id}"
+            aria-label="View ${product.title}">
+            <img src="${product.image}" alt="${product.title}" loading="lazy">
+            <span class="product-tag">${product.label}</span>
+          </button>
+          <div class="product-body">
+            <div class="product-meta mb-2">${product.label}</div>
+            <h3 class="h5 fw-bold mb-2">${product.title}</h3>
+            <div class="d-flex justify-content-between align-items-center gap-2">
+              <span class="price">${product.price}</span>
+              <button class="btn btn-sm btn-outline-dark rounded-pill px-3" type="button" data-product-id="${product.id}">
+                View
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    `).join("");
+  }
+
+  filters.addEventListener("click", event => {
+    const button = event.target.closest("[data-filter]");
+    if (!button) return;
+
+    document.querySelectorAll("[data-filter]").forEach(btn => {
+      btn.classList.remove("btn-dark");
+      btn.classList.add("btn-outline-dark");
+    });
+    button.classList.remove("btn-outline-dark");
+    button.classList.add("btn-dark");
+
+    renderProducts(button.dataset.filter);
+  });
+
+  grid.addEventListener("click", event => {
+    const trigger = event.target.closest("[data-product-id]");
+    if (!trigger) return;
+
+    const product = products.find(item => item.id === Number(trigger.dataset.productId));
+    if (!product) return;
+
+    document.getElementById("modalImage").src = product.image;
+    document.getElementById("modalImage").alt = product.title;
+    document.getElementById("modalCategory").textContent = product.label;
+    document.getElementById("modalTitle").textContent = product.title;
+    document.getElementById("modalPrice").textContent = product.price;
+    document.getElementById("modalDescription").textContent = product.description;
+
+    productModal.show();
+  });
+
+  document.getElementById("enquiryForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const interest = document.getElementById("interest").value;
+    const message = document.getElementById("message").value.trim();
+
+    const enquiryText =
+      `Hello SSOY.IN,%0A%0A` +
+      `Name: ${encodeURIComponent(name)}%0A` +
+      `Phone: ${encodeURIComponent(phone)}%0A` +
+      `Interested in: ${encodeURIComponent(interest)}%0A` +
+      `Message: ${encodeURIComponent(message || "Please share details and pricing.")}`;
+
+    /*
+      IMPORTANT:
+      Replace YOUR_WHATSAPP_NUMBER below with your real WhatsApp number,
+      including country code and without + or spaces.
+      Example for India: 9198XXXXXXXX
+    */
+    const YOUR_WHATSAPP_NUMBER = "";
+
+    const result = document.getElementById("formResult");
+
+    if (YOUR_WHATSAPP_NUMBER) {
+      window.open(`https://wa.me/${YOUR_WHATSAPP_NUMBER}?text=${enquiryText}`, "_blank", "noopener");
+      result.textContent = "Your enquiry is ready in WhatsApp.";
+    } else {
+      result.innerHTML = "Enquiry captured. <strong>Set your WhatsApp number in the JavaScript</strong> to send this form directly to WhatsApp.";
+    }
+
+    result.classList.remove("d-none");
+  });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  window.addEventListener("scroll", () => {
+    document.getElementById("mainNav").classList.toggle("scrolled", window.scrollY > 10);
+  });
+
+  document.querySelectorAll("#navMenu .nav-link, #navMenu .btn").forEach(link => {
+    link.addEventListener("click", () => {
+      const menu = document.getElementById("navMenu");
+      if (menu.classList.contains("show")) {
+        bootstrap.Collapse.getOrCreateInstance(menu).hide();
+      }
+    });
+  });
+
+  renderProducts();
+</script>
+</body>
+</html>
