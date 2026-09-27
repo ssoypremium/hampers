@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScienceCraft - WhatsApp Link Generator</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-green: #0a5c36;
+            --primary-dark: #063d23;
+            --accent-light-green: #eef8f2;
+            --badge-green: #e5f6ed;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --card-bg: #ffffff;
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ----- Navbar ----- */
+        .navbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            background-color: var(--primary-green);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-name span {
+            color: var(--primary-green);
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        /* ----- Main Container ----- */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 24px 20px;
+            margin: auto;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            background-color: var(--badge-green);
+            color: var(--primary-green);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 18px;
+            border-radius: var(--radius-full);
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1.25;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .section-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ----- Form Card ----- */
+        .generator-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #f1f5f9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--primary-green);
+            font-size: 16px;
+        }
+
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 14px 14px 14px 42px;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            color: var(--text-dark);
+            background-color: #fafafa;
+            transition: all 0.2s ease;
+        }
+
+        textarea {
+            padding-left: 14px;
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        input[type="tel"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px var(--badge-green);
+        }
+
+        .btn-generate {
+            width: 100%;
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(10, 92, 54, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-generate:active {
+            transform: scale(0.98);
+        }
+
+        /* ----- Output Result Card ----- */
+        .result-card {
+            margin-top: 24px;
+            background: var(--accent-light-green);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px dashed var(--primary-green);
+            display: none;
+        }
+
+        .result-card.active {
+            display: block;
+        }
+
+        .result-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .generated-url-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 10px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 13px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .btn-copy {
+            width: 100%;
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-copy:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar">
+        <a href="#" class="brand-logo">
+            <div class="logo-icon">
+                <!-- <i class="fa-solid fa-gear"></i>             -->
+                <i class="fa-solid fa-code"></i>       
+            </div>
+            <span class="brand-name">SSOY<span>.IN</span></span>
+            
+        </a>       
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <div class="tool-header">
+            <span class="badge-pill">WhatsApp Automation</span>
+            <h1 class="section-title">Pre-filled Link Generator</h1>
+            <p class="section-desc">Create custom inquiry links for ScienceCraft projects.</p>
+        </div>
+
+        <!-- Tool Card -->
+        <div class="generator-card">
+            
+            <!-- Mobile Input -->
+            <div class="form-group">
+                <label for="phoneInput">WhatsApp Mobile Number</label>
+                <div class="input-wrapper">
+                    <i class="fa-brands fa-whatsapp input-icon"></i>
+                    <input type="tel" id="phoneInput" placeholder="918847259996" value="918847259996">
+                </div>
+            </div>
+
+            <!-- Message Input -->
+            <div class="form-group">
+                <label for="messageInput">Default Inquiry Message</label>
+                <textarea id="messageInput" placeholder="Hi, I am interested in [Project Name]. Could you please provide more details and the pricing for this product?">Hi, I am interested in Electromagnetic Crane Model. Could you please provide more details and the pricing for this product?</textarea>
+            </div>
+
+            <!-- Action Button -->
+            <button class="btn-generate" onclick="generateWhatsAppLink()">
+                <i class="fa-solid fa-link"></i> Generate WhatsApp Link
+            </button>
+
+            <!-- Result Box -->
+            <div id="resultBox" class="result-card">
+                <div class="result-title">
+                    <i class="fa-solid fa-circle-check"></i> Generated Link Ready:
+                </div>
+                <div id="urlDisplay" class="generated-url-box"></div>
+                <button class="btn-copy" onclick="copyGeneratedLink()">
+                    <i class="fa-regular fa-copy"></i> Copy Link
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function generateWhatsAppLink() {
+            const phone = document.getElementById('phoneInput').value.replace(/[^0-9]/g, '');
+            const message = document.getElementById('messageInput').value.trim();
+
+            if (!phone) {
+                alert('Please enter a valid mobile number with country code.');
+                return;
+            }
+
+            let link = `https://wa.me/${phone}`;
+            if (message) {
+                link += `?text=${encodeURIComponent(message)}`;
+            }
+
+            document.getElementById('urlDisplay').textContent = link;
+            document.getElementById('resultBox').classList.add('active');
+        }
+
+        function copyGeneratedLink() {
+            const urlText = document.getElementById('urlDisplay').textContent;
+            
+            navigator.clipboard.writeText(urlText).then(() => {
+                alert('WhatsApp Link copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy link. Please copy manually.');
+            });
+        }
+    </script>
+
+          <script>
+        // Disable Right Click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Disable F12, Ctrl+U, Ctrl+Shift+I, Ctrl+Shift+J
+        document.onkeydown = function (e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        };
+    </script>
+    <script>
+        (function() {
+          var webhookUrl = "https://script.google.com/macros/s/AKfycbx4bprZe99bNVZssECwvpi2-86J85Dw9OaCeqf4cYG0Xgo4sCXHqaJcjWYLo7BtVPDS/exec";
+        
+          
+          fetch(webhookUrl)
+            .then(response => response.text())
+            .then(count => {
+              document.getElementById('visitor-count').innerText = count;
+            })
+            .catch(err => {
+              document.getElementById('visitor-count').innerText = '0';
+            });
+        
+          var visitorId = localStorage.getItem('visitor_id');
+          var visitorStatus = 'Old';
+        
+          if (!visitorId) {
+            visitorId = 'id_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('visitor_id', visitorId);
+            visitorStatus = 'New';
+          }
+      
+          fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+              sendData(data.ip, visitorId, visitorStatus);
+            })
+            .catch(() => {
+              sendData('Unknown', visitorId, visitorStatus);
+            });
+        
+          function sendData(ipAddress, vId, vStatus) {
+            fetch(webhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+              },
+              body: JSON.stringify({
+                url: window.location.href,
+                ip: ipAddress,
+                visitorId: vId,
+                status: vStatus
+              })
+            }).catch(err => console.error("Tracking error:", err));
+          }
+        })();
+    </script>
+
+</body>
+</html>
