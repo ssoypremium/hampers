@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahaja Radio</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* स्क्रीन को स्क्रॉल होने से रोकने के लिए ताकि सब कुछ एक ही बार में फिट रहे */
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            background: linear-gradient(135deg, #134e5e 0%, #71b280 100%); 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            padding: 10px;
+        }
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .player-card { 
+            width: 100%;
+            max-width: 420px; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            color: #2d3748;
+        }
+        h1 { 
+            color: #134e5e; 
+            margin: 0 0 10px 0; 
+            font-size: 22px; 
+        }
+        audio { 
+            width: 100%; 
+            margin-top: 15px; 
+            outline: none; 
+        }
+        .date-display { 
+            color: #718096; 
+            font-size: 13px; 
+            margin-bottom: 10px; 
+        }
+        .track-title { 
+            font-size: 14px; 
+            color: #4a5568; 
+            margin-top: 5px; 
+            font-weight: bold; 
+        }
+        
+        /* Footer Advertisement Marquee Style */
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        marquee {
+            font-size: 15px;
+            color: #ffeb3b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="player-card">
+        <h1>Sahaja Radio</h1>
+        <div class="date-display" id="dateDisplay"></div>
+        <div class="track-title" id="trackTitle">लोड हो रहा है...</div>
+        <!-- controlsList="nodownload" जोड़ने से डाउनलोड का विकल्प छिप जाता है -->
+        <audio id="audioPlayer" controls controlsList="nodownload" autoplay>
+            Aapka browser audio support nahi karta.
+        </audio>
+    </div>
+</div>
+
+<!-- Footer with Ad Marquee -->
+<footer>
+    <marquee id="adMarquee" behavior="scroll" direction="left">
+        जय श्री माता जी! सहज ऑनलाइन रेडियो में आपका स्वागत है। सहज प्रचार-प्रसार के लिए बने इस रेडियो पर सहज ध्यान से जुड़े भजन और स्पीचेस चौबीस घंटे, तीन सौ पैंसठ दिन लगातार चलते रहते हैं। यह अभी ट्रायल पीरियड पर है और आने वाले समय में इसमें काफी सारे सुधार किए जाएंगे। हमें आपके सुझावों का इंतजार रहेगा।
+    </marquee>
+</footer>
+
+<script>
+    const speeches = [
+        { name: "आत्मशतकम्", url: "https://raw.githubusercontent.com/ssoypremium/hampers/main/radio/Atmashatakam.mp3" },
+        { name: "आत्मशतकम्", url: "https://raw.githubusercontent.com/ssoypremium/hampers/main/radio/Atmashatakam.mp3" },
+        { name: "आत्मशतकम्", url: "https://raw.githubusercontent.com/ssoypremium/hampers/main/radio/Atmashatakam.mp3" }
+    ];
+
+    let currentIndex = 0;
+    const player = document.getElementById('audioPlayer');
+    const trackTitleElem = document.getElementById('trackTitle');
+
+    const today = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('dateDisplay').innerText = today.toLocaleDateString('hi-IN', options);
+
+    function playTrack(index) {
+        if (index >= speeches.length) {
+            currentIndex = 0;
+        }
+        player.src = speeches[currentIndex].url;
+        trackTitleElem.innerText = speeches[currentIndex].name;
+        player.play().catch(e => console.log("Auto-play blocked, user interaction needed"));
+    }
+
+    player.addEventListener('ended', function() {
+        currentIndex++;
+        playTrack(currentIndex);
+    });
+
+    playTrack(currentIndex);
+</script>
+
+<script>
+        // Disable Right Click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Disable F12, Ctrl+U, Ctrl+Shift+I, Ctrl+Shift+J
+        document.onkeydown = function (e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        };
+</script>
+
+</body>
+</html>
