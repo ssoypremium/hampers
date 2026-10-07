@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitOn - India's First AI Native Fitness Wearable & Tracker</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        neoDark: '#121614',
+                        neoCardDark: '#1a1f1c',
+                        neoGreen: '#10b981',
+                        neoMint: '#d1fae5',
+                        neoMintGradientStart: '#e6fffa',
+                        neoMintGradientEnd: '#b2f5ea',
+                        neoAccentGreen: '#00e676',
+                        neoButtonDark: '#1c2420',
+                    },
+                    borderRadius: {
+                        '3xl': '1.8rem',
+                        '4xl': '2.2rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #121614;
+            color: #1a1a1a;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .pill-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .floating-nav-shadow {
+            box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.15);
+        }
+
+        .mint-gradient-bg {
+            background: linear-gradient(180deg, #f0fdf4 0%, #d1fae5 100%);
+        }
+
+        .mint-card-gradient {
+            background: linear-gradient(135deg, #e6fcf5 0%, #c3f7e6 100%);
+        }
+
+        .purple-badge-gradient {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-in-out;
+        }
+
+        .accordion-content.active {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-neoDark text-gray-900 min-h-screen flex flex-col items-center justify-start pb-12 antialiased selection:bg-emerald-300">
+
+    <!-- Sticky Floating Header Container -->
+    <header class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <div class="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full px-5 py-3 w-full max-w-sm flex items-center justify-between floating-nav-shadow border border-gray-100">
+            <button id="menu-btn" aria-label="Open Menu" class="p-1 text-gray-800 hover:text-emerald-600 transition-colors">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            
+            <a href="#" class="text-xl font-bold tracking-tight text-gray-900 flex items-center gap-1">
+                FitOn
+            </a>
+
+            <button id="cart-btn" aria-label="Cart" class="p-1 text-gray-800 hover:text-emerald-600 transition-colors relative">
+                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                <span id="cart-badge" class="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Slide Navigation Drawer -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/60 z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex justify-end">
+        <div class="bg-white w-4/5 max-w-xs h-full p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out" id="menu-drawer">
+            <div>
+                <div class="flex justify-between items-center mb-8">
+                    <span class="text-xl font-bold text-emerald-600">FitOn</span>
+                    <button id="close-menu-btn" class="p-2 text-gray-600">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <nav class="space-y-4 text-left font-medium text-gray-800">
+                    <a href="#hero" class="block py-2 hover:text-emerald-600 transition-colors">FitOn Band ↗</a>
+                    <a href="#tracker-tools" class="block py-2 hover:text-emerald-600 transition-colors">Fitness Trackers</a>
+                    <a href="#features" class="block py-2 hover:text-emerald-600 transition-colors">Key Features</a>
+                    <a href="#apps" class="block py-2 hover:text-emerald-600 transition-colors">Apps & Sync</a>
+                    <a href="#faqs" class="block py-2 hover:text-emerald-600 transition-colors">FAQs</a>
+                    <a href="#contact" class="block py-2 hover:text-emerald-600 transition-colors">Contact Us</a>
+                </nav>
+            </div>
+            <div class="text-xs text-gray-500 border-t pt-4">
+                © 2026 FITON WELLNESS PVT LTD.
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN WRAPPER CONTAINER -->
+    <main class="w-full max-w-md mx-auto pt-20 px-3 space-y-4">
+
+        <!-- SECTION 1: HERO & PRODUCT DISPLAY CARD -->
+        <section id="hero" class="bg-white rounded-3xl p-6 shadow-xl flex flex-col items-center text-center relative overflow-hidden">
+            
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-2">What's in the FitOn Box</h2>
+            <p class="text-xs text-gray-500 font-medium mb-6">One smart fitness band. Zero hidden subscriptions.</p>
+
+            <!-- Box Product Carousel Showcase -->
+            <div class="w-full relative mb-4">
+                <div id="slider-container" class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth space-x-4 py-2">
+                    
+                    <!-- Slide 1: Full Bundle -->
+                    <div class="snap-center shrink-0 w-full flex flex-col items-center justify-center min-h-[220px]">
+                        <div class="relative w-full max-w-[280px] h-[200px] flex items-center justify-center">
+                            <svg class="w-full h-full" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Box -->
+                                <rect x="20" y="30" width="110" height="130" rx="12" fill="#0f1715" stroke="#10b981" stroke-width="1.5"/>
+                                <rect x="35" y="60" width="80" height="50" rx="25" fill="#1c2420" stroke="#10b981" stroke-width="2"/>
+                                <circle cx="75" cy="85" r="8" fill="none" stroke="#10b981" stroke-width="2"/>
+                                <text x="75" y="140" fill="#ffffff" font-size="9" font-family="sans-serif" text-anchor="middle" font-weight="600">FitOn Box</text>
+
+                                <!-- FitOn Device -->
+                                <g transform="translate(140, 60)">
+                                    <rect x="0" y="0" width="45" height="80" rx="18" fill="url(#emeraldGrad)" stroke="#222" stroke-width="2"/>
+                                    <circle cx="22.5" cy="35" r="9" fill="none" stroke="#fff" stroke-width="3"/>
+                                    <rect x="18" y="4" width="9" height="10" rx="3" fill="#111"/>
+                                    <text x="22.5" y="95" fill="#374151" font-size="8" font-family="sans-serif" text-anchor="middle" font-weight="600">FitOn Band</text>
+                                </g>
+
+                                <!-- Manual -->
+                                <g transform="translate(195, 75)">
+                                    <rect x="0" y="0" width="48" height="60" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+                                    <text x="24" y="24" fill="#111827" font-size="6" font-family="sans-serif" text-anchor="middle" font-weight="bold">FitOn</text>
+                                    <text x="24" y="32" fill="#111827" font-size="6" font-family="sans-serif" text-anchor="middle" font-weight="bold">Guide</text>
+                                    <text x="24" y="52" fill="#6b7280" font-size="6" font-family="sans-serif" text-anchor="middle">User Manual</text>
+                                </g>
+
+                                <!-- Strap & Cable -->
+                                <g transform="translate(250, 30)">
+                                    <ellipse cx="25" cy="20" rx="20" ry="12" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="3 2"/>
+                                    <text x="25" y="42" fill="#4b5563" font-size="7" text-anchor="middle">Sport Strap</text>
+                                </g>
+                                <g transform="translate(250, 110)">
+                                    <circle cx="20" cy="20" r="14" fill="none" stroke="#1f2937" stroke-width="4"/>
+                                    <text x="20" y="44" fill="#4b5563" font-size="7" text-anchor="middle">Fast Charger</text>
+                                </g>
+
+                                <defs>
+                                    <linearGradient id="emeraldGrad" x1="0" y1="0" x2="45" y2="80" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#10b981"/>
+                                        <stop offset="0.5" stop-color="#059669"/>
+                                        <stop offset="1" stop-color="#047857"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2: Device Close up -->
+                    <div class="snap-center shrink-0 w-full flex flex-col items-center justify-center min-h-[220px]">
+                        <div class="w-24 h-44 bg-gradient-to-b from-emerald-600 via-emerald-800 to-black rounded-3xl shadow-2xl p-2 relative border-2 border-emerald-400/40 flex flex-col items-center justify-center">
+                            <div class="w-6 h-6 rounded-full border-2 border-emerald-400 flex items-center justify-center mb-4">
+                                <i data-lucide="activity" class="w-3 h-3 text-emerald-400"></i>
+                            </div>
+                            <span class="text-white text-[10px] font-semibold tracking-widest uppercase">FitOn</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Slider Controls -->
+                <div class="flex items-center justify-center gap-3 mt-2">
+                    <button id="slide-prev" class="p-1 text-gray-400 hover:text-gray-700"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                    <div class="flex items-center gap-1.5">
+                        <span class="slider-dot w-2 h-2 rounded-full bg-emerald-500 transition-all"></span>
+                        <span class="slider-dot w-2 h-2 rounded-full bg-gray-300 transition-all"></span>
+                    </div>
+                    <button id="slide-next" class="p-1 text-gray-400 hover:text-gray-700"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <!-- Product Header Details -->
+            <div class="w-full text-left pt-2">
+                <div class="flex items-center gap-2 mb-2">
+                    <h1 class="text-3xl font-extrabold text-gray-900">FitOn Band</h1>
+                    <span class="bg-emerald-100/80 text-emerald-900 text-xs font-medium px-3 py-1 rounded-full border border-emerald-200">
+                        AI Fitness & Calorie Tracker
+                    </span>
+                </div>
+
+                <!-- Pricing Section -->
+                <div class="flex items-baseline gap-2 mt-3">
+                    <span class="text-3xl font-bold text-gray-900">₹2,999/-</span>
+                    <span class="text-lg text-gray-400 line-through font-medium">₹4,999/-</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-0.5">MRP inclusive of all taxes</p>
+
+                <!-- Color Selection Options -->
+                <div class="mt-5">
+                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">Select Color</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button class="color-btn active border-2 border-emerald-500 bg-gray-50 py-2 rounded-xl text-xs font-semibold text-gray-800 flex flex-col items-center gap-1 shadow-sm transition-all">
+                            <span class="w-4 h-4 rounded-full bg-black block border"></span>
+                            Matte Black
+                        </button>
+                        <button class="color-btn border-2 border-transparent bg-gray-50 py-2 rounded-xl text-xs font-semibold text-gray-800 flex flex-col items-center gap-1 transition-all hover:bg-gray-100">
+                            <span class="w-4 h-4 rounded-full bg-emerald-600 block border"></span>
+                            Neon Green
+                        </button>
+                        <button class="color-btn border-2 border-transparent bg-gray-50 py-2 rounded-xl text-xs font-semibold text-gray-800 flex flex-col items-center gap-1 transition-all hover:bg-gray-100">
+                            <span class="w-4 h-4 rounded-full bg-slate-600 block border"></span>
+                            Space Gray
+                        </button>
+                        <button class="color-btn border-2 border-transparent bg-gray-50 py-2 rounded-xl text-xs font-semibold text-gray-800 flex flex-col items-center gap-1 transition-all hover:bg-gray-100">
+                            <span class="w-4 h-4 rounded-full bg-orange-500 block border"></span>
+                            Sunset Red
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Description -->
+                <p class="text-xs text-gray-600 mt-4 leading-relaxed">
+                    FitOn tracks your daily calorie intake, workout metrics, heart rate, and steps effortlessly...
+                    <button class="text-emerald-600 font-semibold underline">View More</button>
+                </p>
+
+                <!-- Quantity & Add to Cart -->
+                <div class="flex items-center gap-3 mt-5">
+                    <div class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-2xl px-3 py-2.5 w-32">
+                        <button id="qty-minus" class="text-gray-500 hover:text-gray-800 font-bold px-1 text-lg">-</button>
+                        <span id="qty-count" class="font-bold text-gray-900 text-sm">1</span>
+                        <button id="qty-plus" class="text-emerald-600 hover:text-emerald-700 font-bold px-1 text-lg">+</button>
+                    </div>
+
+                    <button id="add-to-cart-btn" class="flex-1 bg-neoButtonDark text-emerald-400 font-bold text-sm tracking-wide py-3.5 px-4 rounded-2xl hover:bg-black transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2">
+                        <span>ADD TO CART</span>
+                    </button>
+                </div>
+
+                <!-- Dispatch info -->
+                <div class="flex items-center gap-2 mt-4 text-xs font-medium text-gray-700">
+                    <span class="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px]">✓</span>
+                    Dispatched in <strong class="font-semibold text-gray-900">24-48 hours</strong> with Free Express Delivery.
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: INTERACTIVE CALORIE & WORKOUT TRACKER TOOL -->
+        <section id="tracker-tools" class="bg-white rounded-3xl p-6 shadow-xl space-y-6">
+            <h3 class="text-xl font-bold text-gray-900 text-center">FitOn Web Tracker</h3>
+            
+            <!-- Calorie Tracker Widget -->
+            <div class="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-100 space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Calorie Tracker</span>
+                    <span class="text-xs font-bold text-emerald-600"><span id="total-calories">0</span> / 2000 kcal</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="food-item" placeholder="Food Name (e.g. Apple)" class="p-2.5 text-xs border border-gray-200 rounded-xl outline-none focus:border-emerald-500">
+                    <input type="number" id="calories-val" placeholder="Calories (e.g. 95)" class="p-2.5 text-xs border border-gray-200 rounded-xl outline-none focus:border-emerald-500">
+                </div>
+                <button id="add-food-btn" class="w-full bg-emerald-600 text-white font-bold text-xs py-2.5 rounded-xl hover:bg-emerald-700 transition-all">Add Food Item</button>
+                <ul id="food-list" class="space-y-1.5 pt-2 text-xs"></ul>
+            </div>
+
+            <!-- Workout Logger Widget -->
+            <div class="bg-slate-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-800">Workout Logger</span>
+                    <span class="text-xs font-bold text-amber-600"><span id="total-burned">0</span> kcal burned</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="workout-name" placeholder="Workout (e.g. Morning Run)" class="p-2.5 text-xs border border-gray-200 rounded-xl outline-none focus:border-emerald-500">
+                    <input type="number" id="workout-calories" placeholder="Calories Burned (300)" class="p-2.5 text-xs border border-gray-200 rounded-xl outline-none focus:border-emerald-500">
+                </div>
+                <button id="add-workout-btn" class="w-full bg-neoButtonDark text-emerald-400 font-bold text-xs py-2.5 rounded-xl hover:bg-black transition-all">Log Workout</button>
+                <ul id="workout-list" class="space-y-1.5 pt-2 text-xs"></ul>
+            </div>
+        </section>
+
+        <!-- SECTION 3: APP DOWNLOAD SECTION -->
+        <section class="bg-white rounded-3xl p-6 shadow-xl text-center space-y-4">
+            <div>
+                <p class="text-xs font-semibold text-gray-700 mb-3">Special launch offer price</p>
+                <button class="w-full bg-neoButtonDark text-emerald-400 font-bold py-3.5 px-4 rounded-full shadow-lg flex items-center justify-between hover:bg-black transition-all">
+                    <span class="text-xs sm:text-sm tracking-wider uppercase pl-2">BUY NOW @ ₹2,999</span>
+                    <span class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-gray-900">
+                        <i data-lucide="shopping-cart" class="w-4 h-4 stroke-[2.5]"></i>
+                    </span>
+                </button>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100">
+                <p class="text-xs font-medium text-gray-600 mb-4">Download FitOn Companion App for free</p>
+                
+                <div class="space-y-3">
+                    <button class="w-full border border-gray-300 hover:border-gray-400 bg-gray-50/50 py-3 rounded-full font-bold text-xs text-gray-900 flex items-center justify-center gap-2 tracking-wide transition-all">
+                        <i data-lucide="apple" class="w-4 h-4"></i>
+                        GET ON APP STORE
+                    </button>
+                    <button class="w-full border border-gray-300 hover:border-gray-400 bg-gray-50/50 py-3 rounded-full font-bold text-xs text-gray-900 flex items-center justify-center gap-2 tracking-wide transition-all">
+                        <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                        GET ON PLAY STORE
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: KEY FEATURES CARDS -->
+        <section id="features" class="space-y-3">
+            <div class="flex items-center justify-between px-2 py-1">
+                <h3 class="text-lg font-bold text-white">Key Features</h3>
+                <i data-lucide="activity" class="w-5 h-5 text-emerald-400"></i>
+            </div>
+
+            <div class="mint-gradient-bg rounded-3xl p-6 text-left shadow-lg border border-emerald-100/50">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Smart Health Tracking</h3>
+                <p class="text-xs text-gray-700 leading-relaxed mb-5">
+                    FitOn constantly measures your daily activity, active calories, sleep cycles, and continuous heart rate.
+                </p>
+
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div class="bg-emerald-100/60 rounded-2xl p-3 text-center border border-emerald-200/50">
+                        <i data-lucide="flame" class="w-6 h-6 text-emerald-600 mx-auto mb-1"></i>
+                        <span class="text-xs font-bold text-gray-800">Calorie Counter</span>
+                    </div>
+                    <div class="bg-amber-100/60 rounded-2xl p-3 text-center border border-amber-200/50">
+                        <i data-lucide="heart-pulse" class="w-6 h-6 text-red-500 mx-auto mb-1"></i>
+                        <span class="text-xs font-bold text-gray-800">Heart Rate</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="extra-features" class="space-y-3">
+                <div class="mint-card-gradient rounded-3xl p-6 text-center shadow-md">
+                    <h4 class="text-base font-bold text-gray-900 mb-1">Auto Workout Detection</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">Recognizes running, cycling, swimming, and gym workouts automatically.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-3xl p-6 text-center shadow-md border border-gray-100">
+                    <h4 class="text-base font-bold text-gray-900 mb-1">Ultra Long Battery Life</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">Up to 10 days of continuous fitness tracking on a single charge.</p>
+                </div>
+
+                <div class="mint-card-gradient rounded-3xl p-6 text-center shadow-md">
+                    <h4 class="text-base font-bold text-gray-900 mb-1">Water & Sweat Resistant</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">IP68 water rating ready for heavy workouts and swimming.</p>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button id="toggle-features-btn" class="bg-neoButtonDark text-emerald-400 text-xs font-bold px-6 py-3 rounded-full hover:bg-black transition-all">
+                    VIEW LESS
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 5: PRIVACY & DATA SECURITY -->
+        <section class="bg-white rounded-3xl p-6 shadow-xl text-center">
+            <div class="w-20 h-20 mx-auto mb-2 flex items-center justify-center">
+                <div class="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center shadow-inner">
+                    <i data-lucide="shield-check" class="w-8 h-8 text-emerald-600"></i>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-gray-900 mb-1">Your Health Data,</h3>
+            <h3 class="text-2xl font-bold text-emerald-600 mb-3">100% Private</h3>
+            <p class="text-xs text-gray-600 mb-4">We prioritize your health privacy above all else.</p>
+
+            <div class="bg-emerald-50/60 rounded-2xl p-4 text-left border border-emerald-100">
+                <h4 class="text-xs font-bold text-gray-900 mb-1">Encrypted Fitness Cloud</h4>
+                <p class="text-[11px] text-gray-600 leading-relaxed">
+                    Your health stats are stored using end-to-end encryption. We never sell your personal metrics to third-party advertisers.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: FAQ ACCORDION -->
+        <section id="faqs" class="space-y-2">
+            <h3 class="text-lg font-bold text-white px-2 py-1">Frequently Asked Questions</h3>
+
+            <div class="space-y-2" id="faq-accordion">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer faq-item">
+                    <div class="flex items-center justify-between gap-2">
+                        <h4 class="text-xs font-bold text-gray-900">What is included in the FitOn box?</h4>
+                        <i data-lucide="plus" class="w-4 h-4 text-gray-600 shrink-0 faq-icon transition-transform duration-200"></i>
+                    </div>
+                    <div class="accordion-content text-[11px] text-gray-600 mt-2 leading-relaxed">
+                        Each package comes with a FitOn smart band, silicone sport strap, fast-charging magnetic cable, and a quick setup user manual.
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer faq-item">
+                    <div class="flex items-center justify-between gap-2">
+                        <h4 class="text-xs font-bold text-gray-900">Is FitOn compatible with both iOS and Android?</h4>
+                        <i data-lucide="plus" class="w-4 h-4 text-gray-600 shrink-0 faq-icon transition-transform duration-200"></i>
+                    </div>
+                    <div class="accordion-content text-[11px] text-gray-600 mt-2 leading-relaxed">
+                        Yes, the FitOn app is completely free and works seamlessly on both Apple iOS and Android devices.
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer faq-item">
+                    <div class="flex items-center justify-between gap-2">
+                        <h4 class="text-xs font-bold text-gray-900">Does FitOn require any monthly subscription?</h4>
+                        <i data-lucide="plus" class="w-4 h-4 text-gray-600 shrink-0 faq-icon transition-transform duration-200"></i>
+                    </div>
+                    <div class="accordion-content text-[11px] text-gray-600 mt-2 leading-relaxed">
+                        No, all basic calorie tracking and workout logging features are free forever with no hidden subscriptions.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: FOOTER BRAND CARD -->
+        <footer id="contact" class="mint-gradient-bg rounded-4xl p-8 text-left shadow-2xl space-y-6 relative border border-emerald-300/50">
+            
+            <div class="flex justify-between items-start">
+                <ul class="space-y-3 font-extrabold text-sm text-gray-900 tracking-tight">
+                    <li><a href="#" class="hover:text-emerald-700 flex items-center gap-1">FITON BAND <i data-lucide="arrow-up-right" class="w-4 h-4"></i></a></li>
+                    <li><a href="#" class="hover:text-emerald-700">ABOUT US</a></li>
+                    <li><a href="#" class="hover:text-emerald-700">PRIVACY POLICY</a></li>
+                    <li><a href="#" class="hover:text-emerald-700">TERMS OF SERVICE</a></li>
+                    <li><a href="#" class="hover:text-emerald-700">CONTACT US</a></li>
+                </ul>
+
+                <div class="flex flex-col gap-3">
+                    <a href="#" class="w-10 h-10 bg-gray-900 text-white rounded-xl flex items-center justify-center hover:bg-emerald-600 transition-colors shadow">
+                        <i data-lucide="instagram" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-gray-900 text-white rounded-xl flex items-center justify-center hover:bg-emerald-600 transition-colors shadow">
+                        <i data-lucide="twitter" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <hr class="border-emerald-300/60 my-4" />
+
+            <div>
+                <h2 class="text-4xl font-extrabold text-gray-900 tracking-tight">FitOn</h2>
+                <p class="text-xs font-semibold text-gray-700 mt-1">India's First AI Native Fitness Wearable</p>
+            </div>
+
+            <div class="text-[10px] text-gray-600 leading-relaxed font-medium pt-2">
+                Copyright © 2026 • FITON WELLNESS PRIVATE LIMITED.<br>
+                All rights reserved.
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- STICKY FLOATING REFER & EARN BUTTON -->
+    <div class="fixed bottom-5 right-4 z-40">
+        <button id="refer-btn" class="bg-neoButtonDark text-emerald-400 border border-emerald-500/30 font-bold text-xs px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
+            <span class="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">%</span>
+            <span>Refer & Earn</span>
+        </button>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-5 py-3 rounded-full shadow-2xl z-50 opacity-0 transition-opacity duration-300 pointer-events-none flex items-center gap-2 border border-emerald-500">
+        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+        <span id="toast-msg">Added to cart!</span>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile Menu Drawer Toggle Logic
+        const menuBtn = document.getElementById('menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuDrawer = document.getElementById('menu-drawer');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('opacity-0', 'pointer-events-none');
+            menuDrawer.classList.remove('translate-x-full');
+        });
+
+        function closeMenu() {
+            mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+            menuDrawer.classList.add('translate-x-full');
+        }
+
+        closeMenuBtn.addEventListener('click', closeMenu);
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target === mobileMenu) closeMenu();
+        });
+
+        // Quantity Selector Logic
+        let quantity = 1;
+        const qtyCount = document.getElementById('qty-count');
+        document.getElementById('qty-minus').addEventListener('click', () => {
+            if (quantity > 1) { quantity--; qtyCount.textContent = quantity; }
+        });
+        document.getElementById('qty-plus').addEventListener('click', () => {
+            quantity++; qtyCount.textContent = quantity;
+        });
+
+        // Toast System
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-msg');
+        const cartBadge = document.getElementById('cart-badge');
+        let cartItemsCount = 0;
+
+        function showToast(message) {
+            toastMsg.textContent = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2500);
+        }
+
+        // Add to Cart
+        document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+            cartItemsCount += quantity;
+            cartBadge.textContent = cartItemsCount;
+            cartBadge.classList.remove('hidden');
+            showToast(`Added ${quantity} FitOn Band(s) to cart!`);
+        });
+
+        // Refer & Earn
+        document.getElementById('refer-btn').addEventListener('click', () => {
+            showToast('Referral link copied! Share with friends to get ₹500 off.');
+        });
+
+        // Calorie Tracker Code Integration
+        let totalCalories = 0;
+        document.getElementById('add-food-btn').addEventListener('click', () => {
+            const food = document.getElementById('food-item').value;
+            const calories = parseInt(document.getElementById('calories-val').value);
+            if (food && !isNaN(calories) && calories > 0) {
+                totalCalories += calories;
+                document.getElementById('total-calories').textContent = totalCalories;
+                const li = document.createElement('li');
+                li.className = "bg-white p-2 rounded-lg flex justify-between border border-gray-100 shadow-sm";
+                li.innerHTML = `<span>${food}</span><span class="font-bold text-emerald-600">${calories} kcal</span>`;
+                document.getElementById('food-list').appendChild(li);
+                document.getElementById('food-item').value = '';
+                document.getElementById('calories-val').value = '';
+                showToast(`Logged food: ${food}`);
+            }
+        });
+
+        // Workout Logger Code Integration
+        let totalBurned = 0;
+        document.getElementById('add-workout-btn').addEventListener('click', () => {
+            const workout = document.getElementById('workout-name').value;
+            const calories = parseInt(document.getElementById('workout-calories').value);
+            if (workout && !isNaN(calories) && calories > 0) {
+                totalBurned += calories;
+                document.getElementById('total-burned').textContent = totalBurned;
+                const li = document.createElement('li');
+                li.className = "bg-white p-2 rounded-lg flex justify-between border border-gray-100 shadow-sm";
+                li.innerHTML = `<span>${workout}</span><span class="font-bold text-amber-600">${calories} kcal burned</span>`;
+                document.getElementById('workout-list').appendChild(li);
+                document.getElementById('workout-name').value = '';
+                document.getElementById('workout-calories').value = '';
+                showToast(`Logged workout: ${workout}`);
+            }
+        });
+
+        // Color Buttons
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.replace('border-emerald-500', 'border-transparent'));
+                btn.classList.replace('border-transparent', 'border-emerald-500');
+                showToast(`Selected color: ${btn.textContent.trim()}`);
+            });
+        });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const content = item.querySelector('.accordion-content');
+                const icon = item.querySelector('.faq-icon');
+                const isOpen = content.classList.contains('active');
+
+                document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.faq-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+
+                if (!isOpen) {
+                    content.classList.add('active');
+                    icon.style.transform = 'rotate(45deg)';
+                }
+            });
+        });
+
+        // Features Toggle
+        const toggleFeaturesBtn = document.getElementById('toggle-features-btn');
+        const extraFeatures = document.getElementById('extra-features');
+        let isExpanded = true;
+        toggleFeaturesBtn.addEventListener('click', () => {
+            extraFeatures.style.display = isExpanded ? 'none' : 'block';
+            toggleFeaturesBtn.textContent = isExpanded ? 'VIEW MORE' : 'VIEW LESS';
+            isExpanded = !isExpanded;
+        });
+
+        // Slider Nav
+        const slider = document.getElementById('slider-container');
+        document.getElementById('slide-next').addEventListener('click', () => slider.scrollBy({ left: 280, behavior: 'smooth' }));
+        document.getElementById('slide-prev').addEventListener('click', () => slider.scrollBy({ left: -280, behavior: 'smooth' }));
+    </script>
+
+     <script>
+        // Disable Right Click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Disable F12, Ctrl+U, Ctrl+Shift+I, Ctrl+Shift+J
+        document.onkeydown = function (e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        };
+    </script>
+</body>
+</html>
