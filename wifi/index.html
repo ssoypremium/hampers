@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DropLink - Peer-to-Peer File Transfer</title>
-    <!-- Tailwind CSS for utility styling -->
+    <title>Local Wi-Fi File & Text Share (Node.js + WebRTC)</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -15,661 +17,629 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                        }
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        },
+                        darkbg: '#0f172a',
+                        cardbg: '#1e293b',
+                        borderbg: '#334155'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-        }
-        .dark .glass {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-        }
-        .drag-active {
-            border-color: #6366f1 !important;
-            background-color: rgba(99, 102, 241, 0.05) !important;
-        }
-        /* Custom Scrollbar */
+        /* Custom scrollbar for dark mode */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: #0f172a;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
             background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40 min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+<body class="bg-darkbg text-slate-100 font-sans min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
 
-    <!-- Header -->
-    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <div class="p-2.5 bg-brand-600 text-white rounded-2xl shadow-lg shadow-brand-500/30 flex items-center justify-center">
-                <i data-lucide="share-2" class="w-6 h-6"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold bg-gradient-to-r from-brand-600 to-indigo-500 bg-clip-text text-transparent">DropLink</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Local P2P File Express</p>
-            </div>
-        </div>
-
-        <div class="flex items-center space-x-3">
-            <!-- Theme Toggle -->
-            <button id="theme-toggle" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-800 transition-all text-slate-600 dark:text-slate-300 shadow-sm" title="Toggle Theme">
-                <i data-lucide="moon" id="theme-icon-dark" class="w-5 h-5 hidden"></i>
-                <i data-lucide="sun" id="theme-icon-light" class="w-5 h-5"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 mb-12">
-        <!-- Top Status Banner -->
-        <div class="glass border border-white/40 dark:border-slate-800/80 rounded-2xl p-4 mb-6 shadow-xl shadow-indigo-500/5 flex flex-wrap items-center justify-between gap-4">
+    <!-- Header Navigation -->
+    <header class="border-b border-borderbg bg-cardbg/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div id="status-indicator" class="w-3.5 h-3.5 rounded-full bg-amber-500 animate-pulse"></div>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-wifi text-white text-xl"></i>
+                </div>
                 <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Connection State</span>
-                    <span id="status-text" class="text-sm font-semibold text-slate-700 dark:text-slate-200">Ready to Connect</span>
+                    <h1 class="font-bold text-lg leading-none text-white">LocalShare <span class="text-xs px-2 py-0.5 rounded bg-brand-500/20 text-brand-500 border border-brand-500/30">Wi-Fi Only</span></h1>
+                    <p class="text-xs text-slate-400 mt-0.5">बिना इंटरनेट, सीधी फाइल और मैसेज ट्रांसफर</p>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
-                <span>Direct End-to-End Transfer</span>
+            <!-- Tab Switcher -->
+            <div class="flex bg-slate-900/60 p-1 rounded-xl border border-borderbg text-xs sm:text-sm font-medium">
+                <button id="tab-sim-btn" onclick="switchTab('simulator')" class="px-3 sm:px-4 py-1.5 rounded-lg bg-brand-600 text-white transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-desktop"></i>
+                    <span>Live Simulator</span>
+                </button>
+                <button id="tab-code-btn" onclick="switchTab('code')" class="px-3 sm:px-4 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-code"></i>
+                    <span>Node.js Server Code & Guide</span>
+                </button>
             </div>
         </div>
+    </header>
 
-        <!-- Two Column Responsive Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
 
-            <!-- LEFT COLUMN: Connection Setup & SDP Exchange -->
-            <div class="lg:col-span-5 space-y-6">
-                <div class="glass border border-white/40 dark:border-slate-800/80 rounded-3xl p-6 shadow-xl shadow-indigo-500/5 space-y-5">
-                    <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-4">
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="network" class="w-5 h-5 text-brand-600 dark:text-brand-500"></i>
-                            <h2 class="font-bold text-lg text-slate-800 dark:text-slate-100">Connection Setup</h2>
+        <!-- SECTION 1: LIVE SIMULATOR -->
+        <div id="tab-simulator" class="space-y-6">
+            
+            <!-- Connection Status Banner -->
+            <div class="bg-cardbg border border-borderbg rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-brand-500 text-2xl">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse"></span>
+                            <h2 class="text-base sm:text-lg font-semibold text-white">Local Wi-Fi Server Active</h2>
                         </div>
-                        <span class="text-xs font-medium px-2.5 py-1 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 rounded-full border border-brand-200/50 dark:border-brand-800/50">WebRTC</span>
+                        <p class="text-xs sm:text-sm text-slate-400 mt-1">अपने PC और Phone दोनों को **एक ही Wi-Fi** से जोड़ें। Phone के ब्राउज़र में नीचे दिया IP खोलें:</p>
                     </div>
+                </div>
 
-                    <!-- Action Selector -->
-                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200/50 dark:border-slate-800">
-                        <button id="role-host-btn" class="py-2 px-3 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-sm flex items-center justify-center space-x-1.5">
-                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-                            <span>1. Create Offer</span>
-                        </button>
-                        <button id="role-join-btn" class="py-2 px-3 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 transition-all hover:text-slate-900 dark:hover:text-slate-200 flex items-center justify-center space-x-1.5">
-                            <i data-lucide="arrow-down-left" class="w-3.5 h-3.5"></i>
-                            <span>2. Join / Answer</span>
-                        </button>
+                <!-- IP Address Copy Box -->
+                <div class="w-full md:w-auto bg-slate-900 border border-slate-700/80 rounded-xl p-3 flex items-center justify-between gap-3 shadow-inner">
+                    <div class="font-mono text-brand-500 font-semibold text-sm sm:text-base px-2" id="server-ip-display">
+                        http://192.168.1.15:3000
                     </div>
-
-                    <!-- Step 1: Create Connection -->
-                    <div id="step-host-box" class="space-y-4">
-                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                            Click <strong class="text-slate-700 dark:text-slate-300">Generate Offer</strong> to create a handshake code, then copy and send it to the other device.
-                        </p>
-                        <button id="create-offer-btn" class="w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center space-x-2 text-sm">
-                            <i data-lucide="cpu" class="w-4 h-4"></i>
-                            <span>Generate Offer Code</span>
-                        </button>
-                    </div>
-
-                    <!-- Local SDP Area -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center">
-                            <label for="local-sdp" class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Your Signaling Data</label>
-                            <button id="copy-sdp-btn" class="text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline flex items-center space-x-1 opacity-50 cursor-not-allowed" disabled>
-                                <i data-lucide="copy" class="w-3 h-3"></i>
-                                <span id="copy-btn-text">Copy</span>
-                            </button>
-                        </div>
-                        <textarea id="local-sdp" readonly placeholder="Click 'Generate Offer Code' or paste an answer..." class="w-full h-24 p-3 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-slate-600 dark:text-slate-400"></textarea>
-                    </div>
-
-                    <!-- Remote SDP Area -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center">
-                            <label for="remote-sdp" class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Peer Signaling Data</label>
-                            <button id="paste-sdp-btn" class="text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline flex items-center space-x-1">
-                                <i data-lucide="clipboard" class="w-3 h-3"></i>
-                                <span>Paste</span>
-                            </button>
-                        </div>
-                        <textarea id="remote-sdp" placeholder="Paste peer's Offer or Answer code here..." class="w-full h-24 p-3 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-slate-700 dark:text-slate-300"></textarea>
-                    </div>
-
-                    <!-- Connect Action -->
-                    <button id="connect-peer-btn" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2 text-sm">
-                        <i data-lucide="link" class="w-4 h-4"></i>
-                        <span>Accept Peer Data & Connect</span>
+                    <button onclick="copyToClipboard('http://192.168.1.15:3000', 'IP Address Copied!')" class="bg-brand-600 hover:bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition active:scale-95 flex items-center gap-1.5">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Copy IP</span>
                     </button>
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: Drag-and-Drop & Transfer Hub -->
-            <div class="lg:col-span-7 space-y-6">
+            <!-- Two-Device Interactive Simulator View -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <!-- Upload Drag and Drop Container -->
-                <div class="glass border border-white/40 dark:border-slate-800/80 rounded-3xl p-6 shadow-xl shadow-indigo-500/5 space-y-5">
-                    <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-4">
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="hard-drive-upload" class="w-5 h-5 text-brand-600 dark:text-brand-500"></i>
-                            <h2 class="font-bold text-lg text-slate-800 dark:text-slate-100">Send Files</h2>
+                <!-- DEVICE A: PC SERVER VIEW -->
+                <div class="bg-cardbg border border-borderbg rounded-2xl flex flex-col overflow-hidden shadow-xl">
+                    <!-- Device Bar -->
+                    <div class="bg-slate-900/90 border-b border-borderbg p-3.5 px-5 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-laptop text-brand-500"></i>
+                            <span class="font-semibold text-sm text-white">Device 1: PC Server</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">Host (192.168.1.15)</span>
                         </div>
-                        <span id="transfer-capacity" class="text-xs font-medium text-slate-400">P2P Streaming</span>
-                    </div>
-
-                    <!-- Dropzone -->
-                    <div id="dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 dark:hover:border-brand-500 transition-all rounded-2xl p-8 text-center bg-slate-50/50 dark:bg-slate-900/30 flex flex-col items-center justify-center space-y-4 cursor-pointer group">
-                        <input type="file" id="file-input" class="hidden" multiple />
-                        <div class="p-4 bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-brand-400 rounded-2xl group-hover:scale-110 transition-transform duration-200">
-                            <i data-lucide="upload-cloud" class="w-8 h-8"></i>
-                        </div>
-                        <div class="space-y-1">
-                            <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                                Drag & drop files here, or <span class="text-brand-600 dark:text-brand-400 underline">browse</span>
-                            </p>
-                            <p class="text-xs text-slate-400 dark:text-slate-500">Unlimited size. Direct browser-to-browser transfer.</p>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs text-slate-400">Connected</span>
                         </div>
                     </div>
 
-                    <!-- Transfer Progress Section -->
-                    <div id="progress-container" class="space-y-2 hidden">
-                        <div class="flex justify-between items-center text-xs">
-                            <span id="progress-file-name" class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[200px]">filename.zip</span>
-                            <span id="progress-percent" class="font-bold text-brand-600 dark:text-brand-400">0%</span>
+                    <div class="p-5 space-y-5 flex-1 flex flex-col justify-between">
+                        <!-- Send Text / Clipboard -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                                <i class="fa-regular fa-paper-plane mr-1"></i> Send Text / Links to Phone
+                            </label>
+                            <div class="flex gap-2">
+                                <input type="text" id="pc-text-input" placeholder="Type message or paste URL here..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition">
+                                <button onclick="simSendText('pc')" class="bg-brand-600 hover:bg-brand-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition active:scale-95 flex items-center gap-1">
+                                    <span>Send</span>
+                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div id="progress-bar" class="h-full bg-brand-600 rounded-full transition-all duration-150 w-0"></div>
+
+                        <!-- Drag & Drop File Upload Area -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                                <i class="fa-solid fa-file-arrow-up mr-1"></i> Share File to Phone
+                            </label>
+                            <div id="pc-drop-zone" class="border-2 border-dashed border-slate-700 hover:border-brand-500/70 bg-slate-900/50 rounded-2xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[140px]" onclick="document.getElementById('pc-file-input').click()">
+                                <input type="file" id="pc-file-input" class="hidden" onchange="simSendFile('pc', this.files[0])">
+                                <div class="w-10 h-10 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center mb-2">
+                                    <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                                </div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-200">Click to upload or Drag & Drop File</p>
+                                <p class="text-[11px] text-slate-500 mt-1">Photos, Videos, PDFs or APKs (Direct Wi-Fi speed)</p>
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center text-[11px] text-slate-400">
-                            <span id="progress-speed">0 KB/s</span>
-                            <span id="progress-status">Preparing...</span>
+
+                        <!-- Transfer Progress Status -->
+                        <div id="pc-progress-container" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-3">
+                            <div class="flex justify-between text-xs mb-1.5">
+                                <span id="pc-progress-filename" class="font-mono text-slate-300 truncate max-w-[200px]">document.pdf</span>
+                                <span id="pc-progress-percent" class="font-mono text-brand-500 font-semibold">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                <div id="pc-progress-bar" class="bg-brand-500 h-2 rounded-full transition-all duration-100" style="width: 0%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Transfer Activity Logs & Downloads -->
-                <div class="glass border border-white/40 dark:border-slate-800/80 rounded-3xl p-6 shadow-xl shadow-indigo-500/5 space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="list" class="w-5 h-5 text-brand-600 dark:text-brand-500"></i>
-                            <h2 class="font-bold text-base text-slate-800 dark:text-slate-100">Transfer Activity Log</h2>
+                <!-- DEVICE B: SIMULATED MOBILE PHONE -->
+                <div class="bg-cardbg border border-borderbg rounded-2xl flex flex-col overflow-hidden shadow-xl">
+                    <!-- Device Bar -->
+                    <div class="bg-slate-900/90 border-b border-borderbg p-3.5 px-5 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-mobile-screen-button text-sky-400"></i>
+                            <span class="font-semibold text-sm text-white">Device 2: Phone Browser</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">Client (192.168.1.42)</span>
                         </div>
-                        <button id="clear-logs-btn" class="text-xs font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">Clear</button>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs text-slate-400">Receiving Live</span>
+                        </div>
                     </div>
 
-                    <!-- Logs List -->
-                    <div id="log-list" class="space-y-3 max-h-56 overflow-y-auto pr-1">
-                        <div id="empty-log-state" class="text-center py-8 text-xs text-slate-400 dark:text-slate-500">
-                            No file transfer activities yet.
+                    <!-- Phone Receiver Screen Content -->
+                    <div class="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                                    <i class="fa-solid fa-inbox mr-1"></i> Received Messages & Files
+                                </h3>
+                                <button onclick="clearHistory('phone-inbox')" class="text-[11px] text-slate-500 hover:text-slate-300 transition">Clear All</button>
+                            </div>
+
+                            <!-- Inbox Activity Stream -->
+                            <div id="phone-inbox" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 min-h-[200px] max-h-[260px] overflow-y-auto space-y-2.5 text-xs">
+                                <div class="text-center text-slate-500 py-10 italic" id="empty-inbox-msg">
+                                    <i class="fa-solid fa-wifi text-2xl mb-2 block opacity-40"></i>
+                                    Waiting for PC to send files or text...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phone Back-share option -->
+                        <div class="pt-2 border-t border-slate-800">
+                            <div class="flex gap-2">
+                                <input type="text" id="phone-text-input" placeholder="Reply or send text back to PC..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+                                <button onclick="simSendText('phone')" class="bg-sky-600 hover:bg-sky-500 text-white px-3 py-2 rounded-xl text-xs font-semibold transition active:scale-95">
+                                    Send
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-        </div>
-    </main>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs font-medium z-50">
-        <i data-lucide="info" class="w-4 h-4 text-brand-400 dark:text-brand-600"></i>
-        <span id="toast-msg">Message goes here</span>
-    </div>
-
-    <!-- Application Script -->
-    <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
-        // Theme Toggle Logic
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIconLight = document.getElementById('theme-icon-light');
-        const themeIconDark = document.getElementById('theme-icon-dark');
-
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-            themeIconLight.classList.add('hidden');
-            themeIconDark.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            themeIconLight.classList.toggle('hidden');
-            themeIconDark.classList.toggle('hidden');
-        });
-
-        // Toast Notification System
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-msg');
-            toastMsg.innerText = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3500);
-        }
-
-        // WebRTC & App Core State
-        let pc = null;
-        let dataChannel = null;
-        let fileReader = null;
-        let isHost = true;
-
-        // File receiving state
-        let incomingFileInfo = null;
-        let receivedBuffers = [];
-        let receivedSize = 0;
-
-        const CHUNK_SIZE = 16384; // 16 KB standard WebRTC chunk size
-
-        // DOM Element References
-        const statusIndicator = document.getElementById('status-indicator');
-        const statusText = document.getElementById('status-text');
-        const roleHostBtn = document.getElementById('role-host-btn');
-        const roleJoinBtn = document.getElementById('role-join-btn');
-        const stepHostBox = document.getElementById('step-host-box');
-        const createOfferBtn = document.getElementById('create-offer-btn');
-        const localSdp = document.getElementById('local-sdp');
-        const remoteSdp = document.getElementById('remote-sdp');
-        const copySdpBtn = document.getElementById('copy-sdp-btn');
-        const copyBtnText = document.getElementById('copy-btn-text');
-        const pasteSdpBtn = document.getElementById('paste-sdp-btn');
-        const connectPeerBtn = document.getElementById('connect-peer-btn');
-        const dropzone = document.getElementById('dropzone');
-        const fileInput = document.getElementById('file-input');
-        const progressContainer = document.getElementById('progress-container');
-        const progressBar = document.getElementById('progress-bar');
-        const progressFileName = document.getElementById('progress-file-name');
-        const progressPercent = document.getElementById('progress-percent');
-        const progressSpeed = document.getElementById('progress-speed');
-        const progressStatus = document.getElementById('progress-status');
-        const logList = document.getElementById('log-list');
-        const emptyLogState = document.getElementById('empty-log-state');
-        const clearLogsBtn = document.getElementById('clear-logs-btn');
-
-        // Initialize WebRTC Peer Connection
-        function initPeerConnection() {
-            const configuration = {
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' }
-                ]
-            };
-
-            pc = new RTCPeerConnection(configuration);
-
-            // Handle ICE Candidate gathering completion
-            pc.onicecandidate = (event) => {
-                if (event.candidate === null) {
-                    // ICE Gathering completed, output full SDP JSON
-                    localSdp.value = JSON.stringify(pc.localDescription);
-                    copySdpBtn.disabled = false;
-                    copySdpBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            };
-
-            // Monitor Connection State
-            pc.onconnectionstatechange = () => {
-                updateConnectionUI(pc.connectionState);
-            };
-
-            // Handle incoming DataChannel (For Joiner)
-            pc.ondatachannel = (event) => {
-                dataChannel = event.channel;
-                setupDataChannelListeners();
-            };
-        }
-
-        // Setup DataChannel Event Listeners
-        function setupDataChannelListeners() {
-            if (!dataChannel) return;
-
-            dataChannel.binaryType = 'arraybuffer';
-
-            dataChannel.onopen = () => {
-                updateConnectionUI('connected');
-                showToast('P2P Connection Established Successfully!');
-            };
-
-            dataChannel.onclose = () => {
-                updateConnectionUI('disconnected');
-                showToast('Connection Closed.');
-            };
-
-            dataChannel.onmessage = (event) => {
-                handleIncomingData(event.data);
-            };
-        }
-
-        // Update UI State based on WebRTC Connection State
-        function updateConnectionUI(state) {
-            statusIndicator.className = 'w-3.5 h-3.5 rounded-full';
-            switch (state) {
-                case 'connected':
-                    statusIndicator.classList.add('bg-emerald-500');
-                    statusText.innerText = 'Connected & Ready';
-                    break;
-                case 'connecting':
-                    statusIndicator.classList.add('bg-amber-500', 'animate-pulse');
-                    statusText.innerText = 'Connecting to Peer...';
-                    break;
-                case 'disconnected':
-                case 'failed':
-                    statusIndicator.classList.add('bg-rose-500');
-                    statusText.innerText = 'Disconnected';
-                    break;
-                default:
-                    statusIndicator.classList.add('bg-amber-500', 'animate-pulse');
-                    statusText.innerText = 'Awaiting Peer Setup';
-            }
-        }
-
-        // Role Selection
-        roleHostBtn.addEventListener('click', () => {
-            isHost = true;
-            roleHostBtn.classList.add('bg-white', 'dark:bg-slate-800', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
-            roleHostBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-            roleJoinBtn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
-            roleJoinBtn.classList.add('text-slate-600', 'dark:text-slate-400');
-            stepHostBox.classList.remove('hidden');
-        });
-
-        roleJoinBtn.addEventListener('click', () => {
-            isHost = false;
-            roleJoinBtn.classList.add('bg-white', 'dark:bg-slate-800', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
-            roleJoinBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-            roleHostBtn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
-            roleHostBtn.classList.add('text-slate-600', 'dark:text-slate-400');
-            stepHostBox.classList.add('hidden');
-        });
-
-        // Generate Offer (Host)
-        createOfferBtn.addEventListener('click', async () => {
-            initPeerConnection();
-
-            // Create DataChannel as host
-            dataChannel = pc.createDataChannel('fileTransfer');
-            setupDataChannelListeners();
-
-            const offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
-
-            statusText.innerText = 'Gathering network info...';
-            showToast('Generating Offer Code...');
-        });
-
-        // Process Remote Signaling Code (Connect Button)
-        connectPeerBtn.addEventListener('click', async () => {
-            const rawSdp = remoteSdp.value.trim();
-            if (!rawSdp) {
-                showToast('Please paste valid Signaling Data first!');
-                return;
-            }
-
-            try {
-                const sdpData = JSON.parse(rawSdp);
-
-                if (sdpData.type === 'offer') {
-                    // We are answering an offer
-                    initPeerConnection();
-                    await pc.setRemoteDescription(new RTCSessionDescription(sdpData));
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-
-                    statusText.innerText = 'Answer created. Share with Host!';
-                    showToast('Answer generated in "Your Signaling Data"');
-                } else if (sdpData.type === 'answer') {
-                    // Host receiving answer
-                    if (!pc) {
-                        showToast('Initiate an offer first!');
-                        return;
-                    }
-                    await pc.setRemoteDescription(new RTCSessionDescription(sdpData));
-                    showToast('Handshake complete! Connecting...');
-                }
-            } catch (err) {
-                showToast('Invalid SDP Code format.');
-                console.error(err);
-            }
-        });
-
-        // Clipboard Actions
-        copySdpBtn.addEventListener('click', () => {
-            if (!localSdp.value) return;
-            document.execCommand('copy');
-            copyBtnText.innerText = 'Copied!';
-            showToast('Signaling Data copied to clipboard!');
-            setTimeout(() => { copyBtnText.innerText = 'Copy'; }, 2000);
-        });
-
-        pasteSdpBtn.addEventListener('click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                remoteSdp.value = text;
-                showToast('Pasted signaling data!');
-            } catch (err) {
-                showToast('Clipboard access denied. Please paste manually.');
-            }
-        });
-
-        // Drag & Drop & File Select Handlers
-        dropzone.addEventListener('click', () => fileInput.click());
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropzone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropzone.classList.add('drag-active');
-            }, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropzone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropzone.classList.remove('drag-active');
-            }, false);
-        });
-
-        dropzone.addEventListener('drop', (e) => {
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                sendFiles(files);
-            }
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                sendFiles(e.target.files);
-            }
-        });
-
-        // Send Files Logic
-        async function sendFiles(files) {
-            if (!dataChannel || dataChannel.readyState !== 'open') {
-                showToast('Error: Peer connection is not open yet!');
-                return;
-            }
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                await sendSingleFile(file);
-            }
-        }
-
-        function sendSingleFile(file) {
-            return new Promise((resolve) => {
-                progressContainer.classList.remove('hidden');
-                progressFileName.innerText = file.name;
-                progressStatus.innerText = 'Sending metadata...';
-
-                // Send File Header metadata first
-                const header = {
-                    type: 'file-header',
-                    name: file.name,
-                    size: file.size,
-                    fileType: file.type
-                };
-                dataChannel.send(JSON.stringify(header));
-
-                let offset = 0;
-                const startTime = Date.now();
-                fileReader = new FileReader();
-
-                fileReader.onload = (e) => {
-                    dataChannel.send(e.target.result);
-                    offset += e.target.result.byteLength;
-
-                    // Calculate Progress
-                    const percent = Math.round((offset / file.size) * 100);
-                    progressBar.style.width = `${percent}%`;
-                    progressPercent.innerText = `${percent}%`;
-
-                    const elapsedTime = (Date.now() - startTime) / 1000;
-                    const speed = elapsedTime > 0 ? (offset / elapsedTime / 1024).toFixed(1) : 0;
-                    progressSpeed.innerText = `${speed} KB/s`;
-                    progressStatus.innerText = 'Sending chunks...';
-
-                    if (offset < file.size) {
-                        readNextChunk();
-                    } else {
-                        progressStatus.innerText = 'Transfer Complete!';
-                        addLogEntry(file.name, file.size, 'sent');
-                        showToast(`Successfully sent: ${file.name}`);
-                        setTimeout(() => {
-                            progressContainer.classList.add('hidden');
-                        }, 2500);
-                        resolve();
-                    }
-                };
-
-                function readNextChunk() {
-                    const slice = file.slice(offset, offset + CHUNK_SIZE);
-                    fileReader.readAsArrayBuffer(slice);
-                }
-
-                readNextChunk();
-            });
-        }
-
-        // Handle Incoming Data from Peer
-        function handleIncomingData(data) {
-            if (typeof data === 'string') {
-                // Header JSON metadata
-                const meta = JSON.parse(data);
-                if (meta.type === 'file-header') {
-                    incomingFileInfo = meta;
-                    receivedBuffers = [];
-                    receivedSize = 0;
-
-                    progressContainer.classList.remove('hidden');
-                    progressFileName.innerText = incomingFileInfo.name;
-                    progressStatus.innerText = 'Receiving...';
-                }
-            } else {
-                // Binary Chunk ArrayBuffer
-                receivedBuffers.push(data);
-                receivedSize += data.byteLength;
-
-                const percent = Math.round((receivedSize / incomingFileInfo.size) * 100);
-                progressBar.style.width = `${percent}%`;
-                progressPercent.innerText = `${percent}%`;
-
-                if (receivedSize >= incomingFileInfo.size) {
-                    // File Received completely
-                    progressStatus.innerText = 'Saving File...';
-                    const blob = new Blob(receivedBuffers, { type: incomingFileInfo.fileType || 'application/octet-stream' });
-                    const downloadUrl = URL.createObjectURL(blob);
-
-                    addLogEntry(incomingFileInfo.name, incomingFileInfo.size, 'received', downloadUrl);
-                    showToast(`File Received: ${incomingFileInfo.name}`);
-
-                    setTimeout(() => {
-                        progressContainer.classList.add('hidden');
-                    }, 2500);
-
-                    // Reset buffer
-                    receivedBuffers = [];
-                    incomingFileInfo = null;
-                }
-            }
-        }
-
-        // Log Entries Management
-        function addLogEntry(fileName, fileSize, direction, downloadUrl = null) {
-            if (emptyLogState) {
-                emptyLogState.remove();
-            }
-
-            const formattedSize = formatBytes(fileSize);
-            const isSent = direction === 'sent';
-
-            const logItem = document.createElement('div');
-            logItem.className = 'flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 rounded-xl text-xs transition-all hover:border-slate-300';
-
-            logItem.innerHTML = `
-                <div class="flex items-center space-x-3 truncate">
-                    <div class="p-2 rounded-lg ${isSent ? 'bg-indigo-50 dark:bg-indigo-950/50 text-brand-600 dark:text-brand-400' : 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'}">
-                        <i data-lucide="${isSent ? 'arrow-up-right' : 'arrow-down-left'}" class="w-4 h-4"></i>
-                    </div>
-                    <div class="truncate">
-                        <p class="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[180px] sm:max-w-[280px]">${fileName}</p>
-                        <p class="text-[10px] text-slate-400">${formattedSize} • ${isSent ? 'Sent' : 'Received'}</p>
+            <!-- Features Info Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-cardbg/50 border border-borderbg rounded-xl p-4 flex items-start gap-3">
+                    <div class="text-brand-500 text-xl mt-0.5"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-white">No Internet Needed</h4>
+                        <p class="text-xs text-slate-400 mt-1">डेटा आपके Wi-Fi राउटर के ज़रिए सीधे लोकल LAN पर ट्रांसफर होता है। कोई डेटा लिमिट नहीं!</p>
                     </div>
                 </div>
-                ${downloadUrl ? `
-                    <a href="${downloadUrl}" download="${fileName}" class="py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg shadow-sm transition-all flex items-center space-x-1">
-                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                        <span>Save</span>
-                    </a>
-                ` : `
-                    <span class="text-[11px] font-medium text-slate-400">Completed</span>
-                `}
-            `;
+                <div class="bg-cardbg/50 border border-borderbg rounded-xl p-4 flex items-start gap-3">
+                    <div class="text-brand-500 text-xl mt-0.5"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-white">100% Private & Secure</h4>
+                        <p class="text-xs text-slate-400 mt-1">आपकी फाइल्स किसी बाहरी क्लाउड सर्वर पर नहीं जातीं। सब कुछ आपके कमरे के Wi-Fi तक सीमित रहता है।</p>
+                    </div>
+                </div>
+                <div class="bg-cardbg/50 border border-borderbg rounded-xl p-4 flex items-start gap-3">
+                    <div class="text-brand-500 text-xl mt-0.5"><i class="fa-solid fa-copy"></i></div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-white">Instant Copy-Paste</h4>
+                        <p class="text-xs text-slate-400 mt-1">लंबी URLs, पासवर्ड्स या नोट्स को PC से फोन पर एक क्लिक में कॉपी-पेस्ट करें।</p>
+                    </div>
+                </div>
+            </div>
 
-            logList.prepend(logItem);
-            lucide.createIcons();
+        </div>
+
+        <!-- SECTION 2: CODE BLOCKS & STEP-BY-STEP SETUP GUIDE -->
+        <div id="tab-code" class="hidden space-y-8">
+
+            <!-- Setup Instructions Box -->
+            <div class="bg-cardbg border border-borderbg rounded-2xl p-6 shadow-xl">
+                <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-brand-500"></i>
+                    <span>अपने PC पर इसे चलाने की Step-by-Step गाइड (Node.js Setup)</span>
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs sm:text-sm">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                        <div class="w-6 h-6 rounded-full bg-brand-500/20 text-brand-500 font-mono font-bold flex items-center justify-center mb-2">1</div>
+                        <h3 class="font-semibold text-white mb-1">Folder बनाएँ</h3>
+                        <p class="text-slate-400">अपने PC में एक नया फोल्डर बनाएँ, जैसे <code class="bg-slate-800 text-brand-500 px-1.5 py-0.5 rounded font-mono">wifishare</code></p>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                        <div class="w-6 h-6 rounded-full bg-brand-500/20 text-brand-500 font-mono font-bold flex items-center justify-center mb-2">2</div>
+                        <h3 class="font-semibold text-white mb-1">Files सेव करें</h3>
+                        <p class="text-slate-400">नीचे दिए गए दोनों कोड को <code class="bg-slate-800 text-brand-500 px-1.5 py-0.5 rounded font-mono">server.js</code> और <code class="bg-slate-800 text-brand-500 px-1.5 py-0.5 rounded font-mono">index.html</code> नाम से फोल्डर में सेव करें।</p>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                        <div class="w-6 h-6 rounded-full bg-brand-500/20 text-brand-500 font-mono font-bold flex items-center justify-center mb-2">3</div>
+                        <h3 class="font-semibold text-white mb-1">Express इंस्टॉल करें</h3>
+                        <p class="text-slate-400">CMD या Terminal में चलाएँ: <br><code class="bg-slate-800 text-slate-200 px-1.5 py-0.5 rounded font-mono block mt-1">npm install express ws</code></p>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                        <div class="w-6 h-6 rounded-full bg-brand-500/20 text-brand-500 font-mono font-bold flex items-center justify-center mb-2">4</div>
+                        <h3 class="font-semibold text-white mb-1">Server Start करें</h3>
+                        <p class="text-slate-400">Terminal में चलाएँ: <br><code class="bg-slate-800 text-brand-500 px-1.5 py-0.5 rounded font-mono block mt-1">node server.js</code></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CODE BLOCK 1: server.js -->
+            <div class="bg-cardbg border border-borderbg rounded-2xl overflow-hidden shadow-xl">
+                <div class="bg-slate-900 border-b border-borderbg px-5 py-3.5 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-brands fa-node-js text-emerald-500 text-lg"></i>
+                        <span class="font-mono text-sm font-semibold text-white">server.js</span>
+                        <span class="text-xs text-slate-500 ml-2">(Node.js Backend Local IP Auto-Detector)</span>
+                    </div>
+                    <button onclick="copyCode('code-server-js', 'server.js Code Copied!')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-mono transition flex items-center gap-1.5">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Copy Code</span>
+                    </button>
+                </div>
+                <div class="p-4 bg-slate-950 overflow-x-auto">
+                    <pre><code id="code-server-js" class="font-mono text-xs text-slate-300 leading-relaxed">const express = require('express');
+const http = require('http');
+const os = require('os');
+const path = require('path');
+const WebSocket = require('ws');
+
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+const PORT = 3000;
+
+// Automatically detect Local IPv4 Address (e.g. 192.168.x.x)
+function getLocalIpAddress() {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            // Skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return '127.0.0.1';
+}
+
+// Serve static HTML/JS frontend
+app.use(express.static(__dirname));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// WebSocket relay for local peer text & file signaling
+wss.on('connection', (ws) => {
+    console.log('[+] New device connected on Local Wi-Fi');
+
+    ws.on('message', (message) => {
+        // Broadcast incoming message/file chunk to all connected devices on LAN
+        wss.clients.forEach((client) => {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+                client.send(message.toString());
+            }
+        });
+    });
+
+    ws.on('close', () => console.log('[-] Device disconnected'));
+});
+
+// Start Server
+const localIP = getLocalIpAddress();
+server.listen(PORT, '0.0.0.0', () => {
+    console.log('\n==================================================');
+    console.log('🚀 LOCAL WI-FI SHARE SERVER IS RUNNING!');
+    console.log('==================================================');
+    console.log(`\n💻 On PC Open:    http://localhost:${PORT}`);
+    console.log(`📱 On Phone Open: http://${localIP}:${PORT}`);
+    console.log('\n(Ensure both PC and Phone are on the SAME Wi-Fi network)\n');
+});</code></pre>
+                </div>
+            </div>
+
+            <!-- CODE BLOCK 2: index.html -->
+            <div class="bg-cardbg border border-borderbg rounded-2xl overflow-hidden shadow-xl">
+                <div class="bg-slate-900 border-b border-borderbg px-5 py-3.5 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-brands fa-html5 text-orange-500 text-lg"></i>
+                        <span class="font-mono text-sm font-semibold text-white">index.html</span>
+                        <span class="text-xs text-slate-500 ml-2">(Frontend Drag-and-Drop & WebSocket UI)</span>
+                    </div>
+                    <button onclick="copyCode('code-index-html', 'index.html Code Copied!')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-mono transition flex items-center gap-1.5">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Copy Code</span>
+                    </button>
+                </div>
+                <div class="p-4 bg-slate-950 overflow-x-auto">
+                    <pre><code id="code-index-html" class="font-mono text-xs text-slate-300 leading-relaxed">&lt;!DOCTYPE html&gt;
+&lt;html lang="en" class="dark"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Local Wi-Fi File & Text Transfer&lt;/title&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"&gt;
+&lt;/head&gt;
+&lt;body class="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-8 font-sans"&gt;
+    &lt;div class="max-w-3xl mx-auto space-y-6"&gt;
+        
+        &lt;!-- Header --&gt;
+        &lt;div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg text-center"&gt;
+            &lt;h1 class="text-2xl font-bold text-white mb-1"&gt;Local LAN File & Text Share&lt;/h1&gt;
+            &lt;p class="text-sm text-slate-400"&gt;Direct transfer over your Wi-Fi network without internet.&lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Text Sharing Box --&gt;
+        &lt;div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3"&gt;
+            &lt;h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300"&gt;Send Text / Link&lt;/h2&gt;
+            &lt;div class="flex gap-2"&gt;
+                &lt;input type="text" id="text-msg" placeholder="Type text or URL..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none"&gt;
+                &lt;button onclick="sendTextMessage()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-xl text-sm font-semibold"&gt;Send&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- File Upload Area --&gt;
+        &lt;div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-3"&gt;
+            &lt;h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 text-left"&gt;Send File&lt;/h2&gt;
+            &lt;input type="file" id="file-input" class="hidden" onchange="sendFile(this.files[0])"&gt;
+            &lt;div onclick="document.getElementById('file-input').click()" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 bg-slate-950/50 rounded-xl p-8 cursor-pointer"&gt;
+                &lt;i class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-500 mb-2"&gt;&lt;/i&gt;
+                &lt;p class="text-sm font-medium"&gt;Click to select a file to transfer&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Inbox Activity Stream --&gt;
+        &lt;div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3"&gt;
+            &lt;h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300"&gt;Received Feed&lt;/h2&gt;
+            &lt;div id="feed" class="space-y-2 min-h-[120px]"&gt;
+                &lt;div class="text-xs text-slate-500 italic text-center py-6"&gt;No incoming messages or files yet...&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        // Connect to WebSocket Server on same local IP
+        const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ws = new WebSocket(`${protocol}//${location.host}`);
+
+        ws.onmessage = (event) =&gt; {
+            const data = JSON.parse(event.data);
+            const feed = document.getElementById('feed');
+
+            if (data.type === 'text') {
+                const item = document.createElement('div');
+                item.className = 'bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm flex justify-between items-center';
+                item.innerHTML = `&lt;span class="text-slate-200"&gt;${data.text}&lt;/span&gt;&lt;button onclick="navigator.clipboard.writeText('${data.text}')" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300"&gt;Copy&lt;/button&gt;`;
+                feed.appendChild(item);
+            } else if (data.type === 'file') {
+                const item = document.createElement('div');
+                item.className = 'bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm flex justify-between items-center';
+                item.innerHTML = `&lt;span class="text-emerald-400 font-semibold"&gt;${data.filename}&lt;/span&gt;&lt;a href="${data.fileData}" download="${data.filename}" class="text-xs bg-emerald-600 px-3 py-1 rounded font-medium text-white"&gt;Download&lt;/a&gt;`;
+                feed.appendChild(item);
+            }
+        };
+
+        function sendTextMessage() {
+            const input = document.getElementById('text-msg');
+            if (!input.value) return;
+            ws.send(JSON.stringify({ type: 'text', text: input.value }));
+            input.value = '';
         }
 
-        clearLogsBtn.addEventListener('click', () => {
-            logList.innerHTML = '<div id="empty-log-state" class="text-center py-8 text-xs text-slate-400 dark:text-slate-500">No file transfer activities yet.</div>';
-        });
+        function sendFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () =&gt; {
+                ws.send(JSON.stringify({
+                    type: 'file',
+                    filename: file.name,
+                    fileData: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                </div>
+            </div>
 
-        // Utility: Byte Formatter
-        function formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        </div>
+
+    </main>
+
+    <!-- Notification Toast Container -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs sm:text-sm font-semibold opacity-0 transition-all duration-300 pointer-events-none transform translate-y-3 flex items-center gap-2">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-msg">Copied!</span>
+    </div>
+
+    <!-- Live Client Simulator Script -->
+    <script>
+        // Tab Switcher
+        function switchTab(tab) {
+            const simTab = document.getElementById('tab-simulator');
+            const codeTab = document.getElementById('tab-code');
+            const simBtn = document.getElementById('tab-sim-btn');
+            const codeBtn = document.getElementById('tab-code-btn');
+
+            if (tab === 'simulator') {
+                simTab.classList.remove('hidden');
+                codeTab.classList.add('hidden');
+                simBtn.className = 'px-3 sm:px-4 py-1.5 rounded-lg bg-brand-600 text-white transition-all duration-200 flex items-center gap-2';
+                codeBtn.className = 'px-3 sm:px-4 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200 flex items-center gap-2';
+            } else {
+                simTab.classList.add('hidden');
+                codeTab.classList.remove('hidden');
+                codeBtn.className = 'px-3 sm:px-4 py-1.5 rounded-lg bg-brand-600 text-white transition-all duration-200 flex items-center gap-2';
+                simBtn.className = 'px-3 sm:px-4 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200 flex items-center gap-2';
+            }
+        }
+
+        // Copy Helper
+        function copyToClipboard(text, message) {
+            document.execCommand('copy');
+            showToast(message || 'Copied to clipboard!');
+        }
+
+        function copyCode(elementId, message) {
+            const codeText = document.getElementById(elementId).innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = codeText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast(message);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.innerText = msg;
+            toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+            }, 2500);
+        }
+
+        // SIMULATOR LOGIC
+        function simSendText(sender) {
+            const inputId = sender === 'pc' ? 'pc-text-input' : 'phone-text-input';
+            const input = document.getElementById(inputId);
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            addInboxItem({
+                type: 'text',
+                sender: sender === 'pc' ? 'PC' : 'Phone',
+                content: text
+            });
+
+            input.value = '';
+            showToast(`Message sent to Phone!`);
+        }
+
+        function simSendFile(sender, file) {
+            if (!file) return;
+
+            const progressContainer = document.getElementById('pc-progress-container');
+            const progressBar = document.getElementById('pc-progress-bar');
+            const progressPercent = document.getElementById('pc-progress-percent');
+            const progressFilename = document.getElementById('pc-progress-filename');
+
+            progressContainer.classList.remove('hidden');
+            progressFilename.innerText = file.name;
+            progressBar.style.width = '0%';
+            progressPercent.innerText = '0%';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 20;
+                progressBar.style.width = progress + '%';
+                progressPercent.innerText = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progressContainer.classList.add('hidden');
+                        
+                        // Add file to Phone Inbox
+                        addInboxItem({
+                            type: 'file',
+                            sender: 'PC',
+                            filename: file.name,
+                            size: (file.size / (1024 * 1024)).toFixed(2) + ' MB'
+                        });
+
+                        showToast(`File "${file.name}" received on Phone!`);
+                    }, 300);
+                }
+            }, 80);
+        }
+
+        function addInboxItem(item) {
+            const inbox = document.getElementById('phone-inbox');
+            const emptyMsg = document.getElementById('empty-inbox-msg');
+            if (emptyMsg) emptyMsg.remove();
+
+            const card = document.createElement('div');
+            card.className = 'bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 transition hover:border-slate-700';
+
+            if (item.type === 'text') {
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <span class="text-[10px] font-semibold uppercase tracking-wider text-sky-400 block mb-0.5">From ${item.sender}</span>
+                            <p class="text-xs text-white font-mono break-all">${escapeHtml(item.content)}</p>
+                        </div>
+                        <button onclick="navigator.clipboard.writeText('${escapeHtml(item.content)}'); showToast('Text copied on Phone!');" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-slate-300 shrink-0">
+                            Copy
+                        </button>
+                    </div>
+                `;
+            } else if (item.type === 'file') {
+                card.innerHTML = `
+                    <div class="flex justify-between items-center gap-2">
+                        <div class="flex items-center gap-2.5 truncate">
+                            <div class="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-500 flex items-center justify-center text-sm shrink-0">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </div>
+                            <div class="truncate">
+                                <p class="text-xs font-medium text-white truncate">${escapeHtml(item.filename)}</p>
+                                <p class="text-[10px] text-slate-400">${item.size} • Wi-Fi Direct</p>
+                            </div>
+                        </div>
+                        <button onclick="showToast('Simulated File Downloaded!')" class="text-xs bg-brand-600 hover:bg-brand-500 text-white px-2.5 py-1.5 rounded-lg font-medium shrink-0">
+                            Download
+                        </button>
+                    </div>
+                `;
+            }
+
+            inbox.prepend(card);
+        }
+
+        function clearHistory(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="text-center text-slate-500 py-10 italic" id="empty-inbox-msg">
+                    <i class="fa-solid fa-wifi text-2xl mb-2 block opacity-40"></i>
+                    Waiting for PC to send files or text...
+                </div>
+            `;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
 </body>
