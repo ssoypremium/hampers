@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,22 +12,29 @@
     button { padding: 12px 24px; margin: 10px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
     .call-btn { background-color: #28a745; color: white; }
     .end-btn { background-color: #dc3545; color: white; }
-    .status { margin-top: 15px; font-size: 18px; color: #333; }
+    .status-container { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .status-dot { width: 15px; height: 15px; border-radius: 50%; background-color: #dc3545; display: inline-block; }
+    .status-dot.connected { background-color: #28a745; }
+    .status-dot.calling { background-color: #ffc107; }
+    .status-text { font-size: 18px; font-weight: bold; color: #333; }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>Phone 1 (Caller)</h2>
-    <button id="callBtn" class="call-btn" onclick="makeCall()">Phone 2 को कॉल करें</button>
-    <button id="endBtn" class="end-btn" onclick="endCall()" disabled>कॉल एंड करें</button>
-    <div id="status" class="status">स्थिति: तैयार</div>
+    <button id="callBtn" class="call-btn" onclick="makeCall()">Call</button>
+    <button id="endBtn" class="end-btn" onclick="endCall()" disabled>End Call</button>
+    
+    <div class="status-container">
+      <span id="statusDot" class="status-dot"></span>
+      <span id="statusText" class="status-text">Disconnected</span>
+    </div>
   </div>
 
   <audio id="localAudio" autoplay muted></audio>
   <audio id="remoteAudio" autoplay></audio>
 
   <script>
-    // Firebase Config (यहाँ अपनी Firebase प्रोजेक्ट की डिटेल्स डालें)
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -44,13 +51,12 @@
     const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
     async function makeCall() {
-      document.getElementById('status').innerText = "Phone 2 पर कॉल जा रही है...";
+      updateStatus('calling', 'Calling Phone 2...');
       document.getElementById('callBtn').disabled = true;
       document.getElementById('endBtn').disabled = false;
 
-      // निश्चित कॉल ID का उपयोग
       sessionRef = database.ref('active_calls/main_call');
-      await sessionRef.remove(); // पुरानी कॉल डेटा साफ़ करें
+      await sessionRef.remove();
 
       localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       document.getElementById('localAudio').srcObject = localStream;
@@ -77,16 +83,14 @@
         offer: { type: offer.type, sdp: offer.sdp }
       });
 
-      // Answer का इंतज़ार करें
       sessionRef.child('answer').on('value', async snapshot => {
         const data = snapshot.val();
         if (data && !pc.currentRemoteDescription) {
           await pc.setRemoteDescription(new RTCSessionDescription(data));
-          document.getElementById('status').innerText = "कॉल कनेक्ट हो गई (Connected)";
+          updateStatus('connected', 'Connected');
         }
       });
 
-      // Phone 2 के ICE Candidates सुनें
       sessionRef.child('calleeCandidates').on('child_added', snapshot => {
         const candidate = new RTCIceCandidate(snapshot.val());
         pc.addIceCandidate(candidate);
@@ -103,9 +107,18 @@
     function cleanup() {
       if (pc) { pc.close(); pc = null; }
       if (localStream) { localStream.getTracks().forEach(track => track.stop()); }
-      document.getElementById('status').innerText = "कॉल समाप्त (Ended)";
+      updateStatus('disconnected', 'Disconnected');
       document.getElementById('callBtn').disabled = false;
       document.getElementById('endBtn').disabled = true;
+    }
+
+    function updateStatus(state, text) {
+      const dot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+      dot.className = 'status-dot';
+      if (state === 'connected') dot.classList.add('connected');
+      else if (state === 'calling') dot.classList.add('calling');
+      statusText.innerText = text;
     }
   </script>
 </body>
