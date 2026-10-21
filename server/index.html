@@ -1,176 +1,166 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Data Transfer - Server / Sender</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDKs (Modular V9/V10 JS) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        // TODO: अपनी Firebase Project की डिटेल्स यहाँ डालें
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseorg.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Firebase initialize करें
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        let currentPin = null;
-        let sessionRef = null;
-
-        // UI एलिमेंट्स
-        const generatePinBtn = document.getElementById("generatePinBtn");
-        const pinDisplay = document.getElementById("pinDisplay");
-        const statusBadge = document.getElementById("statusBadge");
-        const chatBox = document.getElementById("chatBox");
-        const messageInput = document.getElementById("messageInput");
-        const sendBtn = document.getElementById("sendBtn");
-
-        // 6-Digit PIN जनरेट करने का फ़ंक्शन
-        function generate6DigitPIN() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
-        }
-
-        // 1. PIN जनरेट करके सर्वर रूम बनाना
-        generatePinBtn.addEventListener("click", () => {
-            currentPin = generate6DigitPIN();
-            pinDisplay.innerText = currentPin;
-            
-            sessionRef = ref(database, 'sessions/' + currentPin);
-
-            // Firebase में सर्वर रूम क्रिएट करें
-            set(sessionRef, {
-                createdAt: serverTimestamp(),
-                serverConnected: true,
-                clientConnected: false,
-                status: "waiting"
-            }).then(() => {
-                // सर्वर डिस्कनेक्ट होने पर स्टेटस क्लीन करें
-                onDisconnect(ref(database, 'sessions/' + currentPin + '/serverConnected')).set(false);
-
-                statusBadge.innerText = "क्लाइंट का इंतज़ार जारी है...";
-                statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30";
-                
-                // क्लाइंट के जुड़ने का इंतज़ार करें
-                listenForClient();
-                // मैसेज रिसीव करना सुनना
-                listenForMessages();
-            }).catch((err) => {
-                alert("Firebase त्रुटि: " + err.message);
-            });
-        });
-
-        // 2. क्लाइंट कनेक्ट हुआ या नहीं यह चेक करें
-        function listenForClient() {
-            const clientStatusRef = ref(database, 'sessions/' + currentPin + '/clientConnected');
-            onValue(clientStatusRef, (snapshot) => {
-                const isConnected = snapshot.val();
-                if (isConnected === true) {
-                    statusBadge.innerText = "क्लाइंट कनेक्टेड है!";
-                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                    messageInput.disabled = false;
-                    sendBtn.disabled = false;
-                }
-            });
-        }
-
-        // 3. डेटा/मेसेज भेजना
-        function sendMessage() {
-            const text = messageInput.value.trim();
-            if (!text || !currentPin) return;
-
-            const messagesRef = ref(database, 'sessions/' + currentPin + '/messages');
-            push(messagesRef, {
-                sender: "server",
-                text: text,
-                timestamp: serverTimestamp()
-            });
-
-            appendMessage("Server (आप)", text, "outgoing");
-            messageInput.value = "";
-        }
-
-        sendBtn.addEventListener("click", sendMessage);
-        messageInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") sendMessage();
-        });
-
-        // 4. क्लाइंट से डेटा/मेसेज प्राप्त करना
-        function listenForMessages() {
-            const messagesRef = ref(database, 'sessions/' + currentPin + '/messages');
-            onValue(messagesRef, (snapshot) => {
-                const data = snapshot.val();
-                if (!data) return;
-
-                // चैट बॉक्स साफ़ करके नया लिस्ट रेंडर करें
-                chatBox.innerHTML = "";
-                Object.values(data).forEach(msg => {
-                    const isSelf = msg.sender === "server";
-                    appendMessage(isSelf ? "Server (आप)" : "Client", msg.text, isSelf ? "outgoing" : "incoming");
-                });
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-        }
-
-        // UI में मैसेज जोड़ने का फ़ंक्शन
-        function appendMessage(senderName, text, type) {
-            const msgDiv = document.createElement("div");
-            msgDiv.className = `flex flex-col ${type === 'outgoing' ? 'items-end' : 'items-start'} mb-3`;
-            
-            msgDiv.innerHTML = `
-                <span class="text-xs text-slate-400 mb-1">${senderName}</span>
-                <div class="max-w-xs px-4 py-2 rounded-2xl text-sm ${type === 'outgoing' ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-slate-700 text-slate-100 rounded-bl-none'}">
-                    ${text}
-                </div>
-            `;
-            chatBox.appendChild(msgDiv);
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirShare - Sender (Server)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
 
-    <div class="w-full max-w-md bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 flex flex-col h-[650px]">
-        <!-- Header -->
-        <div class="flex justify-between items-center border-b border-slate-700 pb-4 mb-4">
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-indigo-600 rounded-lg text-white">
+          <i class="fa-solid fa-paper-plane text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-xl leading-tight">AirShare</h1>
+          <p class="text-xs text-indigo-400 font-medium">Sender Mode (Server)</p>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Firebase Connected
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-1">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Left Column: Share Form -->
+      <div class="md:col-span-2 space-y-6">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur">
+          <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-share-nodes text-indigo-400"></i> Share Content
+          </h2>
+          
+          <form id="sendForm" class="space-y-4">
             <div>
-                <h1 class="text-xl font-bold text-indigo-400">Server Node</h1>
-                <p class="text-xs text-slate-400">PIN जनरेट करें और डेटा भेजें</p>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Text or Link Payload</label>
+              <textarea id="payloadInput" rows="5" required placeholder="Paste text, URL, code snippet, or notes here..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition resize-none"></textarea>
             </div>
-            <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-400 border border-slate-600">
-                ऑफलाइन
-            </span>
-        </div>
 
-        <!-- PIN Generation Section -->
-        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 text-center mb-4">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">पेयरिंग PIN कोड</p>
-            <div id="pinDisplay" class="text-3xl font-mono font-extrabold text-emerald-400 tracking-widest mb-3">
-                ------
-            </div>
-            <button id="generatePinBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium py-2 rounded-lg transition-colors shadow-lg shadow-indigo-600/20">
-                नया PIN जनरेट करें
+            <button type="submit" id="submitBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-medium text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+              <i class="fa-solid fa-bolt"></i> Generate Share Code
             </button>
+          </form>
         </div>
 
-        <!-- Chat / Data Exchange Area -->
-        <div id="chatBox" class="flex-1 bg-slate-900/40 border border-slate-700/50 rounded-xl p-4 overflow-y-auto mb-4">
-            <div class="text-center text-xs text-slate-500 my-auto pt-12">
-                PIN जनरेट करें और क्लाइंट का कनेक्ट होने का इंतज़ार करें।
-            </div>
+        <!-- Generated Code Card (Hidden initially) -->
+        <div id="codeCard" class="hidden bg-indigo-950/40 border border-indigo-500/30 rounded-2xl p-6 text-center space-y-3">
+          <p class="text-xs font-medium text-indigo-300 uppercase tracking-wider">Your Share Code</p>
+          <div class="text-4xl font-extrabold tracking-widest text-white font-mono" id="generatedCode">----</div>
+          <p class="text-xs text-slate-400">Receiver can enter this code on <span class="text-slate-200 font-mono">client.html</span></p>
+          <button id="copyCodeBtn" class="px-4 py-2 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 rounded-lg text-xs font-medium transition inline-flex items-center gap-2">
+            <i class="fa-regular fa-copy"></i> Copy Code
+          </button>
         </div>
+      </div>
 
-        <!-- Message Input -->
-        <div class="flex gap-2">
-            <input type="text" id="messageInput" disabled placeholder="डेटा/मैसेज टाइप करें..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 disabled:opacity-50">
-            <button id="sendBtn" disabled class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700
+      <!-- Right Column: Active Shares -->
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur flex flex-col">
+        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-indigo-400"></i> Active Shares
+        </h2>
+        <div id="activeSharesList" class="space-y-3 overflow-y-auto flex-1 max-h-[350px] pr-1">
+          <p class="text-xs text-slate-500 text-center py-6">No active shares yet.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+    AirShare Server &bull; Firebase Realtime Sync
+  </footer>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6a0avUTymJ7byjC87nwjxvHyJCun4vxA",
+      authDomain: "airshare-279eb.firebaseapp.com",
+      databaseURL: "https://airshare-279eb-default-rtdb.firebaseio.com",
+      projectId: "airshare-279eb",
+      storageBucket: "airshare-279eb.firebasestorage.app",
+      messagingSenderId: "344144076433",
+      appId: "1:344144076433:web:4a37b569bf2b358b3e6930"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const sendForm = document.getElementById('sendForm');
+    const payloadInput = document.getElementById('payloadInput');
+    const codeCard = document.getElementById('codeCard');
+    const generatedCode = document.getElementById('generatedCode');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const activeSharesList = document.getElementById('activeSharesList');
+
+    function generate4DigitCode() {
+      return Math.floor(1000 + Math.random() * 9000).toString();
+    }
+
+    sendForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const content = payloadInput.value.trim();
+      if(!content) return;
+
+      const code = generate4DigitCode();
+
+      try {
+        await set(ref(db, 'shares/' + code), {
+          content: content,
+          timestamp: Date.now()
+        });
+
+        generatedCode.textContent = code;
+        codeCard.classList.remove('hidden');
+        payloadInput.value = '';
+      } catch (error) {
+        alert("Error saving data: " + error.message);
+      }
+    });
+
+    copyCodeBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(generatedCode.textContent);
+      copyCodeBtn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Copied!';
+      setTimeout(() => {
+        copyCodeBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Code';
+      }, 2000);
+    });
+
+    // Listen to active shares
+    const sharesRef = ref(db, 'shares');
+    onValue(sharesRef, (snapshot) => {
+      activeSharesList.innerHTML = '';
+      const data = snapshot.val();
+      if (!data) {
+        activeSharesList.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">No active shares yet.</p>';
+        return;
+      }
+
+      Object.keys(data).reverse().forEach(code => {
+        const item = data[code];
+        const card = document.createElement('div');
+        card.className = "p-3 bg-slate-900 border border-slate-700/50 rounded-xl space-y-1 text-xs";
+        card.innerHTML = `
+          <div class="flex items-center justify-between font-mono">
+            <span class="text-indigo-400 font-bold text-sm">#${code}</span>
+            <span class="text-slate-500 text-[10px]">${new Date(item.timestamp).toLocaleTimeString()}</span>
+          </div>
+          <p class="text-slate-300 line-clamp-2 break-all">${item.content}</p>
+        `;
+        activeSharesList.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
