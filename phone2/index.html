@@ -3,32 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phone 2 - WebRTC Audio Receiver</title>
+  <title>Phone 2 - Receiver</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
-    .card { background: #fff; padding: 20px; border-radius: 10px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    input { padding: 10px; font-size: 18px; width: 150px; text-align: center; margin: 10px; }
-    button { padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; }
-    .answer-btn { background-color: #28a745; color: white; }
-    .end-btn { background-color: #dc3545; color: white; }
+    .card { background: #fff; padding: 25px; border-radius: 12px; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    button { padding: 14px 28px; margin: 10px; font-size: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; display: none; }
+    .accept-btn { background-color: #28a745; color: white; animation: pulse 1.5s infinite; }
+    .status { margin-top: 15px; font-size: 18px; color: #333; }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>Phone 2 (Receiver)</h2>
-    <input type="text" id="codeInput" placeholder="6-digit code" maxlength="6">
-    <br>
-    <button id="answerBtn" class="answer-btn" onclick="answerCall()">कॉल रिसीव करें</button>
-    <button id="endBtn" class="end-btn" onclick="endCall()" disabled>कॉल एंड करें</button>
-    <p id="status">स्थिति: कोड दर्ज करें</p>
+    <div id="status" class="status">कॉल का इंतज़ार किया जा रहा है...</div>
+    <button id="acceptBtn" class="accept-btn" onclick="acceptCall()">कॉल उठाएं (Accept Call)</button>
   </div>
 
   <audio id="localAudio" autoplay muted></audio>
   <audio id="remoteAudio" autoplay></audio>
 
   <script>
+    // Firebase Config (यहाँ अपनी Firebase प्रोजेक्ट की डिटेल्स डालें)
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -41,26 +43,24 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    let localStream, pc, sessionRef;
+    let localStream, pc;
     const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+    const sessionRef = database.ref('active_calls/main_call');
 
-    async function answerCall() {
-      const code = document.getElementById('codeInput').value.trim();
-      if (code.length !== 6) {
-        alert("कृपया 6 अंकों का कोड दर्ज करें");
-        return;
+    // इनकमिंग कॉल के लिए लगातार सुनना
+    sessionRef.on('value', snapshot => {
+      const data = snapshot.val();
+      if (data && data.status === 'ringing') {
+        document.getElementById('status').innerText = "📲 इनकमिंग कॉल आ रही है...";
+        document.getElementById('acceptBtn').style.display = 'inline-block';
+      } else if (data && data.status === 'ended') {
+        cleanup();
       }
+    });
 
-      sessionRef = database.ref('calls/' + code);
-      const snapshot = await sessionRef.once('value');
-      if (!snapshot.exists()) {
-        alert("अवैध या पुराना कोड");
-        return;
-      }
-
-      document.getElementById('status').innerText = "कनेक्ट हो रहा है...";
-      document.getElementById('answerBtn').disabled = true;
-      document.getElementById('endBtn').disabled = false;
+    async function acceptCall() {
+      document.getElementById('status').innerText = "कॉल कनेक्ट हो रही है...";
+      document.getElementById('acceptBtn').style.display = 'none';
 
       localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       document.getElementById('localAudio').srcObject = localStream;
@@ -79,38 +79,31 @@
         }
       };
 
-      const offer = (await sessionRef.child('offer').once('value')).val();
+      // Offer प्राप्त करना
+      const offerSnapshot = await sessionRef.child('offer').once('value');
+      const offer = offerSnapshot.val();
       await pc.setRemoteDescription(new RTCSessionDescription(offer));
 
+      // Answer बनाना और भेजना
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
       await sessionRef.child('answer').set({ type: answer.type, sdp: answer.sdp });
+      await sessionRef.child('status').set('connected');
 
+      // Phone 1 के ICE Candidates सुनना
       sessionRef.child('callerCandidates').on('child_added', snapshot => {
         const candidate = new RTCIceCandidate(snapshot.val());
         pc.addIceCandidate(candidate);
       });
 
-      sessionRef.child('status').on('value', snapshot => {
-        if (snapshot.val() === 'ended') {
-          cleanup();
-        }
-      });
-
-      document.getElementById('status').innerText = "कॉल कनेक्ट हो गई (Connected)";
-    }
-
-    function endCall() {
-      if (sessionRef) sessionRef.child('status').set('ended');
-      cleanup();
+      document.getElementById('status').innerText = "कॉल कनेक्टेड (बातचीत चालू है)";
     }
 
     function cleanup() {
-      if (pc) pc.close();
-      if (localStream) localStream.getTracks().forEach(track => track.stop());
-      document.getElementById('status').innerText = "कॉल समाप्त (Ended)";
-      document.getElementById('answerBtn').disabled = false;
-      document.getElementById('endBtn').disabled = true;
+      if (pc) { pc.close(); pc = null; }
+      if (localStream) { localStream.getTracks().forEach(track => track.stop()); }
+      document.getElementById('status').innerText = "कॉल समाप्त हो चुकी है";
+      document.getElementById('acceptBtn').style.display = 'none';
     }
   </script>
 </body>
