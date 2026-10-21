@@ -3,1041 +3,722 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebRTC Real-Time Chess</title>
+    <title>WebRTC Chess Game</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Chess Icons & UI Icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chess.js Library for Rules Validation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
+            background-color: #0f172a;
+            color: #f8fafc;
         }
 
-        /* Chess Board Theme Styling */
-        .board-square {
+        /* Chessboard styling */
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
             aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            user-select: none;
+        }
+
+        .square {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            font-size: 2.2rem;
             transition: background-color 0.15s ease;
         }
 
-        .square-light {
+        @media (max-width: 480px) {
+            .square {
+                font-size: 1.6rem;
+            }
+        }
+
+        .square.light {
             background-color: #f0d9b5;
-            color: #b58863;
+            color: #262421;
         }
 
-        .square-dark {
+        .square.dark {
             background-color: #b58863;
-            color: #f0d9b5;
+            color: #262421;
         }
 
-        .square-selected {
+        .square.selected {
             background-color: #7b61ff !important;
         }
 
-        .square-highlight {
-            position: relative;
+        .square.last-move {
+            background-color: #aaa23a !important;
         }
 
-        .square-highlight::after {
+        .square.highlight::after {
             content: '';
             position: absolute;
-            width: 28%;
-            height: 28%;
-            background-color: rgba(16, 185, 129, 0.65);
+            width: 24%;
+            height: 24%;
+            background-color: rgba(20, 83, 45, 0.6);
             border-radius: 50%;
         }
 
-        .square-capture::after {
+        .square.highlight-capture::after {
             content: '';
             position: absolute;
-            width: 88%;
-            height: 88%;
-            border: 4px solid rgba(239, 68, 68, 0.7);
+            width: 85%;
+            height: 85%;
+            border: 4px solid rgba(185, 28, 28, 0.7);
             border-radius: 50%;
         }
 
-        .square-last-move {
-            background-color: rgba(254, 240, 138, 0.6) !important;
-        }
-
-        .square-check {
-            background-color: rgba(239, 68, 68, 0.75) !important;
-        }
-
-        /* Chess Piece Styling */
-        .chess-piece {
-            cursor: pointer;
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+        .piece {
+            z-index: 10;
             transition: transform 0.1s ease;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
         }
 
-        .chess-piece:hover {
-            transform: scale(1.08);
+        .piece:hover {
+            transform: scale(1.1);
         }
 
-        /* Custom Scrollbar for Move History */
-        .custom-scroll::-webkit-scrollbar {
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
             width: 6px;
         }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: rgba(31, 41, 55, 0.5);
-            border-radius: 4px;
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
         }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(75, 85, 99, 0.8);
-            border-radius: 4px;
-        }
-
-        /* Responsive board container max dimensions */
-        .board-container {
-            width: 100%;
-            max-width: 560px;
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
+<body class="min-h-screen flex flex-col items-center p-3 md:p-6">
 
-    <!-- Header / Navbar -->
-    <header class="bg-slate-900 border-b border-slate-800 px-4 py-3 shadow-md">
-        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 p-2 rounded-lg text-white shadow-lg">
-                    <i class="fa-solid fa-chess-knight text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        WebRTC Real-Time Chess
-                        <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30 font-medium">P2P Multi-Player</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">Play live chess via WebRTC room connection</p>
-                </div>
-            </div>
-
-            <!-- Quick Action Toolbar -->
-            <div class="flex items-center gap-2">
-                <button id="toggle-sound-btn" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg border border-slate-700 transition" title="Toggle Sound">
-                    <i id="sound-icon" class="fa-solid fa-volume-high"></i>
-                </button>
-                <button id="flip-board-btn" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg border border-slate-700 transition" title="Flip Board View">
-                    <i class="fa-solid fa-rotate"></i>
-                </button>
-                <button id="new-game-btn" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-md">
-                    <i class="fa-solid fa-plus"></i> New Room
-                </button>
+    <!-- Header -->
+    <header class="w-full max-w-5xl flex justify-between items-center mb-6 bg-slate-800/80 backdrop-blur p-4 rounded-xl border border-slate-700">
+        <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-chess-knight text-2xl text-indigo-400"></i>
+            <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                P2P WebRTC Chess
+            </h1>
+        </div>
+        <div class="flex items-center space-x-2">
+            <!-- Sound Toggle Button -->
+            <button id="soundToggleBtn" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-sm font-medium transition flex items-center space-x-2">
+                <i id="soundIcon" class="fa-solid fa-volume-high text-indigo-400"></i>
+                <span class="hidden sm:inline">Sound</span>
+            </button>
+            <!-- Connection Badge -->
+            <div id="connectionStatusBadge" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="connectionStatusText">Disconnected</span>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="max-w-6xl w-full mx-auto p-3 md:p-6 flex-grow flex flex-col lg:flex-row gap-6 justify-center items-start">
+    <!-- Main Content Grid -->
+    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- Left / Top: Game Connection & Status Card -->
-        <div class="w-full lg:w-80 flex flex-col gap-4">
+        <!-- Left Side: Connection & Controls -->
+        <section class="lg:col-span-5 flex flex-col space-y-4">
             
-            <!-- Connection Control Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl">
-                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center justify-between">
-                    <span>Connection Room</span>
-                    <span id="p2p-badge" class="normal-case text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">Offline / Local</span>
+            <!-- Connection Panel -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg">
+                <h2 class="text-lg font-semibold mb-3 text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-network-wired text-indigo-400"></i> WebRTC P2P Setup
                 </h2>
+                
+                <!-- Tab Switching for Setup -->
+                <div class="flex border-b border-slate-700 mb-4">
+                    <button id="tabHost" class="flex-1 py-2 text-sm font-medium border-b-2 border-indigo-500 text-indigo-400">1. Host Game</button>
+                    <button id="tabJoin" class="flex-1 py-2 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200">2. Join Game</button>
+                </div>
 
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-xs text-slate-400 mb-1 block">Your Room Code / ID</label>
-                        <div class="flex gap-2">
-                            <input id="room-code-input" type="text" readonly class="bg-slate-950 border border-slate-800 text-indigo-400 font-mono font-bold text-center text-sm rounded-lg px-3 py-2 w-full focus:outline-none" value="Generating...">
-                            <button id="copy-code-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-lg text-sm transition font-medium flex items-center gap-1 border border-slate-700">
-                                <i class="fa-regular fa-copy"></i>
+                <!-- Host View -->
+                <div id="hostSection" class="space-y-3">
+                    <p class="text-xs text-slate-400">Click below to generate a connection offer, then send it to your opponent.</p>
+                    <button id="createOfferBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-lg transition shadow-md flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-plus-circle"></i> Create Game Offer
+                    </button>
+                    
+                    <div id="offerOutputContainer" class="hidden space-y-2">
+                        <label class="block text-xs font-medium text-slate-300">Your Offer Code (Send to Player 2):</label>
+                        <div class="relative">
+                            <textarea id="localOfferInput" readonly class="w-full h-20 p-2 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-300 font-mono focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                            <button id="copyOfferBtn" class="absolute top-2 right-2 px-2 py-1 bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 rounded border border-slate-600">
+                                <i class="fa-solid fa-copy"></i> Copy
+                            </button>
+                        </div>
+
+                        <label class="block text-xs font-medium text-slate-300 pt-2">Paste Answer Code from Player 2:</label>
+                        <textarea id="remoteAnswerInput" placeholder="Paste Answer code here..." class="w-full h-20 p-2 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-300 font-mono focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                        <button id="acceptAnswerBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 px-4 rounded-lg transition shadow-md flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-check-circle"></i> Connect to Player
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Join View -->
+                <div id="joinSection" class="hidden space-y-3">
+                    <p class="text-xs text-slate-400">Paste the host's offer code to generate an answer code.</p>
+                    <textarea id="remoteOfferInput" placeholder="Paste Host's Offer code here..." class="w-full h-20 p-2 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-300 font-mono focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                    
+                    <button id="createAnswerBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-lg transition shadow-md flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-key"></i> Generate Answer
+                    </button>
+
+                    <div id="answerOutputContainer" class="hidden space-y-2">
+                        <label class="block text-xs font-medium text-slate-300">Your Answer Code (Send back to Host):</label>
+                        <div class="relative">
+                            <textarea id="localAnswerInput" readonly class="w-full h-20 p-2 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-300 font-mono focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                            <button id="copyAnswerBtn" class="absolute top-2 right-2 px-2 py-1 bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 rounded border border-slate-600">
+                                <i class="fa-solid fa-copy"></i> Copy
                             </button>
                         </div>
                     </div>
-
-                    <div class="relative flex py-1 items-center">
-                        <div class="flex-grow border-t border-slate-800"></div>
-                        <span class="flex-shrink mx-2 text-xs text-slate-500 uppercase">Or Join Opponent</span>
-                        <div class="flex-grow border-t border-slate-800"></div>
-                    </div>
-
-                    <div class="flex gap-2">
-                        <input id="join-code-input" type="text" placeholder="Enter Room Code..." class="bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 w-full focus:outline-none focus:border-indigo-500 transition">
-                        <button id="join-room-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
-                            Join
-                        </button>
-                    </div>
-
-                    <div id="connection-status-msg" class="text-xs text-slate-400 bg-slate-950 p-2 rounded-lg border border-slate-800/80 text-center">
-                        Ready for local play or WebRTC P2P connection.
-                    </div>
                 </div>
             </div>
 
-            <!-- Player Info & Captured Pieces Sidebar -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-4">
-                <!-- Black Player Card -->
-                <div id="black-player-card" class="p-3 bg-slate-950/60 rounded-lg border border-slate-800 flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-200 border border-slate-700">
-                            <i class="fa-solid fa-chess-king"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
-                                Black Player <span id="black-role-badge" class="text-[10px] text-slate-500">(Opponent)</span>
-                            </div>
-                            <div id="captured-by-white" class="flex flex-wrap gap-0.5 text-slate-400 text-xs mt-0.5 min-h-[18px]">
-                                <!-- Captured White pieces go here -->
-                            </div>
-                        </div>
-                    </div>
-                    <div id="black-turn-indicator" class="w-3 h-3 rounded-full bg-slate-700"></div>
+            <!-- Match Status & Player Role -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg space-y-3">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-400">Your Side:</span>
+                    <span id="playerRoleText" class="font-bold text-slate-200">Unassigned</span>
                 </div>
-
-                <!-- Game Status Display -->
-                <div id="game-status-box" class="bg-indigo-950/40 border border-indigo-800/50 rounded-lg p-3 text-center">
-                    <span id="turn-text" class="text-sm font-semibold text-indigo-300">White's Turn</span>
-                    <p id="check-alert" class="text-xs font-bold text-red-400 mt-0.5 hidden animate-pulse">CHECK!</p>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-400">Turn:</span>
+                    <span id="currentTurnText" class="font-bold text-indigo-400">White's Turn</span>
                 </div>
-
-                <!-- White Player Card -->
-                <div id="white-player-card" class="p-3 bg-slate-950/60 rounded-lg border border-slate-800 flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-slate-900 border border-amber-300 shadow-sm">
-                            <i class="fa-solid fa-chess-king"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
-                                White Player <span id="white-role-badge" class="text-[10px] text-slate-500">(You)</span>
-                            </div>
-                            <div id="captured-by-black" class="flex flex-wrap gap-0.5 text-slate-400 text-xs mt-0.5 min-h-[18px]">
-                                <!-- Captured Black pieces go here -->
-                            </div>
-                        </div>
-                    </div>
-                    <div id="white-turn-indicator" class="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 animate-pulse"></div>
+                <div id="gameAlertBox" class="hidden p-2.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs text-indigo-300 text-center font-medium">
+                    --
                 </div>
             </div>
-        </div>
 
-        <!-- Center: Interactive Chess Board -->
-        <div class="flex flex-col items-center justify-center w-full max-w-[560px]">
-            <div class="board-container relative bg-slate-900 p-2 sm:p-3 rounded-2xl shadow-2xl border border-slate-800">
-                
-                <!-- Coordinates Top/Bottom & Board Grid -->
-                <div id="chessboard" class="grid grid-cols-8 grid-rows-8 w-full rounded-lg overflow-hidden border border-slate-800 shadow-inner">
-                    <!-- Board cells rendered dynamically by JS -->
-                </div>
-
-                <!-- Overlay Notification Modal (Checkmate/Stalemate) -->
-                <div id="game-overlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center z-30 opacity-0 pointer-events-none transition-opacity duration-300">
-                    <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 border border-indigo-500/40 rounded-full flex items-center justify-center text-3xl mb-3 shadow-lg">
-                        <i id="overlay-icon" class="fa-solid fa-trophy"></i>
-                    </div>
-                    <h2 id="overlay-title" class="text-2xl font-extrabold text-white mb-1">Checkmate!</h2>
-                    <p id="overlay-message" class="text-sm text-slate-300 mb-6">White wins the game.</p>
-                    <button id="overlay-restart-btn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-lg transition">
-                        Play Again
-                    </button>
+            <!-- Move History -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg flex-1 min-h-[160px] flex flex-col">
+                <h3 class="text-sm font-semibold text-slate-300 mb-2 flex items-center justify-between">
+                    <span><i class="fa-solid fa-list-ol text-indigo-400 mr-1"></i> Move History</span>
+                    <button id="flipBoardBtn" class="text-xs text-slate-400 hover:text-indigo-400 transition"><i class="fa-solid fa-rotate"></i> Flip View</button>
+                </h3>
+                <div id="moveHistoryList" class="flex-1 bg-slate-900/60 rounded-lg p-2 text-xs text-slate-300 overflow-y-auto max-h-40 font-mono grid grid-cols-2 gap-x-4 gap-y-1">
+                    <!-- Moves added dynamically -->
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Right / Bottom: Move History Panel -->
-        <div class="w-full lg:w-72 bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col h-[320px] lg:h-[580px]">
-            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-list-ol text-indigo-400"></i> Move History
-            </h2>
+        <!-- Right Side: Chessboard Container -->
+        <section class="lg:col-span-7 flex flex-col items-center justify-center">
             
-            <div class="bg-slate-950 border border-slate-800 rounded-lg p-2 flex-grow overflow-y-auto custom-scroll font-mono text-sm">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="text-slate-500 border-b border-slate-800/80 text-xs">
-                            <th class="py-1 px-2 font-medium w-12">#</th>
-                            <th class="py-1 px-2 font-medium">White</th>
-                            <th class="py-1 px-2 font-medium">Black</th>
-                        </tr>
-                    </thead>
-                    <tbody id="move-history-body" class="divide-y divide-slate-800/40 text-slate-300">
-                        <!-- Move pairs injected here -->
-                    </tbody>
-                </table>
+            <!-- Opponent Profile Box -->
+            <div class="w-full max-w-[520px] mb-2 flex justify-between items-center bg-slate-800/60 p-2.5 rounded-t-lg border border-slate-700">
+                <div class="flex items-center space-x-2">
+                    <div id="opponentAvatar" class="w-7 h-7 rounded-full bg-slate-600 flex items-center justify-center text-xs text-slate-200 font-bold">O</div>
+                    <span id="opponentName" class="text-sm font-medium text-slate-300">Opponent</span>
+                </div>
+                <div id="capturedByOpponent" class="flex text-lg space-x-1 min-h-[1.75rem] items-center"></div>
             </div>
 
-            <!-- Controls under move log -->
-            <div class="mt-3 flex gap-2">
-                <button id="resign-btn" class="flex-1 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg text-xs font-semibold transition">
-                    <i class="fa-solid fa-flag mr-1"></i> Resign
-                </button>
-                <button id="undo-btn" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition border border-slate-700">
-                    <i class="fa-solid fa-rotate-left mr-1"></i> Undo
-                </button>
+            <!-- Board Element -->
+            <div id="chessboard" class="board-grid border-2 border-slate-700">
+                <!-- 64 Squares generated dynamically -->
             </div>
-        </div>
+
+            <!-- Self Profile Box -->
+            <div class="w-full max-w-[520px] mt-2 flex justify-between items-center bg-slate-800/60 p-2.5 rounded-b-lg border border-slate-700">
+                <div class="flex items-center space-x-2">
+                    <div id="selfAvatar" class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-xs text-white font-bold">Y</div>
+                    <span id="selfName" class="text-sm font-medium text-slate-300">You</span>
+                </div>
+                <div id="capturedBySelf" class="flex text-lg space-x-1 min-h-[1.75rem] items-center"></div>
+            </div>
+
+        </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-3 text-center text-xs text-slate-500">
-        Peer-to-Peer Real-Time Chess System • Crafted for standard & remote multi-player play
-    </footer>
-
-    <!-- Game Logic & Peer-To-Peer Script -->
+    <!-- JavaScript Logic -->
     <script>
-        /**
-         * Chess Game & P2P WebRTC Signal Logic
-         */
-        
-        // Sound Synthesis via Web Audio API
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Global Game & WebRTC State
+        let game = new Chess();
+        let peerConnection = null;
+        let dataChannel = null;
+        let myRole = 'w'; // Default host is White ('w'), joiner is Black ('b')
+        let isBoardFlipped = false;
+        let selectedSquare = null;
+        let validMovesForSelected = [];
         let soundEnabled = true;
 
-        function playSound(type) {
-            if (!soundEnabled || !audioCtx) return;
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            const now = audioCtx.currentTime;
-
-            if (type === 'move') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(320, now);
-                osc.frequency.exponentialRampToValueAtTime(160, now + 0.08);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
-                osc.start(now);
-                osc.stop(now + 0.08);
-            } else if (type === 'capture') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(200, now + 0.12);
-                gain.gain.setValueAtTime(0.4, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
-                osc.start(now);
-                osc.stop(now + 0.12);
-            } else if (type === 'check') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(440, now);
-                osc.frequency.setValueAtTime(880, now + 0.1);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-                osc.start(now);
-                osc.stop(now + 0.25);
-            } else if (type === 'gameover') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, now);
-                osc.frequency.setValueAtTime(659.25, now + 0.15);
-                osc.frequency.setValueAtTime(783.99, now + 0.3);
-                gain.gain.setValueAtTime(0.4, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            }
-        }
-
-        // FontAwesome icons map for chess pieces
-        const PIECE_ICONS = {
-            'w': {
-                'k': '<i class="fa-solid fa-chess-king text-amber-100 drop-shadow"></i>',
-                'q': '<i class="fa-solid fa-chess-queen text-amber-100 drop-shadow"></i>',
-                'r': '<i class="fa-solid fa-chess-rook text-amber-100 drop-shadow"></i>',
-                'b': '<i class="fa-solid fa-chess-bishop text-amber-100 drop-shadow"></i>',
-                'n': '<i class="fa-solid fa-chess-knight text-amber-100 drop-shadow"></i>',
-                'p': '<i class="fa-solid fa-chess-pawn text-amber-100 drop-shadow"></i>'
-            },
-            'b': {
-                'k': '<i class="fa-solid fa-chess-king text-slate-900 drop-shadow"></i>',
-                'q': '<i class="fa-solid fa-chess-queen text-slate-900 drop-shadow"></i>',
-                'r': '<i class="fa-solid fa-chess-rook text-slate-900 drop-shadow"></i>',
-                'b': '<i class="fa-solid fa-chess-bishop text-slate-900 drop-shadow"></i>',
-                'n': '<i class="fa-solid fa-chess-knight text-slate-900 drop-shadow"></i>',
-                'p': '<i class="fa-solid fa-chess-pawn text-slate-900 drop-shadow"></i>'
-            }
+        // WebRTC STUN Server configuration
+        const rtcConfig = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
         };
 
-        // Chess Engine State
-        let board = [];
-        let turn = 'w'; // 'w' or 'b'
-        let selectedSquare = null; // [r, c]
-        let validMoves = []; // Array of [r, c]
-        let moveHistory = []; // Objects detailing moves
-        let capturedWhite = [];
-        let capturedBlack = [];
-        let isBoardFlipped = false;
-        let myRole = 'both'; // 'w', 'b', or 'both' (local mode)
-        let lastMove = null; // {from: [r,c], to: [r,c]}
-        let isGameOver = false;
+        // Chess piece unicode mapping
+        const pieceUnicode = {
+            'w': { 'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚' },
+            'b': { 'p': '♙', 'r': '♖', 'n': '♘', 'b': '♗', 'q': '♕', 'k': '♔' }
+        };
 
-        // Castling & En Passant rights
-        let castlingRights = { w: { k: true, q: true }, b: { k: true, q: true } };
-        let enPassantTarget = null; // [r, c] or null
+        // Audio synthesis for moves (No external audio file dependencies)
+        function playMoveSound(isCapture = false) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = isCapture ? 'triangle' : 'sine';
+                osc.frequency.setValueAtTime(isCapture ? 150 : 300, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(isCapture ? 60 : 120, ctx.currentTime + 0.08);
+                
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
 
-        // Initial Board Setup
-        function createInitialBoard() {
-            return [
-                [ {c:'b',p:'r'}, {c:'b',p:'n'}, {c:'b',p:'b'}, {c:'b',p:'q'}, {c:'b',p:'k'}, {c:'b',p:'b'}, {c:'b',p:'n'}, {c:'b',p:'r'} ],
-                [ {c:'b',p:'p'}, {c:'b',p:'p'}, {c:'b',p:'p'}, {c:'b',p:'p'}, {c:'b',p:'p'}, {c:'b',p:'p'}, {c:'b',p:'p'}, {c:'b',p:'p'} ],
-                [ null, null, null, null, null, null, null, null ],
-                [ null, null, null, null, null, null, null, null ],
-                [ null, null, null, null, null, null, null, null ],
-                [ null, null, null, null, null, null, null, null ],
-                [ {c:'w',p:'p'}, {c:'w',p:'p'}, {c:'w',p:'p'}, {c:'w',p:'p'}, {c:'w',p:'p'}, {c:'w',p:'p'}, {c:'w',p:'p'}, {c:'w',p:'p'} ],
-                [ {c:'w',p:'r'}, {c:'w',p:'n'}, {c:'w',p:'b'}, {c:'w',p:'q'}, {c:'w',p:'k'}, {c:'w',p:'b'}, {c:'w',p:'n'}, {c:'w',p:'r'} ]
-            ];
-        }
-
-        function initGame() {
-            board = createInitialBoard();
-            turn = 'w';
-            selectedSquare = null;
-            validMoves = [];
-            moveHistory = [];
-            capturedWhite = [];
-            capturedBlack = [];
-            lastMove = null;
-            isGameOver = false;
-            castlingRights = { w: { k: true, q: true }, b: { k: true, q: true } };
-            enPassantTarget = null;
-
-            document.getElementById('game-overlay').classList.add('opacity-0', 'pointer-events-none');
-            updateUI();
-            renderBoard();
-        }
-
-        // Render Chessboard
-        function renderBoard() {
-            const boardEl = document.getElementById('chessboard');
-            boardEl.innerHTML = '';
-
-            const inCheckSquare = findKingInCheck(turn);
-
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
-                    const r = isBoardFlipped ? 7 - i : i;
-                    const c = isBoardFlipped ? 7 - j : j;
-
-                    const squareEl = document.createElement('div');
-                    const isLight = (r + c) % 2 === 0;
-                    squareEl.className = `board-square relative flex items-center justify-center text-3xl sm:text-4xl ${isLight ? 'square-light' : 'square-dark'}`;
-                    squareEl.dataset.row = r;
-                    squareEl.dataset.col = c;
-
-                    // Highlight selected square
-                    if (selectedSquare && selectedSquare[0] === r && selectedSquare[1] === c) {
-                        squareEl.classList.add('square-selected');
-                    }
-
-                    // Highlight last move
-                    if (lastMove && ((lastMove.from[0] === r && lastMove.from[1] === c) || (lastMove.to[0] === r && lastMove.to[1] === c))) {
-                        squareEl.classList.add('square-last-move');
-                    }
-
-                    // Highlight king in check
-                    if (inCheckSquare && inCheckSquare[0] === r && inCheckSquare[1] === c) {
-                        squareEl.classList.add('square-check');
-                    }
-
-                    // Highlight potential moves
-                    const isMove = validMoves.some(m => m[0] === r && m[1] === c);
-                    if (isMove) {
-                        if (board[r][c] || (enPassantTarget && enPassantTarget[0] === r && enPassantTarget[1] === c)) {
-                            squareEl.classList.add('square-capture');
-                        } else {
-                            squareEl.classList.add('square-highlight');
-                        }
-                    }
-
-                    // Render Piece
-                    const piece = board[r][c];
-                    if (piece) {
-                        const pieceSpan = document.createElement('span');
-                        pieceSpan.className = 'chess-piece transition-transform duration-150';
-                        pieceSpan.innerHTML = PIECE_ICONS[piece.c][piece.p];
-                        squareEl.appendChild(pieceSpan);
-                    }
-
-                    // Rank/File Labels
-                    if (c === (isBoardFlipped ? 7 : 0)) {
-                        const rankLabel = document.createElement('span');
-                        rankLabel.className = 'absolute top-0.5 left-1 text-[10px] font-bold opacity-70 pointer-events-none';
-                        rankLabel.innerText = 8 - r;
-                        squareEl.appendChild(rankLabel);
-                    }
-                    if (r === (isBoardFlipped ? 0 : 7)) {
-                        const fileLabel = document.createElement('span');
-                        fileLabel.className = 'absolute bottom-0.5 right-1 text-[10px] font-bold opacity-70 pointer-events-none';
-                        fileLabel.innerText = String.fromCharCode(97 + c);
-                        squareEl.appendChild(fileLabel);
-                    }
-
-                    squareEl.addEventListener('click', () => handleSquareClick(r, c));
-                    boardEl.appendChild(squareEl);
-                }
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.08);
+            } catch (e) {
+                console.warn('Audio context error:', e);
             }
         }
 
-        // Handle square interactions
-        function handleSquareClick(r, c) {
-            if (isGameOver) return;
+        // Initialize WebRTC DataChannel Events
+        function setupDataChannelEvents() {
+            if (!dataChannel) return;
 
-            // Enforce turn restriction in P2P mode
-            if (myRole !== 'both' && turn !== myRole) {
+            dataChannel.onopen = () => {
+                console.log('Data Channel Open');
+                updateConnectionStatus('Connected', 'connected');
+                showAlert('Connection established! You can now play.', 'success');
+            };
+
+            dataChannel.onclose = () => {
+                console.log('Data Channel Closed');
+                updateConnectionStatus('Disconnected', 'disconnected');
+                showAlert('Opponent disconnected.', 'error');
+            };
+
+            dataChannel.onerror = (err) => {
+                console.error('Data Channel Error:', err);
+            };
+
+            dataChannel.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    if (message.type === 'move') {
+                        handleOpponentMove(message.move);
+                    }
+                } catch (err) {
+                    console.error('Failed to parse WebRTC message:', err);
+                }
+            };
+        }
+
+        // Handle WebRTC Host Setup
+        async function createHostOffer() {
+            peerConnection = new RTCPeerConnection(rtcConfig);
+
+            // Create DataChannel (Host creates the channel)
+            dataChannel = peerConnection.createDataChannel('chessDataChannel');
+            setupDataChannelEvents();
+
+            peerConnection.onicecandidate = (event) => {
+                if (!event.candidate) {
+                    // ICE Gathering completed, output complete offer
+                    const offerSdp = btoa(JSON.stringify(peerConnection.localDescription));
+                    document.getElementById('localOfferInput').value = offerSdp;
+                    document.getElementById('offerOutputContainer').classList.remove('hidden');
+                }
+            };
+
+            myRole = 'w'; // Host plays White
+            isBoardFlipped = false;
+            updateRoleUI();
+
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+        }
+
+        // Host accepts Answer from Joiner
+        async function acceptJoinerAnswer() {
+            const answerInput = document.getElementById('remoteAnswerInput').value.trim();
+            if (!answerInput) {
+                showAlert('Please paste the Answer code from Player 2', 'error');
                 return;
             }
 
-            const piece = board[r][c];
+            try {
+                const answerObj = JSON.parse(atob(answerInput));
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(answerObj));
+                showAlert('Connecting to Player 2...', 'info');
+            } catch (err) {
+                showAlert('Invalid Answer code. Please re-copy.', 'error');
+            }
+        }
 
-            // If selecting a piece of current turn's color
-            if (piece && piece.c === turn) {
-                selectedSquare = [r, c];
-                validMoves = getLegalMoves(r, c);
+        // Handle WebRTC Joiner Setup
+        async function createJoinerAnswer() {
+            const offerInput = document.getElementById('remoteOfferInput').value.trim();
+            if (!offerInput) {
+                showAlert('Please paste Host Offer code first', 'error');
+                return;
+            }
+
+            peerConnection = new RTCPeerConnection(rtcConfig);
+
+            // Listen for incoming DataChannel
+            peerConnection.ondatachannel = (event) => {
+                dataChannel = event.channel;
+                setupDataChannelEvents();
+            };
+
+            peerConnection.onicecandidate = (event) => {
+                if (!event.candidate) {
+                    // ICE Gathering completed, output complete answer
+                    const answerSdp = btoa(JSON.stringify(peerConnection.localDescription));
+                    document.getElementById('localAnswerInput').value = answerSdp;
+                    document.getElementById('answerOutputContainer').classList.remove('hidden');
+                }
+            };
+
+            try {
+                const offerObj = JSON.parse(atob(offerInput));
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(offerObj));
+
+                myRole = 'b'; // Joiner plays Black
+                isBoardFlipped = true;
+                updateRoleUI();
+
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+            } catch (err) {
+                showAlert('Invalid Offer code. Please re-copy.', 'error');
+            }
+        }
+
+        // Receive & Apply Opponent Move
+        function handleOpponentMove(moveObj) {
+            const result = game.move(moveObj);
+            if (result) {
+                playMoveSound(result.captured !== undefined);
+                selectedSquare = null;
+                validMovesForSelected = [];
+                renderBoard();
+                updateGameStatus();
+            }
+        }
+
+        // Execute local player move and sync via DataChannel
+        function makeLocalMove(fromSquare, toSquare, promotion = 'q') {
+            const moveObj = { from: fromSquare, to: toSquare, promotion };
+            const result = game.move(moveObj);
+
+            if (result) {
+                playMoveSound(result.captured !== undefined);
+                selectedSquare = null;
+                validMovesForSelected = [];
+
+                // Send move over WebRTC if connected
+                if (dataChannel && dataChannel.readyState === 'open') {
+                    dataChannel.send(JSON.stringify({
+                        type: 'move',
+                        move: moveObj
+                    }));
+                }
+
+                renderBoard();
+                updateGameStatus();
+            }
+        }
+
+        // Render Chessboard UI
+        function renderBoard() {
+            const boardElement = document.getElementById('chessboard');
+            boardElement.innerHTML = '';
+
+            const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+            const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+
+            const effectiveRanks = isBoardFlipped ? [...ranks].reverse() : ranks;
+            const effectiveFiles = isBoardFlipped ? [...files].reverse() : files;
+
+            const history = game.history({ verbose: true });
+            const lastMove = history.length > 0 ? history[history.length - 1] : null;
+
+            effectiveRanks.forEach((rank, rIdx) => {
+                effectiveFiles.forEach((file, fIdx) => {
+                    const squareCoord = file + rank;
+                    const squarePiece = game.get(squareCoord);
+
+                    const squareDiv = document.createElement('div');
+                    const isLight = (files.indexOf(file) + ranks.indexOf(rank)) % 2 === 0;
+                    
+                    squareDiv.className = `square ${isLight ? 'light' : 'dark'}`;
+                    squareDiv.dataset.square = squareCoord;
+
+                    // Last move highlight
+                    if (lastMove && (lastMove.from === squareCoord || lastMove.to === squareCoord)) {
+                        squareDiv.classList.add('last-move');
+                    }
+
+                    // Selection highlight
+                    if (selectedSquare === squareCoord) {
+                        squareDiv.classList.add('selected');
+                    }
+
+                    // Valid moves highlights
+                    if (validMovesForSelected.some(m => m.to === squareCoord)) {
+                        if (squarePiece) {
+                            squareDiv.classList.add('highlight-capture');
+                        } else {
+                            squareDiv.classList.add('highlight');
+                        }
+                    }
+
+                    // Piece rendering
+                    if (squarePiece) {
+                        const pieceSpan = document.createElement('span');
+                        pieceSpan.className = 'piece';
+                        pieceSpan.textContent = pieceUnicode[squarePiece.color][squarePiece.type];
+                        
+                        // Add styling distinction for white/black pieces
+                        if (squarePiece.color === 'w') {
+                            pieceSpan.style.color = '#ffffff';
+                            pieceSpan.style.textShadow = '0 0 2px #000';
+                        } else {
+                            pieceSpan.style.color = '#1a1a1a';
+                        }
+
+                        squareDiv.appendChild(pieceSpan);
+                    }
+
+                    // Square Click Listener
+                    squareDiv.addEventListener('click', () => handleSquareClick(squareCoord));
+
+                    boardElement.appendChild(squareDiv);
+                });
+            });
+
+            renderMoveHistory();
+            renderCapturedPieces();
+        }
+
+        // Handle square clicks for moves
+        function handleSquareClick(square) {
+            const currentTurn = game.turn();
+
+            // Enforce turn turn-based restrictions
+            if (currentTurn !== myRole) {
+                showAlert("It's your opponent's turn!", 'info');
+                return;
+            }
+
+            const pieceOnSquare = game.get(square);
+
+            // If selecting a piece of current player's color
+            if (pieceOnSquare && pieceOnSquare.color === myRole) {
+                selectedSquare = square;
+                validMovesForSelected = game.moves({ square: square, verbose: true });
                 renderBoard();
                 return;
             }
 
-            // If a piece was selected and clicking on a valid target square
+            // If clicking a square to make a move
             if (selectedSquare) {
-                const [sr, sc] = selectedSquare;
-                const isMoveValid = validMoves.some(m => m[0] === r && m[1] === c);
-
-                if (isMoveValid) {
-                    executeMove(sr, sc, r, c);
-                    selectedSquare = null;
-                    validMoves = [];
-                    
-                    // Broadcast via WebRTC / P2P if active
-                    broadcastMove(sr, sc, r, c);
+                const isValid = validMovesForSelected.some(m => m.to === square);
+                if (isValid) {
+                    makeLocalMove(selectedSquare, square);
                 } else {
                     selectedSquare = null;
-                    validMoves = [];
+                    validMovesForSelected = [];
                     renderBoard();
                 }
             }
         }
 
-        // Execute Move Logic
-        function executeMove(fromR, fromC, toR, toC, isRemote = false) {
-            const movingPiece = board[fromR][fromC];
-            const capturedPiece = board[toR][toC];
-            let isCapture = !!capturedPiece;
+        // Update turn display & checkmate warnings
+        function updateGameStatus() {
+            const turnText = document.getElementById('currentTurnText');
+            const alertBox = document.getElementById('gameAlertBox');
 
-            // Handle En Passant Capture
-            if (movingPiece.p === 'p' && enPassantTarget && toR === enPassantTarget[0] && toC === enPassantTarget[1]) {
-                const epRow = turn === 'w' ? toR + 1 : toR - 1;
-                const epCaptured = board[epRow][toC];
-                if (epCaptured) {
-                    if (epCaptured.c === 'w') capturedWhite.push(epCaptured.p);
-                    else capturedBlack.push(epCaptured.p);
-                }
-                board[epRow][toC] = null;
-                isCapture = true;
-            }
+            const currentTurnColor = game.turn() === 'w' ? 'White' : 'Black';
+            turnText.textContent = `${currentTurnColor}'s Turn`;
 
-            // Update captured list
-            if (capturedPiece) {
-                if (capturedPiece.c === 'w') capturedWhite.push(capturedPiece.p);
-                else capturedBlack.push(capturedPiece.p);
-            }
-
-            // Move piece
-            board[toR][toC] = movingPiece;
-            board[fromR][fromC] = null;
-
-            // Handle Pawn Promotion (Auto Queen for simplicity)
-            if (movingPiece.p === 'p' && (toR === 0 || toR === 7)) {
-                movingPiece.p = 'q';
-            }
-
-            // Handle Castling Movement
-            if (movingPiece.p === 'k' && Math.abs(toC - fromC) === 2) {
-                if (toC === 6) { // Kingside
-                    board[toR][5] = board[toR][7];
-                    board[toR][7] = null;
-                } else if (toC === 2) { // Queenside
-                    board[toR][3] = board[toR][0];
-                    board[toR][0] = null;
-                }
-            }
-
-            // Update Castling Rights
-            if (movingPiece.p === 'k') {
-                castlingRights[turn].k = false;
-                castlingRights[turn].q = false;
-            }
-            if (movingPiece.p === 'r') {
-                if (fromC === 0) castlingRights[turn].q = false;
-                if (fromC === 7) castlingRights[turn].k = false;
-            }
-
-            // Update En Passant Target
-            if (movingPiece.p === 'p' && Math.abs(toR - fromR) === 2) {
-                enPassantTarget = [(fromR + toR) / 2, fromC];
+            if (game.in_checkmate()) {
+                showAlert(`Checkmate! ${game.turn() === 'w' ? 'Black' : 'White'} wins!`, 'error');
+            } else if (game.in_draw() || game.in_stalemate() || game.in_threefold_repetition()) {
+                showAlert('Game over: Draw / Stalemate.', 'info');
+            } else if (game.in_check()) {
+                showAlert(`${currentTurnColor} is in Check!`, 'warning');
             } else {
-                enPassantTarget = null;
+                alertBox.classList.add('hidden');
             }
-
-            // Record History
-            const moveNotation = getNotation(movingPiece, fromR, fromC, toR, toC, isCapture);
-            moveHistory.push({ player: turn, move: moveNotation });
-
-            // Last move state
-            lastMove = { from: [fromR, fromC], to: [toR, toC] };
-
-            // Switch Turn
-            turn = turn === 'w' ? 'b' : 'w';
-
-            // Check Game Status (Check / Checkmate / Stalemate)
-            const kingInCheck = isKingInCheck(turn);
-            const hasLegalMovesLeft = playerHasLegalMoves(turn);
-
-            if (isCapture) {
-                playSound('capture');
-            } else {
-                playSound('move');
-            }
-
-            if (kingInCheck) {
-                if (!hasLegalMovesLeft) {
-                    // Checkmate
-                    isGameOver = true;
-                    const winner = turn === 'w' ? "Black" : "White";
-                    showGameOver(`Checkmate! ${winner} Wins!`, 'fa-trophy');
-                    playSound('gameover');
-                } else {
-                    playSound('check');
-                }
-            } else if (!hasLegalMovesLeft) {
-                // Stalemate
-                isGameOver = true;
-                showGameOver('Stalemate! Game Draw.', 'fa-handshake');
-                playSound('gameover');
-            }
-
-            updateUI();
-            renderBoard();
         }
 
-        // Standard Chess Move Validation Engine
-        function getLegalMoves(r, c) {
-            const piece = board[r][c];
-            if (!piece) return [];
+        // Render captured pieces
+        function renderCapturedPieces() {
+            const history = game.history({ verbose: true });
+            const capturedByWhite = [];
+            const capturedByBlack = [];
 
-            const pseudoMoves = getPseudoMoves(r, c, piece, board);
-            const legalMoves = [];
-
-            for (const move of pseudoMoves) {
-                const [tr, tc] = move;
-                // Simulate move
-                const tempBoard = board.map(row => [...row]);
-                tempBoard[tr][tc] = tempBoard[r][c];
-                tempBoard[r][c] = null;
-
-                // En Passant temp simulation
-                if (piece.p === 'p' && enPassantTarget && tr === enPassantTarget[0] && tc === enPassantTarget[1]) {
-                    const epRow = piece.c === 'w' ? tr + 1 : tr - 1;
-                    tempBoard[epRow][tc] = null;
-                }
-
-                if (!isKingInCheckOnBoard(piece.c, tempBoard)) {
-                    legalMoves.push(move);
-                }
-            }
-
-            return legalMoves;
-        }
-
-        function getPseudoMoves(r, c, piece, currentBoard) {
-            const moves = [];
-            const dir = piece.c === 'w' ? -1 : 1;
-
-            if (piece.p === 'p') {
-                // Forward move
-                if (r + dir >= 0 && r + dir < 8 && !currentBoard[r + dir][c]) {
-                    moves.push([r + dir, c]);
-                    // Double step
-                    const startRow = piece.c === 'w' ? 6 : 1;
-                    if (r === startRow && !currentBoard[r + 2 * dir][c]) {
-                        moves.push([r + 2 * dir, c]);
+            history.forEach(m => {
+                if (m.captured) {
+                    if (m.color === 'w') {
+                        capturedByWhite.push(pieceUnicode['b'][m.captured]);
+                    } else {
+                        capturedByBlack.push(pieceUnicode['w'][m.captured]);
                     }
-                }
-                // Standard & En Passant Captures
-                for (const dc of [-1, 1]) {
-                    const nr = r + dir, nc = c + dc;
-                    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                        const target = currentBoard[nr][nc];
-                        if (target && target.c !== piece.c) {
-                            moves.push([nr, nc]);
-                        } else if (enPassantTarget && enPassantTarget[0] === nr && enPassantTarget[1] === nc) {
-                            moves.push([nr, nc]);
-                        }
-                    }
-                }
-            } else if (piece.p === 'n') {
-                const offsets = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                for (const [dr, dc] of offsets) {
-                    const nr = r + dr, nc = c + dc;
-                    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                        const target = currentBoard[nr][nc];
-                        if (!target || target.c !== piece.c) moves.push([nr, nc]);
-                    }
-                }
-            } else if (piece.p === 'k') {
-                const offsets = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-                for (const [dr, dc] of offsets) {
-                    const nr = r + dr, nc = c + dc;
-                    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                        const target = currentBoard[nr][nc];
-                        if (!target || target.c !== piece.c) moves.push([nr, nc]);
-                    }
-                }
-                // Castling
-                if (!isKingInCheck(piece.c)) {
-                    if (castlingRights[piece.c].k && !currentBoard[r][5] && !currentBoard[r][6]) {
-                        if (!isSquareAttacked(r, 5, piece.c) && !isSquareAttacked(r, 6, piece.c)) {
-                            moves.push([r, 6]);
-                        }
-                    }
-                    if (castlingRights[piece.c].q && !currentBoard[r][1] && !currentBoard[r][2] && !currentBoard[r][3]) {
-                        if (!isSquareAttacked(r, 2, piece.c) && !isSquareAttacked(r, 3, piece.c)) {
-                            moves.push([r, 2]);
-                        }
-                    }
-                }
-            } else {
-                // Sliding pieces (Rook, Bishop, Queen)
-                const dirs = [];
-                if (piece.p === 'r' || piece.p === 'q') dirs.push([-1,0],[1,0],[0,-1],[0,1]);
-                if (piece.p === 'b' || piece.p === 'q') dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
-
-                for (const [dr, dc] of dirs) {
-                    let nr = r + dr, nc = c + dc;
-                    while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                        const target = currentBoard[nr][nc];
-                        if (!target) {
-                            moves.push([nr, nc]);
-                        } else {
-                            if (target.c !== piece.c) moves.push([nr, nc]);
-                            break;
-                        }
-                        nr += dr;
-                        nc += dc;
-                    }
-                }
-            }
-
-            return moves;
-        }
-
-        function isSquareAttacked(r, c, defenderColor) {
-            const attackerColor = defenderColor === 'w' ? 'b' : 'w';
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
-                    const p = board[i][j];
-                    if (p && p.c === attackerColor) {
-                        // Avoid infinite loop on king castling check
-                        if (p.p === 'k') {
-                            if (Math.abs(i - r) <= 1 && Math.abs(j - c) <= 1) return true;
-                        } else {
-                            const pm = getPseudoMoves(i, j, p, board);
-                            if (pm.some(m => m[0] === r && m[1] === c)) return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        function isKingInCheck(color) {
-            return isKingInCheckOnBoard(color, board);
-        }
-
-        function isKingInCheckOnBoard(color, targetBoard) {
-            let kingPos = null;
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const p = targetBoard[r][c];
-                    if (p && p.c === color && p.p === 'k') {
-                        kingPos = [r, c];
-                        break;
-                    }
-                }
-            }
-            if (!kingPos) return false;
-
-            const attackerColor = color === 'w' ? 'b' : 'w';
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const p = targetBoard[r][c];
-                    if (p && p.c === attackerColor) {
-                        // Quick check without deep recursive castling lookup
-                        if (p.p === 'p') {
-                            const dir = attackerColor === 'w' ? -1 : 1;
-                            if (r + dir === kingPos[0] && (c - 1 === kingPos[1] || c + 1 === kingPos[1])) return true;
-                        } else if (p.p === 'n') {
-                            const offsets = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                            if (offsets.some(([dr, dc]) => r + dr === kingPos[0] && c + dc === kingPos[1])) return true;
-                        } else if (p.p === 'k') {
-                            if (Math.abs(r - kingPos[0]) <= 1 && Math.abs(c - kingPos[1]) <= 1) return true;
-                        } else {
-                            const pm = getPseudoMoves(r, c, p, targetBoard);
-                            if (pm.some(m => m[0] === kingPos[0] && m[1] === kingPos[1])) return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        function findKingInCheck(color) {
-            if (!isKingInCheck(color)) return null;
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const p = board[r][c];
-                    if (p && p.c === color && p.p === 'k') return [r, c];
-                }
-            }
-            return null;
-        }
-
-        function playerHasLegalMoves(color) {
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const p = board[r][c];
-                    if (p && p.c === color) {
-                        const moves = getLegalMoves(r, c);
-                        if (moves.length > 0) return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        function getNotation(piece, fromR, fromC, toR, toC, isCapture) {
-            const files = ['a','b','c','d','e','f','g','h'];
-            const pieceName = piece.p.toUpperCase();
-            const dest = `${files[toC]}${8 - toR}`;
-            if (piece.p === 'p') {
-                return isCapture ? `${files[fromC]}x${dest}` : dest;
-            }
-            return `${pieceName}${isCapture ? 'x' : ''}${dest}`;
-        }
-
-        // UI & Status Updates
-        function updateUI() {
-            // Update turn text
-            const turnText = document.getElementById('turn-text');
-            turnText.innerText = turn === 'w' ? "White's Turn" : "Black's Turn";
-
-            // Check alert status
-            const checkAlert = document.getElementById('check-alert');
-            if (isKingInCheck(turn) && !isGameOver) {
-                checkAlert.classList.remove('hidden');
-            } else {
-                checkAlert.classList.add('hidden');
-            }
-
-            // Turn Indicators
-            const wInd = document.getElementById('white-turn-indicator');
-            const bInd = document.getElementById('black-turn-indicator');
-            if (turn === 'w') {
-                wInd.className = 'w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 animate-pulse';
-                bInd.className = 'w-3 h-3 rounded-full bg-slate-700';
-            } else {
-                bInd.className = 'w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 animate-pulse';
-                wInd.className = 'w-3 h-3 rounded-full bg-slate-700';
-            }
-
-            // Captured pieces rendering
-            const capWEl = document.getElementById('captured-by-white');
-            const capBEl = document.getElementById('captured-by-black');
-            capWEl.innerHTML = capturedWhite.map(p => PIECE_ICONS['w'][p]).join(' ');
-            capBEl.innerHTML = capturedBlack.map(p => PIECE_ICONS['b'][p]).join(' ');
-
-            // Move History Table
-            const historyBody = document.getElementById('move-history-body');
-            historyBody.innerHTML = '';
-            for (let i = 0; i < moveHistory.length; i += 2) {
-                const moveNum = Math.floor(i / 2) + 1;
-                const whiteMove = moveHistory[i] ? moveHistory[i].move : '';
-                const blackMove = moveHistory[i + 1] ? moveHistory[i + 1].move : '';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="py-1 px-2 text-slate-500">${moveNum}.</td>
-                    <td class="py-1 px-2 font-medium text-slate-200">${whiteMove}</td>
-                    <td class="py-1 px-2 font-medium text-slate-300">${blackMove}</td>
-                `;
-                historyBody.appendChild(tr);
-            }
-            historyBody.parentElement.scrollTop = historyBody.parentElement.scrollHeight;
-        }
-
-        function showGameOver(title, iconClass) {
-            document.getElementById('overlay-title').innerText = title;
-            document.getElementById('overlay-message').innerText = turn === 'w' ? "Black completed checkmate." : "White completed checkmate.";
-            document.getElementById('overlay-icon').className = `fa-solid ${iconClass}`;
-            document.getElementById('game-overlay').classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        // WebRTC & Simulated P2P Messaging
-        let roomCode = '';
-        let peerConnection = null;
-        let dataChannel = null;
-
-        function generateRoomCode() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
-        }
-
-        function setupP2PRoom() {
-            roomCode = generateRoomCode();
-            document.getElementById('room-code-input').value = roomCode;
-            
-            // Listen on BroadcastChannel to simulate WebRTC Peer-To-Peer signaling across browser windows
-            window.p2pChannel = new BroadcastChannel(`chess_room_${roomCode}`);
-            window.p2pChannel.onmessage = (e) => {
-                const data = e.data;
-                if (data.type === 'JOIN_REQUEST') {
-                    // Second player joined
-                    myRole = 'w';
-                    isBoardFlipped = false;
-                    document.getElementById('p2p-badge').innerText = 'Connected (White)';
-                    document.getElementById('p2p-badge').className = 'normal-case text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-                    document.getElementById('white-role-badge').innerText = '(You)';
-                    document.getElementById('black-role-badge').innerText = '(Peer)';
-                    document.getElementById('connection-status-msg').innerText = 'Peer connected! You play as White.';
-                    
-                    window.p2pChannel.postMessage({ type: 'JOIN_ACCEPT' });
-                    renderBoard();
-                } else if (data.type === 'MOVE') {
-                    executeMove(data.from[0], data.from[1], data.to[0], data.to[1], true);
-                } else if (data.type === 'RESIGN') {
-                    isGameOver = true;
-                    showGameOver('Opponent Resigned!', 'fa-flag');
-                } else if (data.type === 'RESTART') {
-                    initGame();
-                }
-            };
-        }
-
-        function joinP2PRoom(code) {
-            roomCode = code;
-            window.p2pChannel = new BroadcastChannel(`chess_room_${roomCode}`);
-            
-            window.p2pChannel.onmessage = (e) => {
-                const data = e.data;
-                if (data.type === 'JOIN_ACCEPT') {
-                    myRole = 'b';
-                    isBoardFlipped = true;
-                    document.getElementById('p2p-badge').innerText = 'Connected (Black)';
-                    document.getElementById('p2p-badge').className = 'normal-case text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-                    document.getElementById('white-role-badge').innerText = '(Peer)';
-                    document.getElementById('black-role-badge').innerText = '(You)';
-                    document.getElementById('connection-status-msg').innerText = 'Connected to room! You play as Black.';
-                    renderBoard();
-                } else if (data.type === 'MOVE') {
-                    executeMove(data.from[0], data.from[1], data.to[0], data.to[1], true);
-                } else if (data.type === 'RESIGN') {
-                    isGameOver = true;
-                    showGameOver('Opponent Resigned!', 'fa-flag');
-                } else if (data.type === 'RESTART') {
-                    initGame();
-                }
-            };
-
-            window.p2pChannel.postMessage({ type: 'JOIN_REQUEST' });
-        }
-
-        function broadcastMove(fromR, fromC, toR, toC) {
-            if (window.p2pChannel) {
-                window.p2pChannel.postMessage({
-                    type: 'MOVE',
-                    from: [fromR, fromC],
-                    to: [toR, toC]
-                });
-            }
-        }
-
-        // Event Listeners Initialization
-        document.addEventListener('DOMContentLoaded', () => {
-            initGame();
-            setupP2PRoom();
-
-            // Toggle Sound Button
-            document.getElementById('toggle-sound-btn').addEventListener('click', () => {
-                soundEnabled = !soundEnabled;
-                const icon = document.getElementById('sound-icon');
-                if (soundEnabled) {
-                    icon.className = 'fa-solid fa-volume-high';
-                } else {
-                    icon.className = 'fa-solid fa-volume-xmark text-slate-500';
                 }
             });
 
-            // Flip Board Button
-            document.getElementById('flip-board-btn').addEventListener('click', () => {
+            const selfCaptured = myRole === 'w' ? capturedByWhite : capturedByBlack;
+            const oppCaptured = myRole === 'w' ? capturedByBlack : capturedByWhite;
+
+            document.getElementById('capturedBySelf').textContent = selfCaptured.join(' ');
+            document.getElementById('capturedByOpponent').textContent = oppCaptured.join(' ');
+        }
+
+        // Render formatted move history table
+        function renderMoveHistory() {
+            const history = game.history();
+            const historyContainer = document.getElementById('moveHistoryList');
+            historyContainer.innerHTML = '';
+
+            for (let i = 0; i < history.length; i += 2) {
+                const moveNum = Math.floor(i / 2) + 1;
+                const whiteMove = history[i] || '';
+                const blackMove = history[i + 1] || '';
+
+                const row = document.createElement('div');
+                row.className = 'flex justify-between py-0.5 border-b border-slate-800/50';
+                row.innerHTML = `<span class="text-slate-500">${moveNum}.</span><span>${whiteMove}</span><span class="text-slate-400">${blackMove}</span>`;
+                historyContainer.appendChild(row);
+            }
+            historyContainer.scrollTop = historyContainer.scrollHeight;
+        }
+
+        // Helper: Connection Status UI
+        function updateConnectionStatus(text, statusClass) {
+            const badge = document.getElementById('connectionStatusBadge');
+            const label = document.getElementById('connectionStatusText');
+
+            label.textContent = text;
+            badge.className = 'px-3 py-1.5 rounded-full text-xs font-semibold flex items-center space-x-1.5 ';
+
+            if (statusClass === 'connected') {
+                badge.classList.add('bg-emerald-500/10', 'text-emerald-400', 'border', 'border-emerald-500/20');
+            } else {
+                badge.classList.add('bg-amber-500/10', 'text-amber-400', 'border', 'border-amber-500/20');
+            }
+        }
+
+        // Helper: Show UI Notifications
+        function showAlert(msg, type = 'info') {
+            const alertBox = document.getElementById('gameAlertBox');
+            alertBox.classList.remove('hidden', 'bg-indigo-500/10', 'text-indigo-300', 'bg-rose-500/10', 'text-rose-300', 'bg-amber-500/10', 'text-amber-300');
+
+            if (type === 'error') {
+                alertBox.classList.add('bg-rose-500/10', 'text-rose-300', 'border-rose-500/20');
+            } else if (type === 'warning') {
+                alertBox.classList.add('bg-amber-500/10', 'text-amber-300', 'border-amber-500/20');
+            } else {
+                alertBox.classList.add('bg-indigo-500/10', 'text-indigo-300', 'border-indigo-500/20');
+            }
+
+            alertBox.textContent = msg;
+        }
+
+        // Helper: Update Player Roles UI
+        function updateRoleUI() {
+            const roleLabel = document.getElementById('playerRoleText');
+            roleLabel.textContent = myRole === 'w' ? 'White (P1)' : 'Black (P2)';
+            renderBoard();
+        }
+
+        // Clipboard Copy Helper
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).value;
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('Code copied to clipboard!', 'info');
+            }).catch(() => {
+                // Fallback for iframe/restricted context
+                const el = document.getElementById(elementId);
+                el.select();
+                document.execCommand('copy');
+                showAlert('Code copied to clipboard!', 'info');
+            });
+        }
+
+        // Event Listeners setup
+        window.addEventListener('DOMContentLoaded', () => {
+            renderBoard();
+
+            // Tab switching
+            const tabHost = document.getElementById('tabHost');
+            const tabJoin = document.getElementById('tabJoin');
+            const hostSec = document.getElementById('hostSection');
+            const joinSec = document.getElementById('joinSection');
+
+            tabHost.addEventListener('click', () => {
+                tabHost.classList.add('border-indigo-500', 'text-indigo-400');
+                tabHost.classList.remove('border-transparent', 'text-slate-400');
+                tabJoin.classList.add('border-transparent', 'text-slate-400');
+                tabJoin.classList.remove('border-indigo-500', 'text-indigo-400');
+                hostSec.classList.remove('hidden');
+                joinSec.classList.add('hidden');
+            });
+
+            tabJoin.addEventListener('click', () => {
+                tabJoin.classList.add('border-indigo-500', 'text-indigo-400');
+                tabJoin.classList.remove('border-transparent', 'text-slate-400');
+                tabHost.classList.add('border-transparent', 'text-slate-400');
+                tabHost.classList.remove('border-indigo-500', 'text-indigo-400');
+                joinSec.classList.remove('hidden');
+                hostSec.classList.add('hidden');
+            });
+
+            // Action Buttons
+            document.getElementById('createOfferBtn').addEventListener('click', createHostOffer);
+            document.getElementById('acceptAnswerBtn').addEventListener('click', acceptJoinerAnswer);
+            document.getElementById('createAnswerBtn').addEventListener('click', createJoinerAnswer);
+
+            document.getElementById('copyOfferBtn').addEventListener('click', () => copyToClipboard('localOfferInput'));
+            document.getElementById('copyAnswerBtn').addEventListener('click', () => copyToClipboard('localAnswerInput'));
+
+            document.getElementById('flipBoardBtn').addEventListener('click', () => {
                 isBoardFlipped = !isBoardFlipped;
                 renderBoard();
             });
 
-            // New Game / Reset Button
-            document.getElementById('new-game-btn').addEventListener('click', () => {
-                initGame();
-                setupP2PRoom();
-                if (window.p2pChannel) {
-                    window.p2pChannel.postMessage({ type: 'RESTART' });
-                }
-            });
-
-            document.getElementById('overlay-restart-btn').addEventListener('click', () => {
-                initGame();
-                if (window.p2pChannel) {
-                    window.p2pChannel.postMessage({ type: 'RESTART' });
-                }
-            });
-
-            // Copy Room Code Button
-            document.getElementById('copy-code-btn').addEventListener('click', () => {
-                const input = document.getElementById('room-code-input');
-                input.select();
-                document.execCommand('copy');
-                const btn = document.getElementById('copy-code-btn');
-                btn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i>';
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-                }, 1800);
-            });
-
-            // Join Room Button
-            document.getElementById('join-room-btn').addEventListener('click', () => {
-                const code = document.getElementById('join-code-input').value.trim();
-                if (code.length === 6) {
-                    joinP2PRoom(code);
+            document.getElementById('soundToggleBtn').addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                const icon = document.getElementById('soundIcon');
+                if (soundEnabled) {
+                    icon.className = 'fa-solid fa-volume-high text-indigo-400';
                 } else {
-                    alert('Please enter a valid 6-digit room code.');
+                    icon.className = 'fa-solid fa-volume-xmark text-slate-500';
                 }
-            });
-
-            // Resign Button
-            document.getElementById('resign-btn').addEventListener('click', () => {
-                if (isGameOver) return;
-                isGameOver = true;
-                const resigningPlayer = myRole === 'both' ? (turn === 'w' ? 'White' : 'Black') : (myRole === 'w' ? 'White' : 'Black');
-                showGameOver(`${resigningPlayer} Resigned`, 'fa-flag');
-                if (window.p2pChannel) {
-                    window.p2pChannel.postMessage({ type: 'RESIGN' });
-                }
-            });
-
-            // Undo Move Button
-            document.getElementById('undo-btn').addEventListener('click', () => {
-                if (moveHistory.length === 0 || isGameOver) return;
-                // Simple undo implementation for local play
-                initGame();
             });
         });
     </script>
