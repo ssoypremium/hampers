@@ -1,189 +1,136 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Data Transfer - Client / Receiver</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDKs (Modular V9/V10 JS) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, onValue, push, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        // TODO: वही Firebase Config डालें जो Server कोड में यूज़ किया था
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseorg.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Firebase initialize करें
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        let activePin = null;
-
-        // UI एलिमेंट्स
-        const pinInput = document.getElementById("pinInput");
-        const connectBtn = document.getElementById("connectBtn");
-        const statusBadge = document.getElementById("statusBadge");
-        const chatBox = document.getElementById("chatBox");
-        const messageInput = document.getElementById("messageInput");
-        const sendBtn = document.getElementById("sendBtn");
-        const connectionSection = document.getElementById("connectionSection");
-
-        // 1. PIN से Server Session से जुड़ना
-        connectBtn.addEventListener("click", async () => {
-            const pin = pinInput.value.trim();
-            if (pin.length !== 6) {
-                alert("कृपया सही 6-अंकों का PIN दर्ज करें!");
-                return;
-            }
-
-            const sessionRef = ref(database, 'sessions/' + pin);
-            
-            try {
-                const snapshot = await get(sessionRef);
-                if (!snapshot.exists()) {
-                    alert("यह PIN अमान्य है या सर्वर एक्टिव नहीं है!");
-                    return;
-                }
-
-                activePin = pin;
-
-                // Client Connected स्टेटस Firebase में अपडेट करें
-                const clientStatusRef = ref(database, 'sessions/' + activePin + '/clientConnected');
-                await set(clientStatusRef, true);
-
-                // डिस्कनेक्ट होने पर स्टेटस सेट करें
-                onDisconnect(clientStatusRef).set(false);
-
-                // UI अपडेट्स
-                statusBadge.innerText = "कनेक्टेड है!";
-                statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                
-                pinInput.disabled = true;
-                connectBtn.disabled = true;
-                messageInput.disabled = false;
-                sendBtn.disabled = false;
-
-                // डेटा/मैसेज लिसन करना शुरू करें
-                listenForMessages();
-                listenForServerStatus();
-
-            } catch (err) {
-                alert("कनेक्शन त्रुटि: " + err.message);
-            }
-        });
-
-        // 2. Server का स्टेटस चेक करना
-        function listenForServerStatus() {
-            const serverStatusRef = ref(database, 'sessions/' + activePin + '/serverConnected');
-            onValue(serverStatusRef, (snapshot) => {
-                const isServerOnline = snapshot.val();
-                if (isServerOnline === false) {
-                    statusBadge.innerText = "सर्वर ऑफ़लाइन है";
-                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400 border border-red-500/30";
-                }
-            });
-        }
-
-        // 3. क्लाइंट से डेटा/मेसेज भेजना
-        function sendMessage() {
-            const text = messageInput.value.trim();
-            if (!text || !activePin) return;
-
-            const messagesRef = ref(database, 'sessions/' + activePin + '/messages');
-            push(messagesRef, {
-                sender: "client",
-                text: text,
-                timestamp: serverTimestamp()
-            });
-
-            messageInput.value = "";
-        }
-
-        sendBtn.addEventListener("click", sendMessage);
-        messageInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") sendMessage();
-        });
-
-        // 4. मैसेज/डेटा रिसीव करना
-        function listenForMessages() {
-            const messagesRef = ref(database, 'sessions/' + activePin + '/messages');
-            onValue(messagesRef, (snapshot) => {
-                const data = snapshot.val();
-                if (!data) return;
-
-                chatBox.innerHTML = "";
-                Object.values(data).forEach(msg => {
-                    const isSelf = msg.sender === "client";
-                    appendMessage(isSelf ? "Client (आप)" : "Server", msg.text, isSelf ? "outgoing" : "incoming");
-                });
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-        }
-
-        // UI में मैसेज जोड़ने का फ़ंक्शन
-        function appendMessage(senderName, text, type) {
-            const msgDiv = document.createElement("div");
-            msgDiv.className = `flex flex-col ${type === 'outgoing' ? 'items-end' : 'items-start'} mb-3`;
-            
-            msgDiv.innerHTML = `
-                <span class="text-xs text-slate-400 mb-1">${senderName}</span>
-                <div class="max-w-xs px-4 py-2 rounded-2xl text-sm ${type === 'outgoing' ? 'bg-teal-600 text-white rounded-br-none' : 'bg-slate-700 text-slate-100 rounded-bl-none'}">
-                    ${text}
-                </div>
-            `;
-            chatBox.appendChild(msgDiv);
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirShare - Receiver (Client)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
 
-    <div class="w-full max-w-md bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 flex flex-col h-[650px]">
-        <!-- Header -->
-        <div class="flex justify-between items-center border-b border-slate-700 pb-4 mb-4">
-            <div>
-                <h1 class="text-xl font-bold text-teal-400">Client Node</h1>
-                <p class="text-xs text-slate-400">PIN डालें और कनेक्शन बनाएं</p>
-            </div>
-            <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-400 border border-slate-600">
-                ऑफलाइन
-            </span>
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-emerald-600 rounded-lg text-white">
+          <i class="fa-solid fa-download text-xl"></i>
         </div>
+        <div>
+          <h1 class="font-bold text-xl leading-tight">AirShare</h1>
+          <p class="text-xs text-emerald-400 font-medium">Receiver Mode (Client)</p>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Ready
+      </span>
+    </div>
+  </header>
 
-        <!-- Connection PIN Section -->
-        <div id="connectionSection" class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 text-center mb-4">
-            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">पेयरिंग PIN दर्ज करें</p>
-            <div class="flex gap-2">
-                <input type="text" id="pinInput" maxlength="6" placeholder="उदा. 123456" class="w-full text-center tracking-widest font-mono text-lg font-bold bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-emerald-400 focus:outline-none focus:border-teal-500">
-                <button id="connectBtn" class="bg-teal-600 hover:bg-teal-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-lg shadow-teal-600/20 whitespace-nowrap">
-                    कनेक्ट करें
-                </button>
-            </div>
-        </div>
-
-        <!-- Chat / Data Exchange Area -->
-        <div id="chatBox" class="flex-1 bg-slate-900/40 border border-slate-700/50 rounded-xl p-4 overflow-y-auto mb-4">
-            <div class="text-center text-xs text-slate-500 my-auto pt-12">
-                PIN डालकर सर्वर से कनेक्ट करें।
-            </div>
-        </div>
-
-        <!-- Message Input -->
-        <div class="flex gap-2">
-            <input type="text" id="messageInput" disabled placeholder="डेटा/मैसेज टाइप करें..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500 disabled:opacity-50">
-            <button id="sendBtn" disabled class="bg-teal-600 hover:bg-teal-500 disabled:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                भेजें
-            </button>
-        </div>
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 py-8 w-full flex-1 space-y-6">
+    
+    <!-- Code Form -->
+    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur">
+      <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+        <i class="fa-solid fa-key text-emerald-400"></i> Enter Share Code
+      </h2>
+      <p class="text-xs text-slate-400 mb-4">Enter the 4-digit code provided by the sender.</p>
+      
+      <form id="receiveForm" class="flex gap-3">
+        <input type="text" id="codeInput" maxlength="4" placeholder="1234" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-center text-xl font-mono font-bold tracking-widest text-slate-100 focus:outline-none focus:border-emerald-500 transition uppercase">
+        <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-medium text-sm rounded-xl transition flex items-center gap-2 shrink-0 shadow-lg shadow-emerald-600/20">
+          <i class="fa-solid fa-arrow-down text-sm"></i> Fetch
+        </button>
+      </form>
     </div>
 
+    <!-- Output Section (Hidden initially) -->
+    <div id="outputCard" class="hidden bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-check"></i> Data Received
+        </span>
+        <button id="copyContentBtn" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition inline-flex items-center gap-1.5">
+          <i class="fa-regular fa-copy"></i> Copy Text
+        </button>
+      </div>
+
+      <div id="contentDisplay" class="bg-slate-900 border border-slate-700/50 rounded-xl p-4 text-sm text-slate-200 font-mono whitespace-pre-wrap break-all max-h-80 overflow-y-auto"></div>
+    </div>
+
+    <!-- Error/Status Message -->
+    <div id="statusMsg" class="hidden text-center text-sm py-3 px-4 rounded-xl border"></div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+    AirShare Client &bull; Realtime Receive
+  </footer>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6a0avUTymJ7byjC87nwjxvHyJCun4vxA",
+      authDomain: "airshare-279eb.firebaseapp.com",
+      databaseURL: "https://airshare-279eb-default-rtdb.firebaseio.com",
+      projectId: "airshare-279eb",
+      storageBucket: "airshare-279eb.firebasestorage.app",
+      messagingSenderId: "344144076433",
+      appId: "1:344144076433:web:4a37b569bf2b358b3e6930"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const receiveForm = document.getElementById('receiveForm');
+    const codeInput = document.getElementById('codeInput');
+    const outputCard = document.getElementById('outputCard');
+    const contentDisplay = document.getElementById('contentDisplay');
+    const copyContentBtn = document.getElementById('copyContentBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    function showStatus(message, isError = false) {
+      statusMsg.textContent = message;
+      statusMsg.className = `text-center text-sm py-3 px-4 rounded-xl border ${isError ? 'bg-rose-950/40 border-rose-500/30 text-rose-300' : 'bg-indigo-950/40 border-indigo-500/30 text-indigo-300'}`;
+      statusMsg.classList.remove('hidden');
+    }
+
+    receiveForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = codeInput.value.trim();
+      if(!code) return;
+
+      statusMsg.classList.add('hidden');
+      outputCard.classList.add('hidden');
+
+      try {
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, `shares/${code}`));
+
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          contentDisplay.textContent = data.content;
+          outputCard.classList.remove('hidden');
+        } else {
+          showStatus("No shared content found for this code. Please check and try again.", true);
+        }
+      } catch (error) {
+        showStatus("Error fetching data: " + error.message, true);
+      }
+    });
+
+    copyContentBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(contentDisplay.textContent);
+      copyContentBtn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Copied!';
+      setTimeout(() => {
+        copyContentBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Text';
+      }, 2000);
+    });
+  </script>
 </body>
 </html>
