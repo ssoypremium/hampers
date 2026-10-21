@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone 2 - WebRTC Audio Receiver</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+    .card { background: #fff; padding: 20px; border-radius: 10px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    input { padding: 10px; font-size: 18px; width: 150px; text-align: center; margin: 10px; }
+    button { padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; }
+    .answer-btn { background-color: #28a745; color: white; }
+    .end-btn { background-color: #dc3545; color: white; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Phone 2 (Receiver)</h2>
+    <input type="text" id="codeInput" placeholder="6-digit code" maxlength="6">
+    <br>
+    <button id="answerBtn" class="answer-btn" onclick="answerCall()">कॉल रिसीव करें</button>
+    <button id="endBtn" class="end-btn" onclick="endCall()" disabled>कॉल एंड करें</button>
+    <p id="status">स्थिति: कोड दर्ज करें</p>
+  </div>
+
+  <audio id="localAudio" autoplay muted></audio>
+  <audio id="remoteAudio" autoplay></audio>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let localStream, pc, sessionRef;
+    const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
+    async function answerCall() {
+      const code = document.getElementById('codeInput').value.trim();
+      if (code.length !== 6) {
+        alert("कृपया 6 अंकों का कोड दर्ज करें");
+        return;
+      }
+
+      sessionRef = database.ref('calls/' + code);
+      const snapshot = await sessionRef.once('value');
+      if (!snapshot.exists()) {
+        alert("अवैध या पुराना कोड");
+        return;
+      }
+
+      document.getElementById('status').innerText = "कनेक्ट हो रहा है...";
+      document.getElementById('answerBtn').disabled = true;
+      document.getElementById('endBtn').disabled = false;
+
+      localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      document.getElementById('localAudio').srcObject = localStream;
+
+      pc = new RTCPeerConnection(servers);
+
+      localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+      pc.ontrack = event => {
+        document.getElementById('remoteAudio').srcObject = event.streams[0];
+      };
+
+      pc.onicecandidate = event => {
+        if (event.candidate) {
+          sessionRef.child('calleeCandidates').push(event.candidate.toJSON());
+        }
+      };
+
+      const offer = (await sessionRef.child('offer').once('value')).val();
+      await pc.setRemoteDescription(new RTCSessionDescription(offer));
+
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      await sessionRef.child('answer').set({ type: answer.type, sdp: answer.sdp });
+
+      sessionRef.child('callerCandidates').on('child_added', snapshot => {
+        const candidate = new RTCIceCandidate(snapshot.val());
+        pc.addIceCandidate(candidate);
+      });
+
+      sessionRef.child('status').on('value', snapshot => {
+        if (snapshot.val() === 'ended') {
+          cleanup();
+        }
+      });
+
+      document.getElementById('status').innerText = "कॉल कनेक्ट हो गई (Connected)";
+    }
+
+    function endCall() {
+      if (sessionRef) sessionRef.child('status').set('ended');
+      cleanup();
+    }
+
+    function cleanup() {
+      if (pc) pc.close();
+      if (localStream) localStream.getTracks().forEach(track => track.stop());
+      document.getElementById('status').innerText = "कॉल समाप्त (Ended)";
+      document.getElementById('answerBtn').disabled = false;
+      document.getElementById('endBtn').disabled = true;
+    }
+  </script>
+</body>
+</html>
