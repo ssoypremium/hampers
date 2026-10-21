@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone 1 - WebRTC Audio Caller</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+    .card { background: #fff; padding: 20px; border-radius: 10px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 10px 20px; margin: 10px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; }
+    .call-btn { background-color: #28a745; color: white; }
+    .end-btn { background-color: #dc3545; color: white; }
+    .code-box { font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #007bff; margin: 15px 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Phone 1 (Caller)</h2>
+    <p>आपका 6-डिजिट सेशन कोड:</p>
+    <div id="codeDisplay" class="code-box">------</div>
+    <button id="callBtn" class="call-btn" onclick="startCall()">कॉल करें (Start Call)</button>
+    <button id="endBtn" class="end-btn" onclick="endCall()" disabled>कॉल एंड करें</button>
+    <p id="status">स्थिति: तैयार</p>
+  </div>
+
+  <audio id="localAudio" autoplay muted></audio>
+  <audio id="remoteAudio" autoplay></audio>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let localStream, pc, sessionRef, roomCode;
+    const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
+    function generate6DigitCode() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    async function startCall() {
+      roomCode = generate6DigitCode();
+      document.getElementById('codeDisplay').innerText = roomCode;
+      document.getElementById('status').innerText = "कॉल लग रही है (Calling)...";
+      document.getElementById('callBtn').disabled = true;
+      document.getElementById('endBtn').disabled = false;
+
+      sessionRef = database.ref('calls/' + roomCode);
+      await sessionRef.set({ status: 'calling' });
+
+      localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      document.getElementById('localAudio').srcObject = localStream;
+
+      pc = new RTCPeerConnection(servers);
+
+      localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+      pc.ontrack = event => {
+        document.getElementById('remoteAudio').srcObject = event.streams[0];
+      };
+
+      pc.onicecandidate = event => {
+        if (event.candidate) {
+          sessionRef.child('callerCandidates').push(event.candidate.toJSON());
+        }
+      };
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      await sessionRef.child('offer').set({ type: offer.type, sdp: offer.sdp });
+
+      sessionRef.child('answer').on('value', async snapshot => {
+        const data = snapshot.val();
+        if (data && !pc.currentRemoteDescription) {
+          await pc.setRemoteDescription(new RTCSessionDescription(data));
+          document.getElementById('status').innerText = "कॉल कनेक्ट हो गई (Connected)";
+        }
+      });
+
+      sessionRef.child('calleeCandidates').on('child_added', snapshot => {
+        const candidate = new RTCIceCandidate(snapshot.val());
+        pc.addIceCandidate(candidate);
+      });
+
+      sessionRef.child('status').on('value', snapshot => {
+        if (snapshot.val() === 'ended') {
+          cleanup();
+        }
+      });
+    }
+
+    function endCall() {
+      if (sessionRef) sessionRef.child('status').set('ended');
+      cleanup();
+    }
+
+    function cleanup() {
+      if (pc) pc.close();
+      if (localStream) localStream.getTracks().forEach(track => track.stop());
+      document.getElementById('status').innerText = "कॉल समाप्त (Ended)";
+      document.getElementById('callBtn').disabled = false;
+      document.getElementById('endBtn').disabled = true;
+      document.getElementById('codeDisplay').innerText = "------";
+    }
+  </script>
+</body>
+</html>
