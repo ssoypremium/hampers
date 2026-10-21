@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Data Transfer - Client / Receiver</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDKs (Modular V9/V10 JS) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, onValue, push, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // TODO: वही Firebase Config डालें जो Server कोड में यूज़ किया था
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseorg.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Firebase initialize करें
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        let activePin = null;
+
+        // UI एलिमेंट्स
+        const pinInput = document.getElementById("pinInput");
+        const connectBtn = document.getElementById("connectBtn");
+        const statusBadge = document.getElementById("statusBadge");
+        const chatBox = document.getElementById("chatBox");
+        const messageInput = document.getElementById("messageInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const connectionSection = document.getElementById("connectionSection");
+
+        // 1. PIN से Server Session से जुड़ना
+        connectBtn.addEventListener("click", async () => {
+            const pin = pinInput.value.trim();
+            if (pin.length !== 6) {
+                alert("कृपया सही 6-अंकों का PIN दर्ज करें!");
+                return;
+            }
+
+            const sessionRef = ref(database, 'sessions/' + pin);
+            
+            try {
+                const snapshot = await get(sessionRef);
+                if (!snapshot.exists()) {
+                    alert("यह PIN अमान्य है या सर्वर एक्टिव नहीं है!");
+                    return;
+                }
+
+                activePin = pin;
+
+                // Client Connected स्टेटस Firebase में अपडेट करें
+                const clientStatusRef = ref(database, 'sessions/' + activePin + '/clientConnected');
+                await set(clientStatusRef, true);
+
+                // डिस्कनेक्ट होने पर स्टेटस सेट करें
+                onDisconnect(clientStatusRef).set(false);
+
+                // UI अपडेट्स
+                statusBadge.innerText = "कनेक्टेड है!";
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                
+                pinInput.disabled = true;
+                connectBtn.disabled = true;
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+
+                // डेटा/मैसेज लिसन करना शुरू करें
+                listenForMessages();
+                listenForServerStatus();
+
+            } catch (err) {
+                alert("कनेक्शन त्रुटि: " + err.message);
+            }
+        });
+
+        // 2. Server का स्टेटस चेक करना
+        function listenForServerStatus() {
+            const serverStatusRef = ref(database, 'sessions/' + activePin + '/serverConnected');
+            onValue(serverStatusRef, (snapshot) => {
+                const isServerOnline = snapshot.val();
+                if (isServerOnline === false) {
+                    statusBadge.innerText = "सर्वर ऑफ़लाइन है";
+                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400 border border-red-500/30";
+                }
+            });
+        }
+
+        // 3. क्लाइंट से डेटा/मेसेज भेजना
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text || !activePin) return;
+
+            const messagesRef = ref(database, 'sessions/' + activePin + '/messages');
+            push(messagesRef, {
+                sender: "client",
+                text: text,
+                timestamp: serverTimestamp()
+            });
+
+            messageInput.value = "";
+        }
+
+        sendBtn.addEventListener("click", sendMessage);
+        messageInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
+
+        // 4. मैसेज/डेटा रिसीव करना
+        function listenForMessages() {
+            const messagesRef = ref(database, 'sessions/' + activePin + '/messages');
+            onValue(messagesRef, (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
+
+                chatBox.innerHTML = "";
+                Object.values(data).forEach(msg => {
+                    const isSelf = msg.sender === "client";
+                    appendMessage(isSelf ? "Client (आप)" : "Server", msg.text, isSelf ? "outgoing" : "incoming");
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        // UI में मैसेज जोड़ने का फ़ंक्शन
+        function appendMessage(senderName, text, type) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `flex flex-col ${type === 'outgoing' ? 'items-end' : 'items-start'} mb-3`;
+            
+            msgDiv.innerHTML = `
+                <span class="text-xs text-slate-400 mb-1">${senderName}</span>
+                <div class="max-w-xs px-4 py-2 rounded-2xl text-sm ${type === 'outgoing' ? 'bg-teal-600 text-white rounded-br-none' : 'bg-slate-700 text-slate-100 rounded-bl-none'}">
+                    ${text}
+                </div>
+            `;
+            chatBox.appendChild(msgDiv);
+        }
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 flex flex-col h-[650px]">
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b border-slate-700 pb-4 mb-4">
+            <div>
+                <h1 class="text-xl font-bold text-teal-400">Client Node</h1>
+                <p class="text-xs text-slate-400">PIN डालें और कनेक्शन बनाएं</p>
+            </div>
+            <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-400 border border-slate-600">
+                ऑफलाइन
+            </span>
+        </div>
+
+        <!-- Connection PIN Section -->
+        <div id="connectionSection" class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 text-center mb-4">
+            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">पेयरिंग PIN दर्ज करें</p>
+            <div class="flex gap-2">
+                <input type="text" id="pinInput" maxlength="6" placeholder="उदा. 123456" class="w-full text-center tracking-widest font-mono text-lg font-bold bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-emerald-400 focus:outline-none focus:border-teal-500">
+                <button id="connectBtn" class="bg-teal-600 hover:bg-teal-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-lg shadow-teal-600/20 whitespace-nowrap">
+                    कनेक्ट करें
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat / Data Exchange Area -->
+        <div id="chatBox" class="flex-1 bg-slate-900/40 border border-slate-700/50 rounded-xl p-4 overflow-y-auto mb-4">
+            <div class="text-center text-xs text-slate-500 my-auto pt-12">
+                PIN डालकर सर्वर से कनेक्ट करें।
+            </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="flex gap-2">
+            <input type="text" id="messageInput" disabled placeholder="डेटा/मैसेज टाइप करें..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500 disabled:opacity-50">
+            <button id="sendBtn" disabled class="bg-teal-600 hover:bg-teal-500 disabled:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                भेजें
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>
