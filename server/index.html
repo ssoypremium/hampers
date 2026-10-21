@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Data Transfer - Server / Sender</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDKs (Modular V9/V10 JS) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // TODO: अपनी Firebase Project की डिटेल्स यहाँ डालें
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseorg.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Firebase initialize करें
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        let currentPin = null;
+        let sessionRef = null;
+
+        // UI एलिमेंट्स
+        const generatePinBtn = document.getElementById("generatePinBtn");
+        const pinDisplay = document.getElementById("pinDisplay");
+        const statusBadge = document.getElementById("statusBadge");
+        const chatBox = document.getElementById("chatBox");
+        const messageInput = document.getElementById("messageInput");
+        const sendBtn = document.getElementById("sendBtn");
+
+        // 6-Digit PIN जनरेट करने का फ़ंक्शन
+        function generate6DigitPIN() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // 1. PIN जनरेट करके सर्वर रूम बनाना
+        generatePinBtn.addEventListener("click", () => {
+            currentPin = generate6DigitPIN();
+            pinDisplay.innerText = currentPin;
+            
+            sessionRef = ref(database, 'sessions/' + currentPin);
+
+            // Firebase में सर्वर रूम क्रिएट करें
+            set(sessionRef, {
+                createdAt: serverTimestamp(),
+                serverConnected: true,
+                clientConnected: false,
+                status: "waiting"
+            }).then(() => {
+                // सर्वर डिस्कनेक्ट होने पर स्टेटस क्लीन करें
+                onDisconnect(ref(database, 'sessions/' + currentPin + '/serverConnected')).set(false);
+
+                statusBadge.innerText = "क्लाइंट का इंतज़ार जारी है...";
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                
+                // क्लाइंट के जुड़ने का इंतज़ार करें
+                listenForClient();
+                // मैसेज रिसीव करना सुनना
+                listenForMessages();
+            }).catch((err) => {
+                alert("Firebase त्रुटि: " + err.message);
+            });
+        });
+
+        // 2. क्लाइंट कनेक्ट हुआ या नहीं यह चेक करें
+        function listenForClient() {
+            const clientStatusRef = ref(database, 'sessions/' + currentPin + '/clientConnected');
+            onValue(clientStatusRef, (snapshot) => {
+                const isConnected = snapshot.val();
+                if (isConnected === true) {
+                    statusBadge.innerText = "क्लाइंट कनेक्टेड है!";
+                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                }
+            });
+        }
+
+        // 3. डेटा/मेसेज भेजना
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text || !currentPin) return;
+
+            const messagesRef = ref(database, 'sessions/' + currentPin + '/messages');
+            push(messagesRef, {
+                sender: "server",
+                text: text,
+                timestamp: serverTimestamp()
+            });
+
+            appendMessage("Server (आप)", text, "outgoing");
+            messageInput.value = "";
+        }
+
+        sendBtn.addEventListener("click", sendMessage);
+        messageInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
+
+        // 4. क्लाइंट से डेटा/मेसेज प्राप्त करना
+        function listenForMessages() {
+            const messagesRef = ref(database, 'sessions/' + currentPin + '/messages');
+            onValue(messagesRef, (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
+
+                // चैट बॉक्स साफ़ करके नया लिस्ट रेंडर करें
+                chatBox.innerHTML = "";
+                Object.values(data).forEach(msg => {
+                    const isSelf = msg.sender === "server";
+                    appendMessage(isSelf ? "Server (आप)" : "Client", msg.text, isSelf ? "outgoing" : "incoming");
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        // UI में मैसेज जोड़ने का फ़ंक्शन
+        function appendMessage(senderName, text, type) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `flex flex-col ${type === 'outgoing' ? 'items-end' : 'items-start'} mb-3`;
+            
+            msgDiv.innerHTML = `
+                <span class="text-xs text-slate-400 mb-1">${senderName}</span>
+                <div class="max-w-xs px-4 py-2 rounded-2xl text-sm ${type === 'outgoing' ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-slate-700 text-slate-100 rounded-bl-none'}">
+                    ${text}
+                </div>
+            `;
+            chatBox.appendChild(msgDiv);
+        }
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 flex flex-col h-[650px]">
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b border-slate-700 pb-4 mb-4">
+            <div>
+                <h1 class="text-xl font-bold text-indigo-400">Server Node</h1>
+                <p class="text-xs text-slate-400">PIN जनरेट करें और डेटा भेजें</p>
+            </div>
+            <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-400 border border-slate-600">
+                ऑफलाइन
+            </span>
+        </div>
+
+        <!-- PIN Generation Section -->
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 text-center mb-4">
+            <p class="text-xs text-slate-400 uppercase tracking-wider mb-2">पेयरिंग PIN कोड</p>
+            <div id="pinDisplay" class="text-3xl font-mono font-extrabold text-emerald-400 tracking-widest mb-3">
+                ------
+            </div>
+            <button id="generatePinBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium py-2 rounded-lg transition-colors shadow-lg shadow-indigo-600/20">
+                नया PIN जनरेट करें
+            </button>
+        </div>
+
+        <!-- Chat / Data Exchange Area -->
+        <div id="chatBox" class="flex-1 bg-slate-900/40 border border-slate-700/50 rounded-xl p-4 overflow-y-auto mb-4">
+            <div class="text-center text-xs text-slate-500 my-auto pt-12">
+                PIN जनरेट करें और क्लाइंट का कनेक्ट होने का इंतज़ार करें।
+            </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="flex gap-2">
+            <input type="text" id="messageInput" disabled placeholder="डेटा/मैसेज टाइप करें..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 disabled:opacity-50">
+            <button id="sendBtn" disabled class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700
