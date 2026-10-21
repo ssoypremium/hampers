@@ -183,7 +183,9 @@
   <!-- JavaScript App Logic -->
   <script>
     // App State Configuration
-    const CHUNK_SIZE = 16384; // 16KB WebRTC chunk transfer size
+    // const CHUNK_SIZE = 16384; // 16KB WebRTC chunk transfer size
+    // const CHUNK_SIZE = 65536; // 64KB WebRTC chunk transfer size
+    const CHUNK_SIZE = 1048576; // 1MB WebRTC chunk transfer size
     let peer = null;
     let conn = null;
     let myPeerId = null;
