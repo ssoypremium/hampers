@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,11 @@
     .card { background: #fff; padding: 25px; border-radius: 12px; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
     button { padding: 14px 28px; margin: 10px; font-size: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; display: none; }
     .accept-btn { background-color: #28a745; color: white; animation: pulse 1.5s infinite; }
-    .status { margin-top: 15px; font-size: 18px; color: #333; }
+    .status-container { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .status-dot { width: 15px; height: 15px; border-radius: 50%; background-color: #dc3545; display: inline-block; }
+    .status-dot.connected { background-color: #28a745; }
+    .status-dot.calling { background-color: #ffc107; }
+    .status-text { font-size: 18px; font-weight: bold; color: #333; }
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); }
@@ -22,15 +26,18 @@
 <body>
   <div class="card">
     <h2>Phone 2 (Receiver)</h2>
-    <div id="status" class="status">कॉल का इंतज़ार किया जा रहा है...</div>
-    <button id="acceptBtn" class="accept-btn" onclick="acceptCall()">कॉल उठाएं (Accept Call)</button>
+    <button id="acceptBtn" class="accept-btn" onclick="acceptCall()">Accept Call</button>
+    
+    <div class="status-container">
+      <span id="statusDot" class="status-dot"></span>
+      <span id="statusText" class="status-text">Waiting for Call...</span>
+    </div>
   </div>
 
   <audio id="localAudio" autoplay muted></audio>
   <audio id="remoteAudio" autoplay></audio>
 
   <script>
-    // Firebase Config (यहाँ अपनी Firebase प्रोजेक्ट की डिटेल्स डालें)
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -47,11 +54,10 @@
     const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
     const sessionRef = database.ref('active_calls/main_call');
 
-    // इनकमिंग कॉल के लिए लगातार सुनना
     sessionRef.on('value', snapshot => {
       const data = snapshot.val();
       if (data && data.status === 'ringing') {
-        document.getElementById('status').innerText = "📲 इनकमिंग कॉल आ रही है...";
+        updateStatus('calling', 'Incoming Call...');
         document.getElementById('acceptBtn').style.display = 'inline-block';
       } else if (data && data.status === 'ended') {
         cleanup();
@@ -59,7 +65,7 @@
     });
 
     async function acceptCall() {
-      document.getElementById('status').innerText = "कॉल कनेक्ट हो रही है...";
+      updateStatus('calling', 'Connecting...');
       document.getElementById('acceptBtn').style.display = 'none';
 
       localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -79,31 +85,37 @@
         }
       };
 
-      // Offer प्राप्त करना
       const offerSnapshot = await sessionRef.child('offer').once('value');
       const offer = offerSnapshot.val();
       await pc.setRemoteDescription(new RTCSessionDescription(offer));
 
-      // Answer बनाना और भेजना
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
       await sessionRef.child('answer').set({ type: answer.type, sdp: answer.sdp });
       await sessionRef.child('status').set('connected');
 
-      // Phone 1 के ICE Candidates सुनना
       sessionRef.child('callerCandidates').on('child_added', snapshot => {
         const candidate = new RTCIceCandidate(snapshot.val());
         pc.addIceCandidate(candidate);
       });
 
-      document.getElementById('status').innerText = "कॉल कनेक्टेड (बातचीत चालू है)";
+      updateStatus('connected', 'Connected');
     }
 
     function cleanup() {
       if (pc) { pc.close(); pc = null; }
       if (localStream) { localStream.getTracks().forEach(track => track.stop()); }
-      document.getElementById('status').innerText = "कॉल समाप्त हो चुकी है";
+      updateStatus('disconnected', 'Disconnected');
       document.getElementById('acceptBtn').style.display = 'none';
+    }
+
+    function updateStatus(state, text) {
+      const dot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+      dot.className = 'status-dot';
+      if (state === 'connected') dot.classList.add('connected');
+      else if (state === 'calling') dot.classList.add('calling');
+      statusText.innerText = text;
     }
   </script>
 </body>
