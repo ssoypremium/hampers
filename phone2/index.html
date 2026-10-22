@@ -3,20 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phone 2 - Client</title>
+  <title>Phone 2 - Receiver</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 320px;
+    }
+    .indicator-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .dot {
+      height: 14px;
+      width: 14px;
+      background-color: #dc3545; /* Default Red */
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.ringing {
+      background-color: #28a745; /* Green */
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+    .status-text {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+    .btn-receive {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      display: none; /* Hide until incoming call */
+    }
+    .btn-receive:hover {
+      background-color: #218838;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Phone 2 (Client)</h1>
-  <p>Firebase Realtime Database कनेक्ट हो गया है।</p>
+  <div class="card">
+    <h2>Phone 2 (Receiver)</h2>
+    
+    <div class="indicator-container">
+      <span class="dot" id="statusDot"></span>
+      <span class="status-text" id="statusText">Waiting for Call...</span>
+    </div>
 
-  <!-- Firebase Modular SDK -->
+    <button class="btn-receive" id="receiveBtn">Receive Call</button>
+  </div>
+
   <script type="module">
-    // Firebase App और Realtime Database SDK इम्पोर्ट करें
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
 
-    // आपका Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCgNSfsh7rTqznUB_zd8m7uTMo4IyaYM_k",
       authDomain: "voip-85216.firebaseapp.com",
@@ -27,11 +93,41 @@
       appId: "1:514359486982:web:a210261bc758b1823ff187"
     };
 
-    // Firebase को इनिशियलाइज़ करें
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    console.log("Firebase Successfully Connected on Phone 2!");
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const receiveBtn = document.getElementById('receiveBtn');
+
+    // Listen to Firebase for Call status from Phone 1
+    onValue(ref(database, 'call/status'), (snapshot) => {
+      const status = snapshot.val();
+
+      if (status === 'calling') {
+        // Incoming call state
+        statusDot.classList.add('ringing');
+        statusText.innerText = "Incoming Call...";
+        receiveBtn.style.display = "block";
+      } else if (status === 'connected') {
+        // Call accepted state
+        statusDot.classList.remove('ringing');
+        statusDot.style.backgroundColor = "#28a745";
+        statusText.innerText = "Call Connected";
+        receiveBtn.style.display = "none";
+      } else {
+        // Idle state
+        statusDot.classList.remove('ringing');
+        statusDot.style.backgroundColor = "#dc3545";
+        statusText.innerText = "Waiting for Call...";
+        receiveBtn.style.display = "none";
+      }
+    });
+
+    // Accept Call Click Action
+    receiveBtn.addEventListener('click', () => {
+      set(ref(database, 'call/status'), 'connected');
+    });
   </script>
 
 </body>
