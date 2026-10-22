@@ -4,19 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phone 1 - Server</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 320px;
+    }
+    .status {
+      font-size: 16px;
+      margin: 15px 0;
+      font-weight: bold;
+      color: #333;
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Phone 1 (Server)</h1>
-  <p>Firebase Realtime Database कनेक्ट हो गया है।</p>
+  <div class="card">
+    <h2>Phone 1 (Server)</h2>
+    <div class="status" id="callStatus">Status: Idle</div>
+    <button class="btn" id="callBtn">Make Call</button>
+  </div>
 
-  <!-- Firebase Modular SDK -->
   <script type="module">
-    // Firebase App और Realtime Database SDK इम्पोर्ट करें
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
 
-    // आपका Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCgNSfsh7rTqznUB_zd8m7uTMo4IyaYM_k",
       authDomain: "voip-85216.firebaseapp.com",
@@ -27,11 +65,29 @@
       appId: "1:514359486982:web:a210261bc758b1823ff187"
     };
 
-    // Firebase को इनिशियलाइज़ करें
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    console.log("Firebase Successfully Connected on Phone 1!");
+    const callBtn = document.getElementById('callBtn');
+    const callStatus = document.getElementById('callStatus');
+
+    // Make Call button click
+    callBtn.addEventListener('click', () => {
+      set(ref(database, 'call/status'), 'calling');
+      callStatus.innerText = "Status: Calling Phone 2...";
+    });
+
+    // Listen to Response from Phone 2
+    onValue(ref(database, 'call/status'), (snapshot) => {
+      const status = snapshot.val();
+      if (status === 'connected') {
+        callStatus.innerText = "Status: Call Connected!";
+        callStatus.style.color = "green";
+      } else if (status === 'idle') {
+        callStatus.innerText = "Status: Idle";
+        callStatus.style.color = "#333";
+      }
+    });
   </script>
 
 </body>
