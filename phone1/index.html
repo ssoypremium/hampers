@@ -1,94 +1,695 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phone 1 - Server</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f4f4f9;
-    }
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 320px;
-    }
-    .status {
-      font-size: 16px;
-      margin: 15px 0;
-      font-weight: bold;
-      color: #333;
-    }
-    .btn {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-    }
-    .btn:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC VoIP Call Tester - Firebase Realtime Database</title>
+    <!-- Tailwind CSS for modern responsive UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .pulse-ring {
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            animation: pulse-ring 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+        @keyframes pulse-ring {
+            to {
+                box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
+            }
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
-  <div class="card">
-    <h2>Phone 1 (Server)</h2>
-    <div class="status" id="callStatus">Status: Idle</div>
-    <button class="btn" id="callBtn">Make Call</button>
-  </div>
+    <!-- Header Navigation -->
+    <header class="bg-slate-800/80 backdrop-blur border-b border-slate-700/60 sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-phone-volume"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">WebRTC VoIP Call Tester</h1>
+                    <p class="text-xs text-slate-400">Powered by Firebase Realtime Database</p>
+                </div>
+            </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+            <!-- View Mode Switcher -->
+            <div class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-700/80 text-sm font-medium">
+                <button id="tab-split" onclick="setViewMode('split')" class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-2 bg-blue-600 text-white shadow">
+                    <i class="fa-solid fa-columns"></i>
+                    <span class="hidden sm:inline">Split View</span>
+                </button>
+                <button id="tab-call1" onclick="setViewMode('call1')" class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-phone-arrow-up-right"></i>
+                    <span>Call 1 (Caller)</span>
+                </button>
+                <button id="tab-call2" onclick="setViewMode('call2')" class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-phone-arrow-down-left"></i>
+                    <span>Call 2 (Receiver)</span>
+                </button>
+            </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCgNSfsh7rTqznUB_zd8m7uTMo4IyaYM_k",
-      authDomain: "voip-85216.firebaseapp.com",
-      databaseURL: "https://voip-85216-default-rtdb.firebaseio.com",
-      projectId: "voip-85216",
-      storageBucket: "voip-85216.firebasestorage.app",
-      messagingSenderId: "514359486982",
-      appId: "1:514359486982:web:a210261bc758b1823ff187"
-    };
+            <!-- Configuration Drawer Toggle -->
+            <button onclick="toggleConfigModal()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition">
+                <i class="fa-solid fa-gear"></i>
+                <span>Firebase Config</span>
+            </button>
+        </div>
+    </header>
 
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
 
-    const callBtn = document.getElementById('callBtn');
-    const callStatus = document.getElementById('callStatus');
+        <!-- Call Session ID Input Bar -->
+        <div class="bg-slate-800 border border-slate-700/80 rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 w-full md:w-auto">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                    <i class="fa-solid fa-hashtag"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Active Call Room</span>
+                    <span id="current-room-display" class="font-mono text-sm font-bold text-blue-400">voip-demo-room</span>
+                </div>
+            </div>
 
-    // Make Call button click
-    callBtn.addEventListener('click', () => {
-      set(ref(database, 'call/status'), 'calling');
-      callStatus.innerText = "Status: Calling Phone 2...";
-    });
+            <div class="flex items-center space-x-2 w-full md:w-auto">
+                <input id="room-id-input" type="text" value="voip-demo-room" placeholder="Enter Room ID" class="bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-2 focus:outline-none focus:border-blue-500 w-full md:w-64">
+                <button onclick="changeRoom()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-xl transition shadow-lg shadow-indigo-500/20 whitespace-nowrap">
+                    Join / Set Room
+                </button>
+            </div>
+        </div>
 
-    // Listen to Response from Phone 2
-    onValue(ref(database, 'call/status'), (snapshot) => {
-      const status = snapshot.val();
-      if (status === 'connected') {
-        callStatus.innerText = "Status: Call Connected!";
-        callStatus.style.color = "green";
-      } else if (status === 'idle') {
-        callStatus.innerText = "Status: Idle";
-        callStatus.style.color = "#333";
-      }
-    });
-  </script>
+        <!-- Testing Panels Layout Grid -->
+        <div id="panels-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
 
+            <!-- CALLER PANEL (Call 1) -->
+            <section id="panel-caller" class="bg-slate-800 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between shadow-2xl relative overflow-hidden transition-all duration-300">
+                <!-- Top Status Header -->
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center font-bold">
+                                1
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-slate-100 text-base">Call 1 — Caller</h2>
+                                <p class="text-xs text-slate-400">Creates Offer SDP & ICE Candidates</p>
+                            </div>
+                        </div>
+                        <!-- Status Badge -->
+                        <div id="caller-status-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-300 border border-slate-600 flex items-center space-x-1.5">
+                            <span id="caller-status-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                            <span id="caller-status-text">Disconnected</span>
+                        </div>
+                    </div>
+
+                    <!-- Audio Visualization & Waveform Placeholder -->
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/50 mb-6 flex flex-col items-center justify-center min-h-[160px] relative">
+                        <div id="caller-avatar" class="w-16 h-16 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center mb-3 transition">
+                            <i class="fa-solid fa-user text-2xl text-slate-500"></i>
+                        </div>
+                        <p id="caller-subtext" class="text-xs text-slate-400">Ready to initiate call...</p>
+                        
+                        <!-- Remote Audio Element -->
+                        <audio id="caller-remote-audio" autoplay></audio>
+                        <!-- Audio Meter Bar -->
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div id="caller-audio-meter" class="bg-blue-500 h-full w-0 transition-all duration-75"></div>
+                        </div>
+                    </div>
+
+                    <!-- Log Output Window -->
+                    <div class="bg-slate-950 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-400 h-32 overflow-y-auto mb-4" id="caller-logs">
+                        <div class="text-slate-500">[System] Initialized Caller Interface.</div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="btn-caller-start" onclick="startCall1()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>Start Call</span>
+                        </button>
+                        <button id="btn-caller-hangup" onclick="hangupCall1()" disabled class="w-full py-3 bg-slate-700 text-slate-500 font-semibold text-sm rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 transition">
+                            <i class="fa-solid fa-phone-slash"></i>
+                            <span>End Call</span>
+                        </button>
+                    </div>
+                    <!-- Audio Mute Toggle -->
+                    <button id="btn-caller-mute" onclick="toggleMuteCall1()" disabled class="w-full py-2 bg-slate-700/60 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-microphone"></i>
+                        <span id="caller-mute-text">Mute Microphone</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- RECEIVER PANEL (Call 2) -->
+            <section id="panel-receiver" class="bg-slate-800 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between shadow-2xl relative overflow-hidden transition-all duration-300">
+                <!-- Top Status Header -->
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold">
+                                2
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-slate-100 text-base">Call 2 — Receiver</h2>
+                                <p class="text-xs text-slate-400">Receives Offer & Returns Answer SDP</p>
+                            </div>
+                        </div>
+                        <!-- Status Badge -->
+                        <div id="receiver-status-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-300 border border-slate-600 flex items-center space-x-1.5">
+                            <span id="receiver-status-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                            <span id="receiver-status-text">Disconnected</span>
+                        </div>
+                    </div>
+
+                    <!-- Audio Visualization & Waveform Placeholder -->
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/50 mb-6 flex flex-col items-center justify-center min-h-[160px] relative">
+                        <div id="receiver-avatar" class="w-16 h-16 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center mb-3 transition">
+                            <i class="fa-solid fa-user text-2xl text-slate-500"></i>
+                        </div>
+                        <p id="receiver-subtext" class="text-xs text-slate-400">Listening for incoming offer...</p>
+                        
+                        <!-- Remote Audio Element -->
+                        <audio id="receiver-remote-audio" autoplay></audio>
+                        <!-- Audio Meter Bar -->
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div id="receiver-audio-meter" class="bg-emerald-500 h-full w-0 transition-all duration-75"></div>
+                        </div>
+                    </div>
+
+                    <!-- Log Output Window -->
+                    <div class="bg-slate-950 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-400 h-32 overflow-y-auto mb-4" id="receiver-logs">
+                        <div class="text-slate-500">[System] Initialized Receiver Interface.</div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="btn-receiver-answer" onclick="answerCall2()" disabled class="w-full py-3 bg-slate-700 text-slate-500 font-semibold text-sm rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 transition">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>Answer Call</span>
+                        </button>
+                        <button id="btn-receiver-hangup" onclick="hangupCall2()" disabled class="w-full py-3 bg-slate-700 text-slate-500 font-semibold text-sm rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 transition">
+                            <i class="fa-solid fa-phone-slash"></i>
+                            <span>End Call</span>
+                        </button>
+                    </div>
+                    <!-- Audio Mute Toggle -->
+                    <button id="btn-receiver-mute" onclick="toggleMuteCall2()" disabled class="w-full py-2 bg-slate-700/60 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-microphone"></i>
+                        <span id="receiver-mute-text">Mute Microphone</span>
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Firebase Config Modal -->
+    <div id="config-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-database text-yellow-500"></i>
+                    <span>Firebase Credentials</span>
+                </h3>
+                <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-400 mb-4">
+                Your provided database URL is configured by default. Update the API Key or App ID if needed for production Authentication.
+            </p>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Database URL</label>
+                    <input id="cfg-db-url" type="text" value="https://voip-e867a-default-rtdb.firebaseio.com/" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 text-xs font-mono focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">API Key (Optional / Configured)</label>
+                    <input id="cfg-api-key" type="text" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 text-xs font-mono focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Project ID</label>
+                    <input id="cfg-project-id" type="text" value="voip-e867a" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 text-xs font-mono focus:border-blue-500 outline-none">
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="toggleConfigModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl text-xs font-semibold">
+                    Close
+                </button>
+                <button onclick="saveFirebaseConfig()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-blue-600/30">
+                    Save & Reconnect
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase App & Database Scripts (SDK v9 Compatibility Imports) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <!-- Main Logic Script -->
+    <script>
+        // Default Configuration
+        const firebaseConfig = {
+            databaseURL: "https://voip-e867a-default-rtdb.firebaseio.com/",
+            projectId: "voip-e867a"
+        };
+
+        // STUN Servers for WebRTC NAT Traversal
+        const rtcConfiguration = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+
+        let app, db;
+        let activeRoom = 'voip-demo-room';
+
+        // Call State Objects
+        const call1 = {
+            pc: null,
+            localStream: null,
+            remoteStream: null,
+            isMuted: false,
+            roomRef: null
+        };
+
+        const call2 = {
+            pc: null,
+            localStream: null,
+            remoteStream: null,
+            isMuted: false,
+            roomRef: null
+        };
+
+        // Initialize App & Firebase
+        window.onload = () => {
+            initFirebase();
+            setupReceiverListeners();
+        };
+
+        function initFirebase() {
+            try {
+                if (!firebase.apps.length) {
+                    app = firebase.initializeApp(firebaseConfig);
+                } else {
+                    app = firebase.app();
+                }
+                db = firebase.database();
+                log('caller', 'Connected to Firebase Realtime Database.');
+                log('receiver', 'Connected to Firebase Realtime Database.');
+            } catch (err) {
+                log('caller', 'Firebase Error: ' + err.message, 'error');
+                log('receiver', 'Firebase Error: ' + err.message, 'error');
+            }
+        }
+
+        // --- ROOM MANAGEMENT ---
+        function changeRoom() {
+            const inputVal = document.getElementById('room-id-input').value.trim();
+            if (!inputVal) return;
+            activeRoom = inputVal;
+            document.getElementById('current-room-display').innerText = activeRoom;
+            
+            // Cleanup existing peer connections if active
+            hangupCall1();
+            hangupCall2();
+
+            log('caller', `Joined Room: ${activeRoom}`);
+            log('receiver', `Joined Room: ${activeRoom}`);
+
+            // Re-listen for receiver
+            setupReceiverListeners();
+        }
+
+        // --- CALL 1 (CALLER) LOGIC ---
+        async function startCall1() {
+            try {
+                updateStatus('caller', 'connecting', 'Initiating Call...');
+                log('caller', 'Accessing local microphone...');
+
+                call1.localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                setupAudioMeter(call1.localStream, 'caller-audio-meter');
+
+                call1.pc = new RTCPeerConnection(rtcConfiguration);
+
+                // Add Local Audio Tracks to PC
+                call1.localStream.getTracks().forEach(track => call1.pc.addTrack(track, call1.localStream));
+
+                // Handle Remote Audio Track Arrival
+                call1.remoteStream = new MediaStream();
+                const remoteAudioEl = document.getElementById('caller-remote-audio');
+                remoteAudioEl.srcObject = call1.remoteStream;
+
+                call1.pc.ontrack = (event) => {
+                    event.streams[0].getTracks().forEach(track => call1.remoteStream.addTrack(track));
+                    updateStatus('caller', 'connected', 'Connected');
+                    log('caller', 'Received remote audio stream!');
+                };
+
+                // Firebase Database Reference for current room
+                call1.roomRef = db.ref(`calls/${activeRoom}`);
+                await call1.roomRef.remove(); // Clear previous call session data
+
+                // ICE Candidate Gathering -> Push to Firebase
+                const callerCandidatesRef = call1.roomRef.child('callerCandidates');
+                call1.pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        callerCandidatesRef.push(event.candidate.toJSON());
+                    }
+                };
+
+                // Create SDP Offer
+                const offer = await call1.pc.createOffer();
+                await call1.pc.setLocalDescription(offer);
+                log('caller', 'Created SDP Offer. Writing to Firebase...');
+
+                // Save Offer to Firebase
+                await call1.roomRef.child('offer').set({
+                    type: offer.type,
+                    sdp: offer.sdp
+                });
+
+                // Listen for Answer SDP from Receiver (Call 2)
+                call1.roomRef.child('answer').on('value', async (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && !call1.pc.currentRemoteDescription) {
+                        log('caller', 'Received SDP Answer from Receiver. Setting remote description...');
+                        const answer = new RTCSessionDescription(data);
+                        await call1.pc.setRemoteDescription(answer);
+                    }
+                });
+
+                // Listen for ICE Candidates from Receiver
+                call1.roomRef.child('receiverCandidates').on('child_added', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        call1.pc.addIceCandidate(new RTCIceCandidate(data));
+                    }
+                });
+
+                // Enable Control Buttons
+                document.getElementById('btn-caller-start').disabled = true;
+                document.getElementById('btn-caller-start').classList.add('opacity-50', 'cursor-not-allowed');
+                document.getElementById('btn-caller-hangup').disabled = false;
+                document.getElementById('btn-caller-hangup').classList.remove('bg-slate-700', 'text-slate-500', 'cursor-not-allowed');
+                document.getElementById('btn-caller-hangup').classList.add('bg-rose-600', 'hover:bg-rose-500', 'text-white', 'shadow-lg');
+                document.getElementById('btn-caller-mute').disabled = false;
+
+            } catch (err) {
+                log('caller', 'Error starting call: ' + err.message, 'error');
+                updateStatus('caller', 'disconnected', 'Failed');
+            }
+        }
+
+        function hangupCall1() {
+            if (call1.pc) call1.pc.close();
+            if (call1.localStream) call1.localStream.getTracks().forEach(t => t.stop());
+            if (call1.roomRef) call1.roomRef.off();
+
+            call1.pc = null;
+            call1.localStream = null;
+
+            updateStatus('caller', 'disconnected', 'Disconnected');
+            log('caller', 'Call ended.');
+
+            // Reset UI Buttons
+            document.getElementById('btn-caller-start').disabled = false;
+            document.getElementById('btn-caller-start').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('btn-caller-hangup').disabled = true;
+            document.getElementById('btn-caller-hangup').className = 'w-full py-3 bg-slate-700 text-slate-500 font-semibold text-sm rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 transition';
+            document.getElementById('btn-caller-mute').disabled = true;
+            document.getElementById('caller-audio-meter').style.width = '0%';
+        }
+
+        function toggleMuteCall1() {
+            if (!call1.localStream) return;
+            call1.isMuted = !call1.isMuted;
+            call1.localStream.getAudioTracks()[0].enabled = !call1.isMuted;
+            document.getElementById('caller-mute-text').innerText = call1.isMuted ? 'Unmute Microphone' : 'Mute Microphone';
+            log('caller', call1.isMuted ? 'Microphone muted.' : 'Microphone unmuted.');
+        }
+
+        // --- CALL 2 (RECEIVER) LOGIC ---
+        function setupReceiverListeners() {
+            call2.roomRef = db.ref(`calls/${activeRoom}`);
+
+            // Listen for Incoming SDP Offer
+            call2.roomRef.child('offer').on('value', (snapshot) => {
+                const offer = snapshot.val();
+                if (offer && (!call2.pc || call2.pc.signalingState === 'closed')) {
+                    updateStatus('receiver', 'connecting', 'Incoming Call...');
+                    log('receiver', 'Incoming offer detected! Click "Answer Call" to accept.');
+
+                    const answerBtn = document.getElementById('btn-receiver-answer');
+                    answerBtn.disabled = false;
+                    answerBtn.classList.remove('bg-slate-700', 'text-slate-500', 'cursor-not-allowed');
+                    answerBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-500', 'text-white', 'pulse-ring');
+                }
+            });
+        }
+
+        async function answerCall2() {
+            try {
+                log('receiver', 'Answering call & accessing microphone...');
+                call2.localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                setupAudioMeter(call2.localStream, 'receiver-audio-meter');
+
+                call2.pc = new RTCPeerConnection(rtcConfiguration);
+
+                call2.localStream.getTracks().forEach(track => call2.pc.addTrack(track, call2.localStream));
+
+                call2.remoteStream = new MediaStream();
+                const remoteAudioEl = document.getElementById('receiver-remote-audio');
+                remoteAudioEl.srcObject = call2.remoteStream;
+
+                call2.pc.ontrack = (event) => {
+                    event.streams[0].getTracks().forEach(track => call2.remoteStream.addTrack(track));
+                    updateStatus('receiver', 'connected', 'Connected');
+                    log('receiver', 'Connected to Call 1!');
+                };
+
+                // Push ICE Candidates to Firebase
+                const receiverCandidatesRef = call2.roomRef.child('receiverCandidates');
+                call2.pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        receiverCandidatesRef.push(event.candidate.toJSON());
+                    }
+                };
+
+                // Read Offer from Firebase
+                const snapshot = await call2.roomRef.child('offer').get();
+                const offerData = snapshot.val();
+
+                await call2.pc.setRemoteDescription(new RTCSessionDescription(offerData));
+                log('receiver', 'Set remote SDP offer. Creating answer...');
+
+                // Create Answer SDP
+                const answer = await call2.pc.createAnswer();
+                await call2.pc.setLocalDescription(answer);
+
+                // Write Answer SDP to Firebase
+                await call2.roomRef.child('answer').set({
+                    type: answer.type,
+                    sdp: answer.sdp
+                });
+
+                // Listen for Caller ICE Candidates
+                call2.roomRef.child('callerCandidates').on('child_added', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        call2.pc.addIceCandidate(new RTCIceCandidate(data));
+                    }
+                });
+
+                // Update UI Buttons
+                const answerBtn = document.getElementById('btn-receiver-answer');
+                answerBtn.disabled = true;
+                answerBtn.className = 'w-full py-3 bg-slate-700 text-slate-500 font-semibold text-sm rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 transition';
+
+                const hangupBtn = document.getElementById('btn-receiver-hangup');
+                hangupBtn.disabled = false;
+                hangupBtn.classList.remove('bg-slate-700', 'text-slate-500', 'cursor-not-allowed');
+                hangupBtn.classList.add('bg-rose-600', 'hover:bg-rose-500', 'text-white', 'shadow-lg');
+
+                document.getElementById('btn-receiver-mute').disabled = false;
+
+            } catch (err) {
+                log('receiver', 'Error answering call: ' + err.message, 'error');
+                updateStatus('receiver', 'disconnected', 'Failed');
+            }
+        }
+
+        function hangupCall2() {
+            if (call2.pc) call2.pc.close();
+            if (call2.localStream) call2.localStream.getTracks().forEach(t => t.stop());
+
+            call2.pc = null;
+            call2.localStream = null;
+
+            updateStatus('receiver', 'disconnected', 'Disconnected');
+            log('receiver', 'Call ended.');
+
+            // Reset UI
+            document.getElementById('btn-receiver-answer').disabled = true;
+            document.getElementById('btn-receiver-answer').className = 'w-full py-3 bg-slate-700 text-slate-500 font-semibold text-sm rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 transition';
+            document.getElementById('btn-receiver-hangup').disabled = true;
+            document.getElementById('btn-receiver-hangup').className = 'w-full py-3 bg-slate-700 text-slate-500 font-semibold text-sm rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 transition';
+            document.getElementById('btn-receiver-mute').disabled = true;
+            document.getElementById('receiver-audio-meter').style.width = '0%';
+        }
+
+        function toggleMuteCall2() {
+            if (!call2.localStream) return;
+            call2.isMuted = !call2.isMuted;
+            call2.localStream.getAudioTracks()[0].enabled = !call2.isMuted;
+            document.getElementById('receiver-mute-text').innerText = call2.isMuted ? 'Unmute Microphone' : 'Mute Microphone';
+            log('receiver', call2.isMuted ? 'Microphone muted.' : 'Microphone unmuted.');
+        }
+
+        // --- AUDIO VISUALIZER (Volume Meter) ---
+        function setupAudioMeter(stream, meterElementId) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const mediaStreamSource = audioContext.createMediaStreamSource(stream);
+                const processor = audioContext.createScriptProcessor(2048, 1, 1);
+
+                mediaStreamSource.connect(processor);
+                processor.connect(audioContext.destination);
+
+                processor.onaudioprocess = (e) => {
+                    const input = e.inputBuffer.getChannelData(0);
+                    let sum = 0;
+                    for (let i = 0; i < input.length; i++) {
+                        sum += input[i] * input[i];
+                    }
+                    const rms = Math.sqrt(sum / input.length);
+                    const volumePercent = Math.min(100, Math.round(rms * 400));
+                    const meter = document.getElementById(meterElementId);
+                    if (meter) {
+                        meter.style.width = volumePercent + '%';
+                    }
+                };
+            } catch (e) {
+                console.error("Audio Meter error:", e);
+            }
+        }
+
+        // --- HELPER FUNCTIONS ---
+        function updateStatus(role, state, label) {
+            const badge = document.getElementById(`${role}-status-badge`);
+            const dot = document.getElementById(`${role}-status-dot`);
+            const text = document.getElementById(`${role}-status-text`);
+            const avatar = document.getElementById(`${role}-avatar`);
+            const subtext = document.getElementById(`${role}-subtext`);
+
+            text.innerText = label;
+
+            if (state === 'connected') {
+                badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1.5';
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-ping';
+                avatar.className = 'w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400 flex items-center justify-center mb-3';
+                subtext.innerText = 'Call Active - Audio Streaming';
+            } else if (state === 'connecting') {
+                badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center space-x-1.5';
+                dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+                avatar.className = 'w-16 h-16 rounded-full bg-amber-500/20 border-2 border-amber-500 text-amber-400 flex items-center justify-center mb-3';
+                subtext.innerText = label;
+            } else {
+                badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-300 border border-slate-600 flex items-center space-x-1.5';
+                dot.className = 'w-2 h-2 rounded-full bg-slate-400';
+                avatar.className = 'w-16 h-16 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center mb-3 text-slate-500';
+                subtext.innerText = 'Idle / Disconnected';
+            }
+        }
+
+        function log(role, msg, type = 'info') {
+            const container = document.getElementById(`${role}-logs`);
+            if (!container) return;
+            const time = new Date().toLocaleTimeString();
+            const colorClass = type === 'error' ? 'text-rose-400' : 'text-slate-300';
+            const entry = document.createElement('div');
+            entry.className = `mb-1 ${colorClass}`;
+            entry.innerHTML = `<span class="text-slate-600">[${time}]</span> ${msg}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- UI SWITCHING & MODAL ---
+        function setViewMode(mode) {
+            const container = document.getElementById('panels-container');
+            const p1 = document.getElementById('panel-caller');
+            const p2 = document.getElementById('panel-receiver');
+
+            const btnSplit = document.getElementById('tab-split');
+            const btnCall1 = document.getElementById('tab-call1');
+            const btnCall2 = document.getElementById('tab-call2');
+
+            // Reset Tab styling
+            [btnSplit, btnCall1, btnCall2].forEach(btn => {
+                btn.className = 'px-3 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-400 hover:text-white';
+            });
+
+            if (mode === 'split') {
+                btnSplit.className = 'px-3 py-1.5 rounded-lg transition-all flex items-center space-x-2 bg-blue-600 text-white shadow';
+                container.className = 'grid grid-cols-1 md:grid-cols-2 gap-6 flex-1';
+                p1.classList.remove('hidden');
+                p2.classList.remove('hidden');
+            } else if (mode === 'call1') {
+                btnCall1.className = 'px-3 py-1.5 rounded-lg transition-all flex items-center space-x-2 bg-blue-600 text-white shadow';
+                container.className = 'grid grid-cols-1 gap-6 flex-1';
+                p1.classList.remove('hidden');
+                p2.classList.add('hidden');
+            } else if (mode === 'call2') {
+                btnCall2.className = 'px-3 py-1.5 rounded-lg transition-all flex items-center space-x-2 bg-blue-600 text-white shadow';
+                container.className = 'grid grid-cols-1 gap-6 flex-1';
+                p1.classList.add('hidden');
+                p2.classList.remove('hidden');
+            }
+        }
+
+        function toggleConfigModal() {
+            const modal = document.getElementById('config-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveFirebaseConfig() {
+            firebaseConfig.databaseURL = document.getElementById('cfg-db-url').value.trim();
+            const apiKey = document.getElementById('cfg-api-key').value.trim();
+            if (apiKey) firebaseConfig.apiKey = apiKey;
+            firebaseConfig.projectId = document.getElementById('cfg-project-id').value.trim();
+
+            if (firebase.apps.length) {
+                firebase.app().delete().then(() => {
+                    initFirebase();
+                    setupReceiverListeners();
+                });
+            } else {
+                initFirebase();
+                setupReceiverListeners();
+            }
+
+            toggleConfigModal();
+        }
+    </script>
 </body>
 </html>
