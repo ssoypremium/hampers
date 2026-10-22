@@ -1,122 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phone 2 - Receiver</title>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
-    .card { background: #fff; padding: 25px; border-radius: 12px; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-    button { padding: 14px 28px; margin: 10px; font-size: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; display: none; }
-    .accept-btn { background-color: #28a745; color: white; animation: pulse 1.5s infinite; }
-    .status-container { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .status-dot { width: 15px; height: 15px; border-radius: 50%; background-color: #dc3545; display: inline-block; }
-    .status-dot.connected { background-color: #28a745; }
-    .status-dot.calling { background-color: #ffc107; }
-    .status-text { font-size: 18px; font-weight: bold; color: #333; }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-  </style>
+  <title>Phone 2 - Client</title>
 </head>
 <body>
-  <div class="card">
-    <h2>Phone 2 (Receiver)</h2>
-    <button id="acceptBtn" class="accept-btn" onclick="acceptCall()">Accept Call</button>
-    
-    <div class="status-container">
-      <span id="statusDot" class="status-dot"></span>
-      <span id="statusText" class="status-text">Waiting for Call...</span>
-    </div>
-  </div>
 
-  <audio id="localAudio" autoplay muted></audio>
-  <audio id="remoteAudio" autoplay></audio>
+  <h1>Phone 2 (Client)</h1>
+  <p>Firebase Realtime Database कनेक्ट हो गया है।</p>
 
-  <script>
+  <!-- Firebase Modular SDK -->
+  <script type="module">
+    // Firebase App और Realtime Database SDK इम्पोर्ट करें
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+    // आपका Firebase Configuration
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyCgNSfsh7rTqznUB_zd8m7uTMo4IyaYM_k",
+      authDomain: "voip-85216.firebaseapp.com",
+      databaseURL: "https://voip-85216-default-rtdb.firebaseio.com",
+      projectId: "voip-85216",
+      storageBucket: "voip-85216.firebasestorage.app",
+      messagingSenderId: "514359486982",
+      appId: "1:514359486982:web:a210261bc758b1823ff187"
     };
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
 
-    let localStream, pc;
-    const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-    const sessionRef = database.ref('active_calls/main_call');
+    // Firebase को इनिशियलाइज़ करें
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
 
-    sessionRef.on('value', snapshot => {
-      const data = snapshot.val();
-      if (data && data.status === 'ringing') {
-        updateStatus('calling', 'Incoming Call...');
-        document.getElementById('acceptBtn').style.display = 'inline-block';
-      } else if (data && data.status === 'ended') {
-        cleanup();
-      }
-    });
-
-    async function acceptCall() {
-      updateStatus('calling', 'Connecting...');
-      document.getElementById('acceptBtn').style.display = 'none';
-
-      localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      document.getElementById('localAudio').srcObject = localStream;
-
-      pc = new RTCPeerConnection(servers);
-
-      localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-
-      pc.ontrack = event => {
-        document.getElementById('remoteAudio').srcObject = event.streams[0];
-      };
-
-      pc.onicecandidate = event => {
-        if (event.candidate) {
-          sessionRef.child('calleeCandidates').push(event.candidate.toJSON());
-        }
-      };
-
-      const offerSnapshot = await sessionRef.child('offer').once('value');
-      const offer = offerSnapshot.val();
-      await pc.setRemoteDescription(new RTCSessionDescription(offer));
-
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      await sessionRef.child('answer').set({ type: answer.type, sdp: answer.sdp });
-      await sessionRef.child('status').set('connected');
-
-      sessionRef.child('callerCandidates').on('child_added', snapshot => {
-        const candidate = new RTCIceCandidate(snapshot.val());
-        pc.addIceCandidate(candidate);
-      });
-
-      updateStatus('connected', 'Connected');
-    }
-
-    function cleanup() {
-      if (pc) { pc.close(); pc = null; }
-      if (localStream) { localStream.getTracks().forEach(track => track.stop()); }
-      updateStatus('disconnected', 'Disconnected');
-      document.getElementById('acceptBtn').style.display = 'none';
-    }
-
-    function updateStatus(state, text) {
-      const dot = document.getElementById('statusDot');
-      const statusText = document.getElementById('statusText');
-      dot.className = 'status-dot';
-      if (state === 'connected') dot.classList.add('connected');
-      else if (state === 'calling') dot.classList.add('calling');
-      statusText.innerText = text;
-    }
+    console.log("Firebase Successfully Connected on Phone 2!");
   </script>
+
 </body>
 </html>
