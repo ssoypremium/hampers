@@ -193,7 +193,7 @@
       // Handle call state updates
       if (data.status === 'ringing' && !peerConnection) {
         currentOfferData = data.offer;
-        updateStatusUI('ringing', 'Incoming Call from Phone 1!', 'Phone 1 is calling you...');
+        updateStatusUI('ringing', 'Incoming Call', 'ssoy is calling you...');
       } else if (data.status === 'ended') {
         resetCallUI("Call Ended");
       }
@@ -305,7 +305,7 @@
       currentOfferData = null;
       stopTimer();
 
-      updateStatusUI('idle', message || 'Waiting for Call...', 'This phone can only receive incoming calls from Phone 1.');
+      updateStatusUI('idle', message || 'Waiting for Call...', 'This phone can only receive incoming calls from Phone 11.');
 
       document.getElementById('localMeter').style.width = '0%';
       document.getElementById('remoteMeter').style.width = '0%';
