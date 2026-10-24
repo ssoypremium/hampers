@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="robots" content="noindex, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AirShare - P2P Code & Text Transfer</title>
+  <title>O2 Code Share</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -51,7 +52,7 @@
         <i data-lucide="code" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">P2P Code Share</h1>
+        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Code Share</h1>
         <p class="text-[11px] text-slate-400">Instant HTML, CSS, JS Transfer</p>
       </div>
     </div>
@@ -388,6 +389,18 @@
     });
 
     window.addEventListener('load', initPeer);
+  </script>
+
+  <script>
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    document.onkeydown = function (e) {
+        if (e.keyCode == 123) return false; // F12
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+    };
   </script>
 </body>
 </html>
