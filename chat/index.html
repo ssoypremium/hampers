@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="robots" content="noindex, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O2Chat - P2P Secure Chat</title>
+  <title>O2 Private Chat</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- PeerJS for WebRTC Peer-to-Peer Connection -->
+  <!-- PeerJS for WebRTC Connection -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
   <!-- QRCode.js for QR Code Generation -->
@@ -22,7 +21,6 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -37,7 +35,6 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #475569;
     }
-    /* Scanner video styling */
     #reader video {
       border-radius: 0.75rem;
       object-fit: cover;
@@ -45,17 +42,17 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-4 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-2 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- Header -->
-  <header class="w-full max-w-md mb-6 flex items-center justify-between border-b border-slate-800 pb-4">
+  <header class="w-full max-w-xl mb-3 flex items-center justify-between border-b border-slate-800 pb-2">
     <div class="flex items-center gap-3">
-      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
-        <i data-lucide="message-square" class="w-5 h-5"></i>
+      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">        
+        <i data-lucide="bot" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2Chat</h1>
-        <p class="text-[11px] text-slate-400">Secure Private Tunnel</p>
+        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 CHAT</h1>
+        <p class="text-[11px] text-slate-400">Secure Private Tunnels</p>
       </div>
     </div>
 
@@ -67,22 +64,22 @@
   </header>
 
   <!-- Main Content Container -->
-  <main class="w-full max-w-md flex flex-col gap-6">
+  <main class="w-full max-w-xl flex flex-col gap-4 flex-1 justify-center">
 
-    <!-- QR Handshake Card (Will hide automatically on connect) -->
-    <div id="qr-card-container" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
+    <!-- QR Handshake Card -->
+    <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
       <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
 
-      <h2 class="text-xl font-bold text-slate-100 mb-1">Pair Devices</h2>
-      <p class="text-xs text-slate-400 mb-5 max-w-xs leading-relaxed">
-        Scan this QR code from another device or use the built-in camera scanner below.
+      <h2 class="text-base font-bold text-slate-100 mb-1">Pair Devices</h2>
+      <p class="text-xs text-slate-400 mb-3 max-w-xs leading-relaxed">
+        Scan this QR code from another device to connect instantly.
       </p>
 
       <!-- QR Code Box -->
-      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[190px] min-w-[190px] flex items-center justify-center">
+      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-3 relative min-h-[150px] min-w-[150px] flex items-center justify-center">
         <div id="qrcode"></div>
         <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
-          <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
+          <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-indigo-400 mb-2"></i>
           <span class="text-xs">Generating ID...</span>
         </div>
       </div>
@@ -94,35 +91,43 @@
       </button>
     </div>
 
-    <!-- Chat Box Container -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col min-h-[380px] shadow-xl">
+    <!-- Chat Interface Section -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col h-[480px]">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
         <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="messages-square" class="w-4 h-4 text-cyan-400"></i>
-          Chat Messages
+          <i data-lucide="message-square" class="w-4 h-4 text-cyan-400"></i>
+          Secure Tunnel Chat
         </h3>
-        <button id="btn-clear-chat" class="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
+        <button id="btn-clear-history" class="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
           Clear
         </button>
       </div>
 
-      <!-- Chat Messages List -->
-      <div id="chat-messages" class="flex-1 space-y-3 overflow-y-auto max-h-[300px] min-h-[220px] pr-1 mb-3">
-        <div id="empty-state" class="h-full min-h-[180px] flex flex-col items-center justify-center text-slate-600 text-center">
-          <i data-lucide="message-circle" class="w-8 h-8 mb-2 opacity-40"></i>
-          <p class="text-xs">No messages yet.</p>
-          <p class="text-[10px] text-slate-600 mt-1">Connect devices and start chatting.</p>
+      <!-- Message History List -->
+      <div id="chat-list" class="flex-1 space-y-3 overflow-y-auto pr-1">
+        <div id="empty-state" class="h-full flex flex-col items-center justify-center text-slate-600 text-center">
+          <i data-lucide="shield" class="w-8 h-8 mb-2 opacity-40"></i>
+          <p class="text-xs">Paired and ready. Send a message to start.</p>
         </div>
       </div>
 
-      <!-- Text Message Input Box -->
-      <div class="flex gap-2 pt-2 border-t border-slate-800/80">
-        <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500">
-        <button id="btn-send-message" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition flex items-center gap-1.5 shadow-lg shadow-indigo-600/20 shrink-0">
-          <i data-lucide="send" class="w-3.5 h-3.5"></i>
-          <span>Send</span>
-        </button>
+      <!-- Typing Indicator -->
+      <div id="typing-indicator" class="text-[11px] text-slate-400 italic px-1 hidden h-5 flex items-center">
+        <span>Peer is typing...</span>
+      </div>
+
+      <!-- Input Area -->
+      <div class="flex flex-col gap-2 border-t border-slate-800 pt-3 mt-1">
+        <div class="flex items-center gap-2">
+          <button id="btn-paste-clipboard" title="Paste from Clipboard" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition flex items-center justify-center border border-slate-700">
+            <i data-lucide="clipboard" class="w-4 h-4"></i>
+          </button>
+          <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+          <button id="btn-send-chat" class="py-3 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center shadow-lg shadow-indigo-600/20">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -155,26 +160,29 @@
     let conn = null;
     let myPeerId = null;
     let html5QrcodeScanner = null;
+    let typingTimeout = null;
 
     // UI Selectors
     const statusBadge = document.getElementById('status-badge');
     const statusText = document.getElementById('status-text');
+    const qrCard = document.getElementById('qr-card');
     const qrContainer = document.getElementById('qrcode');
     const qrLoader = document.getElementById('qr-loader');
-    const qrCardContainer = document.getElementById('qr-card-container');
-    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const btnSendChat = document.getElementById('btn-send-chat');
+    const btnPasteClipboard = document.getElementById('btn-paste-clipboard');
+    const chatList = document.getElementById('chat-list');
     const emptyState = document.getElementById('empty-state');
-    const messageInput = document.getElementById('message-input');
-    const btnSendMessage = document.getElementById('btn-send-message');
-    const btnClearChat = document.getElementById('btn-clear-chat');
+    const btnClearHistory = document.getElementById('btn-clear-history');
     const btnOpenScanner = document.getElementById('btn-open-scanner');
     const btnCloseScanner = document.getElementById('btn-close-scanner');
     const scannerModal = document.getElementById('scanner-modal');
+    const typingIndicator = document.getElementById('typing-indicator');
 
     // Initialize Lucide Icons
     lucide.createIcons();
 
-    // Check URL parameters for direct connect via QR scan
+    // Check URL parameters for direct connect via QR scan link
     const urlParams = new URLSearchParams(window.location.search);
     const targetFromUrl = urlParams.get('connect');
 
@@ -191,8 +199,8 @@
         qrContainer.innerHTML = '';
         new QRCode(qrContainer, {
           text: connectUrl,
-          width: 170,
-          height: 170,
+          width: 140,
+          height: 140,
           colorDark: "#0f172a",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M
@@ -227,75 +235,25 @@
 
       conn.on('open', () => {
         updateStatus('connected', 'Connected');
-        // Hide QR card on successful connection
-        qrCardContainer.classList.add('hidden');
-        addSystemLog('Connected with peer. Start chatting!');
       });
 
       conn.on('data', (data) => {
-        if (typeof data === 'object' && data.type === 'chat') {
-          renderMessage(data.text, 'received');
+        if (typeof data === 'object') {
+          if (data.type === 'chat') {
+            renderChatMessage(data.content, 'received');
+          } else if (data.type === 'typing') {
+            if (data.status) {
+              typingIndicator.classList.remove('hidden');
+            } else {
+              typingIndicator.classList.add('hidden');
+            }
+          }
         }
       });
 
       conn.on('close', () => {
         updateStatus('waiting', 'Disconnected');
-        // Show QR card back if disconnected
-        qrCardContainer.classList.remove('hidden');
-        addSystemLog('Peer disconnected.');
       });
-    }
-
-    function sendMessage() {
-      const text = messageInput.value.trim();
-      if (!text) return;
-
-      if (!conn || !conn.open) {
-        alert('Please connect to a peer first by scanning their QR code.');
-        return;
-      }
-
-      conn.send({ type: 'chat', text: text });
-      renderMessage(text, 'sent');
-      messageInput.value = '';
-    }
-
-    function renderMessage(text, direction) {
-      if (emptyState) emptyState.style.display = 'none';
-      const isSent = direction === 'sent';
-
-      const messageCard = document.createElement('div');
-      messageCard.className = `p-2.5 rounded-xl text-xs max-w-[85%] flex flex-col gap-1 ${
-        isSent 
-          ? 'bg-indigo-600 text-white ml-auto rounded-br-none' 
-          : 'bg-slate-800 text-slate-100 mr-auto rounded-bl-none border border-slate-700/80'
-      }`;
-
-      const isUrl = /^https?:\/\//i.test(text);
-      const contentHtml = isUrl 
-        ? `<a href="${text}" target="_blank" class="underline text-cyan-300 break-all">${escapeHtml(text)}</a>`
-        : `<p class="whitespace-pre-wrap break-all">${escapeHtml(text)}</p>`;
-
-      messageCard.innerHTML = `
-        ${contentHtml}
-        <span class="text-[9px] opacity-70 ${isSent ? 'text-right' : 'text-left'}">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-      `;
-
-      chatMessages.appendChild(messageCard);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function addSystemLog(text) {
-      if (emptyState) emptyState.style.display = 'none';
-      const item = document.createElement('div');
-      item.className = 'py-1 px-3 rounded-full bg-slate-950 border border-slate-800 text-[10px] text-slate-400 text-center w-max mx-auto my-1';
-      item.textContent = text;
-      chatMessages.appendChild(item);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function escapeHtml(text) {
-      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
     function updateStatus(state, message) {
@@ -303,14 +261,92 @@
       if (state === 'connected') {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
+
+        // Automatically hide QR Card when connected
+        qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
       } else if (state === 'connecting') {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-indigo-400 animate-ping';
       } else {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+
+        // Show QR Card if disconnected
+        qrCard.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
       }
     }
+
+    function sendChatMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      if (!conn || !conn.open) {
+        alert('Please connect to a peer first by scanning their QR code.');
+        return;
+      }
+
+      // Send stop typing signal immediately on send
+      conn.send({ type: 'typing', status: false });
+
+      conn.send({ type: 'chat', content: text });
+      renderChatMessage(text, 'sent');
+      chatInput.value = '';
+    }
+
+    function renderChatMessage(messageText, direction) {
+      if (emptyState) emptyState.style.display = 'none';
+      const isSent = direction === 'sent';
+
+      const messageWrapper = document.createElement('div');
+      messageWrapper.className = `flex ${isSent ? 'justify-end' : 'justify-start'}`;
+
+      const messageBubble = document.createElement('div');
+      messageBubble.className = `max-w-[80%] p-3 rounded-2xl text-xs flex flex-col gap-1 shadow-sm ${
+        isSent 
+          ? 'bg-indigo-600 text-white rounded-tr-none' 
+          : 'bg-slate-800 text-slate-100 rounded-tl-none border border-slate-700'
+      }`;
+
+      messageBubble.innerHTML = `
+        <p class="leading-relaxed break-words">${escapeHtml(messageText)}</p>
+        <span class="text-[9px] ${isSent ? 'text-indigo-200' : 'text-slate-400'} self-end mt-0.5">
+          ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </span>
+      `;
+
+      messageWrapper.appendChild(messageBubble);
+      chatList.appendChild(messageWrapper);
+      chatList.scrollTop = chatList.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    // Typing broadcast on input
+    chatInput.addEventListener('input', () => {
+      if (!conn || !conn.open) return;
+      
+      conn.send({ type: 'typing', status: true });
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        conn.send({ type: 'typing', status: false });
+      }, 1200);
+    });
+
+    // Paste Action
+    btnPasteClipboard.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          chatInput.value = text;
+          chatInput.dispatchEvent(new Event('input'));
+        }
+      } catch (err) {
+        alert('Paste permission denied. Please paste manually using Ctrl+V or long-press.');
+      }
+    });
 
     // Scanner Modal Handlers
     function openScanner() {
@@ -347,26 +383,31 @@
     }
 
     // Event Listeners
-    btnSendMessage.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') sendMessage();
+    btnSendChat.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendChatMessage();
     });
 
     btnOpenScanner.addEventListener('click', openScanner);
     btnCloseScanner.addEventListener('click', closeScanner);
 
-    btnClearChat.addEventListener('click', () => {
-      chatMessages.innerHTML = '';
-      chatMessages.appendChild(emptyState);
+    btnClearHistory.addEventListener('click', () => {
+      chatList.innerHTML = '';
+      chatList.appendChild(emptyState);
       emptyState.style.display = 'flex';
     });
 
     window.addEventListener('load', initPeer);
   </script>
 
-  <!-- Security Scripts (Right-Click & Inspect Disable) -->
+  <!-- Security Scripts -->
   <script>
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.addEventListener('contextmenu', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        return true;
+      }
+      e.preventDefault();
+    });
 
     document.onkeydown = function (e) {
         if (e.keyCode == 123) return false; // F12
