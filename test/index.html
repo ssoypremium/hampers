@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O2 Chat & Tunnel</title>
+  <title>O2 Private Chat</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -42,16 +42,16 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-4 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-2 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- Header -->
-  <header class="w-full max-w-xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
+  <header class="w-full max-w-xl mb-3 flex items-center justify-between border-b border-slate-800 pb-2">
     <div class="flex items-center gap-3">
       <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">        
         <i data-lucide="bot" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 CBUS</h1>
+        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 CHAT</h1>
         <p class="text-[11px] text-slate-400">Secure Private Tunnels</p>
       </div>
     </div>
@@ -64,7 +64,7 @@
   </header>
 
   <!-- Main Content Container -->
-  <main class="w-full max-w-xl flex flex-col gap-4">
+  <main class="w-full max-w-xl flex flex-col gap-4 flex-1 justify-center">
 
     <!-- QR Handshake Card -->
     <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Chat Interface Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col h-[400px]">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col h-[480px]">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
         <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
           <i data-lucide="message-square" class="w-4 h-4 text-cyan-400"></i>
@@ -112,17 +112,13 @@
         </div>
       </div>
 
-      <!-- Main Quick Reactions Bar -->
-      <div class="flex items-center justify-around border-t border-slate-800/80 pt-3 mt-3 bg-slate-950/40 p-2 rounded-xl">
-        <button onclick="sendQuickReaction('👍')" class="text-lg hover:scale-125 transition-transform p-1">👍</button>
-        <button onclick="sendQuickReaction('😂')" class="text-lg hover:scale-125 transition-transform p-1">😂</button>
-        <button onclick="sendQuickReaction('❤️')" class="text-lg hover:scale-125 transition-transform p-1">❤️</button>
-        <button onclick="sendQuickReaction('🔥')" class="text-lg hover:scale-125 transition-transform p-1">🔥</button>
-        <button onclick="sendQuickReaction('🎉')" class="text-lg hover:scale-125 transition-transform p-1">🎉</button>
+      <!-- Typing Indicator -->
+      <div id="typing-indicator" class="text-[11px] text-slate-400 italic px-1 hidden h-5 flex items-center">
+        <span>Peer is typing...</span>
       </div>
 
       <!-- Input Area -->
-      <div class="flex flex-col gap-2 border-t border-slate-800 pt-3 mt-2">
+      <div class="flex flex-col gap-2 border-t border-slate-800 pt-3 mt-1">
         <div class="flex items-center gap-2">
           <button id="btn-paste-clipboard" title="Paste from Clipboard" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition flex items-center justify-center border border-slate-700">
             <i data-lucide="clipboard" class="w-4 h-4"></i>
@@ -164,6 +160,7 @@
     let conn = null;
     let myPeerId = null;
     let html5QrcodeScanner = null;
+    let typingTimeout = null;
 
     // UI Selectors
     const statusBadge = document.getElementById('status-badge');
@@ -180,6 +177,7 @@
     const btnOpenScanner = document.getElementById('btn-open-scanner');
     const btnCloseScanner = document.getElementById('btn-close-scanner');
     const scannerModal = document.getElementById('scanner-modal');
+    const typingIndicator = document.getElementById('typing-indicator');
 
     // Initialize Lucide Icons
     lucide.createIcons();
@@ -240,8 +238,16 @@
       });
 
       conn.on('data', (data) => {
-        if (typeof data === 'object' && data.type === 'chat') {
-          renderChatMessage(data.content, 'received');
+        if (typeof data === 'object') {
+          if (data.type === 'chat') {
+            renderChatMessage(data.content, 'received');
+          } else if (data.type === 'typing') {
+            if (data.status) {
+              typingIndicator.classList.remove('hidden');
+            } else {
+              typingIndicator.classList.add('hidden');
+            }
+          }
         }
       });
 
@@ -279,19 +285,13 @@
         return;
       }
 
+      // Send stop typing signal immediately on send
+      conn.send({ type: 'typing', status: false });
+
       conn.send({ type: 'chat', content: text });
       renderChatMessage(text, 'sent');
       chatInput.value = '';
     }
-
-    window.sendQuickReaction = function(emoji) {
-      if (!conn || !conn.open) {
-        alert('Please connect to a peer first by scanning their QR code.');
-        return;
-      }
-      conn.send({ type: 'chat', content: emoji });
-      renderChatMessage(emoji, 'sent');
-    };
 
     function renderChatMessage(messageText, direction) {
       if (emptyState) emptyState.style.display = 'none';
@@ -307,11 +307,8 @@
           : 'bg-slate-800 text-slate-100 rounded-tl-none border border-slate-700'
       }`;
 
-      // Check if the message is just a single emoji
-      const isSingleEmoji = /^[\p{Emoji_Presentation}\u{FE0F}\u{200D}]+$/u.test(messageText);
-
       messageBubble.innerHTML = `
-        <p class="${isSingleEmoji ? 'text-2xl py-1' : 'leading-relaxed break-words'}">${escapeHtml(messageText)}</p>
+        <p class="leading-relaxed break-words">${escapeHtml(messageText)}</p>
         <span class="text-[9px] ${isSent ? 'text-indigo-200' : 'text-slate-400'} self-end mt-0.5">
           ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
@@ -326,12 +323,25 @@
       return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
+    // Typing broadcast on input
+    chatInput.addEventListener('input', () => {
+      if (!conn || !conn.open) return;
+      
+      conn.send({ type: 'typing', status: true });
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        conn.send({ type: 'typing', status: false });
+      }, 1200);
+    });
+
     // Paste Action
     btnPasteClipboard.addEventListener('click', async () => {
       try {
         const text = await navigator.clipboard.readText();
         if (text) {
           chatInput.value = text;
+          chatInput.dispatchEvent(new Event('input'));
         }
       } catch (err) {
         alert('Paste permission denied. Please paste manually using Ctrl+V or long-press.');
@@ -390,7 +400,7 @@
     window.addEventListener('load', initPeer);
   </script>
 
-  <!-- Security Scripts (Allowing paste inside input fields) -->
+  <!-- Security Scripts -->
   <script>
     document.addEventListener('contextmenu', (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
