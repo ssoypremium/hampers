@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O2 Private Chat</title>
+  <title>O2 Remote</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -42,17 +42,17 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-2 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-3 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- Header -->
-  <header class="w-full max-w-xl mb-3 flex items-center justify-between border-b border-slate-800 pb-2">
+  <header class="w-full max-w-xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
     <div class="flex items-center gap-3">
-      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">        
-        <i data-lucide="bot" class="w-5 h-5"></i>
+      <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">        
+        <i data-lucide="monitor-play" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 CHAT</h1>
-        <p class="text-[11px] text-slate-400">Secure Private Tunnels</p>
+        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Remote</h1>
+        <p class="text-[11px] text-slate-400">Secure Screen Tunnels</p>
       </div>
     </div>
 
@@ -67,16 +67,16 @@
   <main class="w-full max-w-xl flex flex-col gap-4 flex-1 justify-center">
 
     <!-- QR Handshake Card -->
-    <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
+    <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
       <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
 
       <h2 class="text-base font-bold text-slate-100 mb-1">Pair Devices</h2>
-      <p class="text-xs text-slate-400 mb-3 max-w-xs leading-relaxed">
-        Scan this QR code from another device to connect instantly.
+      <p class="text-xs text-slate-400 mb-4 max-w-xs leading-relaxed">
+        Scan this QR code from another device to establish a secure screen tunnel.
       </p>
 
       <!-- QR Code Box -->
-      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-3 relative min-h-[150px] min-w-[150px] flex items-center justify-center">
+      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-4 relative min-h-[160px] min-w-[160px] flex items-center justify-center">
         <div id="qrcode"></div>
         <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
           <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-indigo-400 mb-2"></i>
@@ -85,50 +85,37 @@
       </div>
 
       <!-- Scan QR Code Button -->
-      <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+      <button id="btn-open-scanner" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
         <i data-lucide="qr-code" class="w-4 h-4"></i>
         Scan QR Code with Camera
       </button>
     </div>
 
-    <!-- Chat Interface Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col h-[480px]">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
-        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="message-square" class="w-4 h-4 text-cyan-400"></i>
-          Secure Tunnel Chat
-        </h3>
-        <button id="btn-clear-history" class="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
-          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-          Clear
+    <!-- Screen Share Viewport Container -->
+    <div id="screen-container" class="hidden bg-slate-900 border border-indigo-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <span class="text-xs font-semibold text-indigo-400 flex items-center gap-2">
+          <i data-lucide="monitor" class="w-4 h-4"></i> Live Screen Feed
+        </span>
+        <button id="btn-stop-screen" class="px-3 py-1 bg-red-600/20 text-red-400 border border-red-500/30 rounded-lg text-xs font-medium hidden hover:bg-red-600/30 transition">
+          Stop Sharing
         </button>
       </div>
+      <video id="remote-screen" autoplay playsinline class="w-full rounded-xl bg-slate-950 border border-slate-800 max-h-[380px] object-contain shadow-inner"></video>
+    </div>
 
-      <!-- Message History List -->
-      <div id="chat-list" class="flex-1 space-y-3 overflow-y-auto pr-1">
-        <div id="empty-state" class="h-full flex flex-col items-center justify-center text-slate-600 text-center">
-          <i data-lucide="shield" class="w-8 h-8 mb-2 opacity-40"></i>
-          <p class="text-xs">Paired and ready. Send a message to start.</p>
-        </div>
+    <!-- Remote Controls Panel (Active when connected) -->
+    <div id="control-panel" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 hidden">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+          Tunnel Active
+        </h3>
       </div>
-
-      <!-- Typing Indicator -->
-      <div id="typing-indicator" class="text-[11px] text-slate-400 italic px-1 hidden h-5 flex items-center">
-        <span>Peer is typing...</span>
-      </div>
-
-      <!-- Input Area -->
-      <div class="flex flex-col gap-2 border-t border-slate-800 pt-3 mt-1">
-        <div class="flex items-center gap-2">
-          <button id="btn-paste-clipboard" title="Paste from Clipboard" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition flex items-center justify-center border border-slate-700">
-            <i data-lucide="clipboard" class="w-4 h-4"></i>
-          </button>
-          <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-          <button id="btn-send-chat" class="py-3 px-5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center shadow-lg shadow-indigo-600/20">
-            <i data-lucide="send" class="w-4 h-4"></i>
-          </button>
-        </div>
-      </div>
+      <button id="btn-share-screen" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+        <i data-lucide="monitor-up" class="w-4 h-4"></i>
+        Start Full Screen Sharing
+      </button>
     </div>
 
   </main>
@@ -158,9 +145,10 @@
   <script>
     let peer = null;
     let conn = null;
+    let mediaCall = null;
+    let localStream = null;
     let myPeerId = null;
     let html5QrcodeScanner = null;
-    let typingTimeout = null;
 
     // UI Selectors
     const statusBadge = document.getElementById('status-badge');
@@ -168,16 +156,15 @@
     const qrCard = document.getElementById('qr-card');
     const qrContainer = document.getElementById('qrcode');
     const qrLoader = document.getElementById('qr-loader');
-    const chatInput = document.getElementById('chat-input');
-    const btnSendChat = document.getElementById('btn-send-chat');
-    const btnPasteClipboard = document.getElementById('btn-paste-clipboard');
-    const chatList = document.getElementById('chat-list');
-    const emptyState = document.getElementById('empty-state');
-    const btnClearHistory = document.getElementById('btn-clear-history');
+    const controlPanel = document.getElementById('control-panel');
     const btnOpenScanner = document.getElementById('btn-open-scanner');
     const btnCloseScanner = document.getElementById('btn-close-scanner');
     const scannerModal = document.getElementById('scanner-modal');
-    const typingIndicator = document.getElementById('typing-indicator');
+
+    const btnShareScreen = document.getElementById('btn-share-screen');
+    const btnStopScreen = document.getElementById('btn-stop-screen');
+    const screenContainer = document.getElementById('screen-container');
+    const remoteScreen = document.getElementById('remote-screen');
 
     // Initialize Lucide Icons
     lucide.createIcons();
@@ -199,8 +186,8 @@
         qrContainer.innerHTML = '';
         new QRCode(qrContainer, {
           text: connectUrl,
-          width: 140,
-          height: 140,
+          width: 150,
+          height: 150,
           colorDark: "#0f172a",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M
@@ -215,6 +202,17 @@
 
       peer.on('connection', (incomingConn) => {
         setupConnection(incomingConn);
+      });
+
+      // Handle incoming screen share stream
+      peer.on('call', (call) => {
+        mediaCall = call;
+        call.answer(); 
+        call.on('stream', (remoteStreamVideo) => {
+          screenContainer.classList.remove('hidden');
+          remoteScreen.srcObject = remoteStreamVideo;
+        });
+        call.on('close', stopRemoteScreenView);
       });
 
       peer.on('error', (err) => {
@@ -237,22 +235,9 @@
         updateStatus('connected', 'Connected');
       });
 
-      conn.on('data', (data) => {
-        if (typeof data === 'object') {
-          if (data.type === 'chat') {
-            renderChatMessage(data.content, 'received');
-          } else if (data.type === 'typing') {
-            if (data.status) {
-              typingIndicator.classList.remove('hidden');
-            } else {
-              typingIndicator.classList.add('hidden');
-            }
-          }
-        }
-      });
-
       conn.on('close', () => {
         updateStatus('waiting', 'Disconnected');
+        stopScreenShare();
       });
     }
 
@@ -262,8 +247,9 @@
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
 
-        // Automatically hide QR Card when connected
+        // Hide QR Card and show Control Panel when connected
         qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+        controlPanel.classList.remove('hidden');
       } else if (state === 'connecting') {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-indigo-400 animate-ping';
@@ -271,82 +257,59 @@
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
 
-        // Show QR Card if disconnected
+        // Show QR Card and hide Control Panel if disconnected
         qrCard.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+        controlPanel.classList.add('hidden');
       }
     }
 
-    function sendChatMessage() {
-      const text = chatInput.value.trim();
-      if (!text) return;
-
+    // Screen Sharing Logic (Prefers Full Screen Monitor)
+    async function startScreenShare() {
       if (!conn || !conn.open) {
-        alert('Please connect to a peer first by scanning their QR code.');
+        alert("Please connect to a peer first.");
         return;
       }
 
-      // Send stop typing signal immediately on send
-      conn.send({ type: 'typing', status: false });
-
-      conn.send({ type: 'chat', content: text });
-      renderChatMessage(text, 'sent');
-      chatInput.value = '';
-    }
-
-    function renderChatMessage(messageText, direction) {
-      if (emptyState) emptyState.style.display = 'none';
-      const isSent = direction === 'sent';
-
-      const messageWrapper = document.createElement('div');
-      messageWrapper.className = `flex ${isSent ? 'justify-end' : 'justify-start'}`;
-
-      const messageBubble = document.createElement('div');
-      messageBubble.className = `max-w-[80%] p-3 rounded-2xl text-xs flex flex-col gap-1 shadow-sm ${
-        isSent 
-          ? 'bg-indigo-600 text-white rounded-tr-none' 
-          : 'bg-slate-800 text-slate-100 rounded-tl-none border border-slate-700'
-      }`;
-
-      messageBubble.innerHTML = `
-        <p class="leading-relaxed break-words">${escapeHtml(messageText)}</p>
-        <span class="text-[9px] ${isSent ? 'text-indigo-200' : 'text-slate-400'} self-end mt-0.5">
-          ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </span>
-      `;
-
-      messageWrapper.appendChild(messageBubble);
-      chatList.appendChild(messageWrapper);
-      chatList.scrollTop = chatList.scrollHeight;
-    }
-
-    function escapeHtml(text) {
-      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-    }
-
-    // Typing broadcast on input
-    chatInput.addEventListener('input', () => {
-      if (!conn || !conn.open) return;
-      
-      conn.send({ type: 'typing', status: true });
-
-      clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => {
-        conn.send({ type: 'typing', status: false });
-      }, 1200);
-    });
-
-    // Paste Action
-    btnPasteClipboard.addEventListener('click', async () => {
       try {
-        const text = await navigator.clipboard.readText();
-        if (text) {
-          chatInput.value = text;
-          chatInput.dispatchEvent(new Event('input'));
-        }
+        localStream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            displaySurface: "monitor" 
+          },
+          audio: false
+        });
+
+        screenContainer.classList.remove('hidden');
+        remoteScreen.srcObject = localStream;
+        btnStopScreen.classList.remove('hidden');
+
+        mediaCall = peer.call(conn.peer, localStream);
+
+        localStream.getVideoTracks()[0].onended = () => {
+          stopScreenShare();
+        };
+
       } catch (err) {
-        alert('Paste permission denied. Please paste manually using Ctrl+V or long-press.');
+        console.error("Screen Share cancelled/failed:", err);
       }
-    });
+    }
+
+    function stopScreenShare() {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+      if (mediaCall) {
+        mediaCall.close();
+        mediaCall = null;
+      }
+      stopRemoteScreenView();
+    }
+
+    function stopRemoteScreenView() {
+      remoteScreen.srcObject = null;
+      screenContainer.classList.add('hidden');
+      btnStopScreen.classList.add('hidden');
+    }
 
     // Scanner Modal Handlers
     function openScanner() {
@@ -383,19 +346,11 @@
     }
 
     // Event Listeners
-    btnSendChat.addEventListener('click', sendChatMessage);
-    chatInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') sendChatMessage();
-    });
+    btnShareScreen.addEventListener('click', startScreenShare);
+    btnStopScreen.addEventListener('click', stopScreenShare);
 
     btnOpenScanner.addEventListener('click', openScanner);
     btnCloseScanner.addEventListener('click', closeScanner);
-
-    btnClearHistory.addEventListener('click', () => {
-      chatList.innerHTML = '';
-      chatList.appendChild(emptyState);
-      emptyState.style.display = 'flex';
-    });
 
     window.addEventListener('load', initPeer);
   </script>
@@ -403,9 +358,6 @@
   <!-- Security Scripts -->
   <script>
     document.addEventListener('contextmenu', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-        return true;
-      }
       e.preventDefault();
     });
 
