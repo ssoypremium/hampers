@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O2 Code Share</title>
+  <title>O2 Remote</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- PeerJS for WebRTC Peer-to-Peer Connection -->
+  <!-- PeerJS for WebRTC Connection -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
   <!-- QRCode.js for QR Code Generation -->
@@ -42,17 +42,17 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-4 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-3 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- Header -->
-  <header class="w-full max-w-xl mb-6 flex items-center justify-between border-b border-slate-800 pb-4">
+  <header class="w-full max-w-xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
     <div class="flex items-center gap-3">
-      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">        
-        <i data-lucide="bot" class="w-5 h-5"></i>
+      <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">        
+        <i data-lucide="monitor-play" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 CBUS</h1>
-        <p class="text-[11px] text-slate-400">Secure Private Tunnels</p>
+        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Remote</h1>
+        <p class="text-[11px] text-slate-400">Secure Screen Tunnels</p>
       </div>
     </div>
 
@@ -64,72 +64,66 @@
   </header>
 
   <!-- Main Content Container -->
-  <main class="w-full max-w-xl flex flex-col gap-6">
+  <main class="w-full max-w-xl flex flex-col gap-4 flex-1 justify-center">
 
     <!-- QR Handshake Card -->
     <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
       <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
 
-      <h2 class="text-lg font-bold text-slate-100 mb-1">Pair Devices</h2>
+      <h2 class="text-base font-bold text-slate-100 mb-1">Pair Devices</h2>
       <p class="text-xs text-slate-400 mb-4 max-w-xs leading-relaxed">
-        Scan this QR code from another device to connect instantly.
+        Scan this QR code from mobile to connect instantly.
       </p>
 
       <!-- QR Code Box -->
       <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-4 relative min-h-[160px] min-w-[160px] flex items-center justify-center">
         <div id="qrcode"></div>
         <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
-          <i data-lucide="loader-2" class="w-7 h-7 animate-spin text-indigo-400 mb-2"></i>
+          <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-indigo-400 mb-2"></i>
           <span class="text-xs">Generating ID...</span>
         </div>
       </div>
 
-      <!-- Scan QR Code Button -->
-      <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+      <!-- Scan QR Code Button (Hidden on PC if needed, but useful for pairing) -->
+      <button id="btn-open-scanner" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
         <i data-lucide="qr-code" class="w-4 h-4"></i>
         Scan QR Code with Camera
       </button>
     </div>
 
-    <!-- Code / Text Input Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <label for="code-input" class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i>
-          Paste Code or Text
-        </label>
-        <button id="btn-paste-clipboard" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 rounded-lg transition flex items-center gap-1 border border-slate-700">
-          <i data-lucide="clipboard" class="w-3 h-3"></i> Paste
+    <!-- Screen Share Viewport Container -->
+    <div id="screen-container" class="hidden bg-slate-900 border border-indigo-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <span class="text-xs font-semibold text-indigo-400 flex items-center gap-2">
+          <i data-lucide="monitor" class="w-4 h-4"></i> Live Screen Feed
+        </span>
+        <button id="btn-stop-screen" class="px-3 py-1 bg-red-600/20 text-red-400 border border-red-500/30 rounded-lg text-xs font-medium hidden hover:bg-red-600/30 transition">
+          Stop Sharing
         </button>
       </div>
-
-      <textarea id="code-input" rows="5" placeholder="Paste your code or text here..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 font-mono focus:outline-none focus:border-indigo-500 resize-y"></textarea>
-
-      <button id="btn-send-code" class="w-full py-2.5 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
-        <i data-lucide="send" class="w-4 h-4"></i>
-        Send to Peer
-      </button>
+      <video id="remote-screen" autoplay playsinline class="w-full rounded-xl bg-slate-950 border border-slate-800 max-h-[380px] object-contain shadow-inner"></video>
     </div>
 
-    <!-- Shared Code / Transfer Activity Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col min-h-[220px]">
-      <div class="flex items-center justify-between mb-4">
+    <!-- Control Panel (Active when connected) -->
+    <div id="control-panel" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 hidden">
+      <div class="flex items-center justify-between">
         <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="file-code" class="w-4 h-4 text-indigo-400"></i>
-          Shared Content
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+          Tunnel Active
         </h3>
-        <button id="btn-clear-history" class="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
-          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-          Clear
-        </button>
+        <span id="device-type-label" class="text-[10px] text-slate-500 uppercase tracking-wider"></span>
       </div>
 
-      <!-- Activity Log List -->
-      <div id="transfer-list" class="flex-1 space-y-3 overflow-y-auto max-h-[350px] pr-1">
-        <div id="empty-state" class="h-full min-h-[140px] flex flex-col items-center justify-center text-slate-600 text-center">
-          <i data-lucide="inbox" class="w-8 h-8 mb-2 opacity-40"></i>
-          <p class="text-xs">No content shared yet.</p>
-        </div>
+      <!-- Button only visible on Desktop/PC -->
+      <button id="btn-share-screen" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 hidden">
+        <i data-lucide="monitor-up" class="w-4 h-4"></i>
+        Start Full Screen Sharing
+      </button>
+
+      <!-- Receiver Notice for Mobile -->
+      <div id="mobile-viewer-notice" class="text-center py-2 text-xs text-slate-400 flex items-center justify-center gap-2 hidden">
+        <i data-lucide="tv" class="w-4 h-4 text-cyan-400 animate-pulse"></i>
+        <span>Waiting for Desktop Screen Feed...</span>
       </div>
     </div>
 
@@ -152,7 +146,7 @@
         <div id="reader" class="w-full"></div>
       </div>
 
-      <p class="text-[11px] text-slate-400 text-center">Point your camera at the QR code displayed on the other device.</p>
+      <p class="text-[11px] text-slate-400 text-center">Point your camera at the QR code displayed on Desktop.</p>
     </div>
   </div>
 
@@ -160,8 +154,13 @@
   <script>
     let peer = null;
     let conn = null;
+    let mediaCall = null;
+    let localStream = null;
     let myPeerId = null;
     let html5QrcodeScanner = null;
+
+    // Detect if device is mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     // UI Selectors
     const statusBadge = document.getElementById('status-badge');
@@ -169,15 +168,17 @@
     const qrCard = document.getElementById('qr-card');
     const qrContainer = document.getElementById('qrcode');
     const qrLoader = document.getElementById('qr-loader');
-    const codeInput = document.getElementById('code-input');
-    const btnSendCode = document.getElementById('btn-send-code');
-    const btnPasteClipboard = document.getElementById('btn-paste-clipboard');
-    const transferList = document.getElementById('transfer-list');
-    const emptyState = document.getElementById('empty-state');
-    const btnClearHistory = document.getElementById('btn-clear-history');
+    const controlPanel = document.getElementById('control-panel');
+    const deviceTypeLabel = document.getElementById('device-type-label');
     const btnOpenScanner = document.getElementById('btn-open-scanner');
     const btnCloseScanner = document.getElementById('btn-close-scanner');
     const scannerModal = document.getElementById('scanner-modal');
+
+    const btnShareScreen = document.getElementById('btn-share-screen');
+    const btnStopScreen = document.getElementById('btn-stop-screen');
+    const mobileViewerNotice = document.getElementById('mobile-viewer-notice');
+    const screenContainer = document.getElementById('screen-container');
+    const remoteScreen = document.getElementById('remote-screen');
 
     // Initialize Lucide Icons
     lucide.createIcons();
@@ -217,6 +218,18 @@
         setupConnection(incomingConn);
       });
 
+      // Receive incoming screen share stream
+      peer.on('call', (call) => {
+        mediaCall = call;
+        call.answer(); 
+        call.on('stream', (remoteStreamVideo) => {
+          screenContainer.classList.remove('hidden');
+          if (mobileViewerNotice) mobileViewerNotice.classList.add('hidden');
+          remoteScreen.srcObject = remoteStreamVideo;
+        });
+        call.on('close', stopRemoteScreenView);
+      });
+
       peer.on('error', (err) => {
         console.error('PeerJS Error:', err);
         updateStatus('error', 'Connection Error');
@@ -237,14 +250,9 @@
         updateStatus('connected', 'Connected');
       });
 
-      conn.on('data', (data) => {
-        if (typeof data === 'object' && data.type === 'content') {
-          renderContentMessage(data.content, 'received');
-        }
-      });
-
       conn.on('close', () => {
         updateStatus('waiting', 'Disconnected');
+        stopScreenShare();
       });
     }
 
@@ -254,8 +262,20 @@
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
 
-        // Automatically hide QR Card when connected
         qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+        controlPanel.classList.remove('hidden');
+
+        // Show buttons based on device type
+        if (isMobile) {
+          deviceTypeLabel.textContent = 'Mobile Viewer';
+          btnShareScreen.classList.add('hidden');
+          mobileViewerNotice.classList.remove('hidden');
+        } else {
+          deviceTypeLabel.textContent = 'Desktop Host';
+          btnShareScreen.classList.remove('hidden');
+          mobileViewerNotice.classList.add('hidden');
+        }
+
       } else if (state === 'connecting') {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-indigo-400 animate-ping';
@@ -263,87 +283,61 @@
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
 
-        // Show QR Card if disconnected
         qrCard.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+        controlPanel.classList.add('hidden');
       }
     }
 
-    function sendContent() {
-      const text = codeInput.value.trim();
-      if (!text) return;
-
+    // Desktop Screen Share
+    async function startScreenShare() {
       if (!conn || !conn.open) {
-        alert('Please connect to a peer first by scanning their QR code.');
+        alert("Please connect to mobile device first.");
         return;
       }
 
-      conn.send({ type: 'content', content: text });
-      renderContentMessage(text, 'sent');
-      codeInput.value = '';
-    }
-
-    function renderContentMessage(contentText, direction) {
-      if (emptyState) emptyState.style.display = 'none';
-      const isSent = direction === 'sent';
-      const cardId = 'content-card-' + Math.random().toString(36).substr(2, 9);
-
-      const card = document.createElement('div');
-      card.className = `p-3 rounded-xl border text-xs flex flex-col gap-2 ${
-        isSent 
-          ? 'bg-indigo-950/30 border-indigo-800/40 text-indigo-100' 
-          : 'bg-slate-950 border-slate-800 text-slate-100'
-      }`;
-
-      card.innerHTML = `
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">${isSent ? 'Sent' : 'Received'}</span>
-          <div class="flex items-center gap-2">
-            <span class="text-[10px] text-slate-500">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-            <button onclick="copySnippet('${cardId}')" id="btn-${cardId}" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md text-[11px] font-medium transition flex items-center gap-1">
-              <i data-lucide="copy" class="w-3 h-3"></i> Copy
-            </button>
-          </div>
-        </div>
-        <pre id="${cardId}" class="bg-slate-900 p-3 rounded-lg overflow-x-auto text-[11px] font-mono text-slate-300 select-all border border-slate-800/80 max-h-48 whitespace-pre-wrap break-all"><code>${escapeHtml(contentText)}</code></pre>
-      `;
-
-      transferList.appendChild(card);
-      lucide.createIcons();
-      transferList.scrollTop = transferList.scrollHeight;
-    }
-
-    function escapeHtml(text) {
-      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-    }
-
-    window.copySnippet = function(cardId) {
-      const preEl = document.getElementById(cardId);
-      const btnEl = document.getElementById('btn-' + cardId);
-      const textToCopy = preEl.textContent;
-
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        btnEl.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> Copied!`;
-        btnEl.className = 'px-2.5 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-md text-[11px] font-medium transition flex items-center gap-1';
-        lucide.createIcons();
-        setTimeout(() => {
-          btnEl.innerHTML = `<i data-lucide="copy" class="w-3 h-3"></i> Copy`;
-          btnEl.className = 'px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md text-[11px] font-medium transition flex items-center gap-1';
-          lucide.createIcons();
-        }, 2000);
-      });
-    };
-
-    // Quick Paste Button Action
-    btnPasteClipboard.addEventListener('click', async () => {
       try {
-        const text = await navigator.clipboard.readText();
-        if (text) {
-          codeInput.value = text;
-        }
+        localStream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            displaySurface: "monitor" 
+          },
+          audio: false
+        });
+
+        screenContainer.classList.remove('hidden');
+        remoteScreen.srcObject = localStream;
+        btnStopScreen.classList.remove('hidden');
+
+        mediaCall = peer.call(conn.peer, localStream);
+
+        localStream.getVideoTracks()[0].onended = () => {
+          stopScreenShare();
+        };
+
       } catch (err) {
-        alert('Paste permission denied. Please paste manually using Ctrl+V or long-press.');
+        console.error("Screen Share cancelled/failed:", err);
       }
-    });
+    }
+
+    function stopScreenShare() {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+      if (mediaCall) {
+        mediaCall.close();
+        mediaCall = null;
+      }
+      stopRemoteScreenView();
+    }
+
+    function stopRemoteScreenView() {
+      remoteScreen.srcObject = null;
+      screenContainer.classList.add('hidden');
+      btnStopScreen.classList.add('hidden');
+      if (isMobile && mobileViewerNotice) {
+        mobileViewerNotice.classList.remove('hidden');
+      }
+    }
 
     // Scanner Modal Handlers
     function openScanner() {
@@ -380,29 +374,18 @@
     }
 
     // Event Listeners
-    btnSendCode.addEventListener('click', sendContent);
-    codeInput.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'Enter') sendContent();
-    });
+    btnShareScreen.addEventListener('click', startScreenShare);
+    btnStopScreen.addEventListener('click', stopScreenShare);
 
     btnOpenScanner.addEventListener('click', openScanner);
     btnCloseScanner.addEventListener('click', closeScanner);
 
-    btnClearHistory.addEventListener('click', () => {
-      transferList.innerHTML = '';
-      transferList.appendChild(emptyState);
-      emptyState.style.display = 'flex';
-    });
-
     window.addEventListener('load', initPeer);
   </script>
 
-  <!-- Security Scripts (Allowing paste inside input fields) -->
+  <!-- Security Scripts -->
   <script>
     document.addEventListener('contextmenu', (e) => {
-      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
-        return true;
-      }
       e.preventDefault();
     });
 
