@@ -397,5 +397,18 @@
 
     window.addEventListener('load', initPeer);
   </script>
+
+  <!-- Security Scripts (Right-Click & Inspect Disable) -->
+  <script>
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    document.onkeydown = function (e) {
+        (e.keyCode == 123) && (e.preventDefault()); // F12
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+    };
+  </script>
 </body>
 </html>
