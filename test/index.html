@@ -72,7 +72,7 @@
 
       <h2 class="text-base font-bold text-slate-100 mb-1">Pair Devices</h2>
       <p class="text-xs text-slate-400 mb-4 max-w-xs leading-relaxed">
-        Scan this QR code from another device to establish a secure screen tunnel.
+        Scan this QR code from mobile to connect instantly.
       </p>
 
       <!-- QR Code Box -->
@@ -104,7 +104,7 @@
       <video id="remote-screen" autoplay playsinline class="w-full rounded-xl bg-slate-950 border border-slate-800 max-h-[380px] object-contain shadow-inner"></video>
     </div>
 
-    <!-- Remote Controls Panel (Active when connected) -->
+    <!-- Control Panel (Active when connected) -->
     <div id="control-panel" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 hidden">
       <div class="flex items-center justify-between">
         <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
@@ -112,7 +112,9 @@
           Tunnel Active
         </h3>
       </div>
-      <button id="btn-share-screen" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+
+      <!-- Button only visible on Desktop/PC -->
+      <button id="btn-share-screen" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 hidden">
         <i data-lucide="monitor-up" class="w-4 h-4"></i>
         Start Full Screen Sharing
       </button>
@@ -137,7 +139,7 @@
         <div id="reader" class="w-full"></div>
       </div>
 
-      <p class="text-[11px] text-slate-400 text-center">Point your camera at the QR code displayed on the other device.</p>
+      <p class="text-[11px] text-slate-400 text-center">Point your camera at the QR code displayed on Desktop.</p>
     </div>
   </div>
 
@@ -149,6 +151,9 @@
     let localStream = null;
     let myPeerId = null;
     let html5QrcodeScanner = null;
+
+    // Detect if device is mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     // UI Selectors
     const statusBadge = document.getElementById('status-badge');
@@ -204,7 +209,7 @@
         setupConnection(incomingConn);
       });
 
-      // Handle incoming screen share stream
+      // Receive incoming screen share stream
       peer.on('call', (call) => {
         mediaCall = call;
         call.answer(); 
@@ -247,9 +252,14 @@
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
 
-        // Hide QR Card and show Control Panel when connected
         qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
         controlPanel.classList.remove('hidden');
+
+        // Show share button only on Desktop
+        if (!isMobile) {
+          btnShareScreen.classList.remove('hidden');
+        }
+
       } else if (state === 'connecting') {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-indigo-400 animate-ping';
@@ -257,16 +267,15 @@
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
 
-        // Show QR Card and hide Control Panel if disconnected
         qrCard.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
         controlPanel.classList.add('hidden');
       }
     }
 
-    // Screen Sharing Logic (Prefers Full Screen Monitor)
+    // Desktop Screen Share
     async function startScreenShare() {
       if (!conn || !conn.open) {
-        alert("Please connect to a peer first.");
+        alert("Please connect to mobile device first.");
         return;
       }
 
