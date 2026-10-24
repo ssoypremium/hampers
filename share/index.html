@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AirShare - Instant Local P2P File & Text Transfer</title>
+  <title>O2Share</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,7 +21,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* Custom Scrollbar for Sleek Dark Theme */
+    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -36,12 +36,7 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #475569;
     }
-    /* Drag and drop highlight */
-    .drag-over {
-      border-color: #6366f1 !important;
-      background-color: rgba(99, 102, 241, 0.1) !important;
-    }
-    /* Custom styling for scanner video viewport */
+    /* Scanner video styling */
     #reader video {
       border-radius: 0.75rem;
       object-fit: cover;
@@ -49,153 +44,80 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-4 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- Header -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
-          <i data-lucide="wifi" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <h1 class="text-lg font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">AirShare P2P</h1>
-          <p class="text-xs text-slate-400">Local Direct Transfer</p>
-        </div>
+  <header class="w-full max-w-md mb-6 flex items-center justify-between border-b border-slate-800 pb-4">
+    <div class="flex items-center gap-3">
+      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+        <i data-lucide="wifi" class="w-5 h-5"></i>
       </div>
+      <div>
+        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2</h1>
+        <p class="text-[11px] text-slate-400">Secure File Sharing</p>
+      </div>
+    </div>
 
-      <!-- Connection Status Badge -->
-      <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700 transition-all">
-        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-        <span id="status-text">Initializing Peer...</span>
-      </div>
+    <!-- Connection Status Badge -->
+    <div id="status-badge" class="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
+      <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+      <span id="status-text">Initializing...</span>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <!-- Main Content Container -->
+  <main class="w-full max-w-md flex flex-col gap-6">
 
-    <!-- LEFT PANEL: Peer Info & QR Code & Scanner -->
-    <section class="lg:col-span-5 flex flex-col gap-6">
-      
-      <!-- QR Handshake Card -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center relative overflow-hidden">
-        <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+    <!-- QR Handshake Card -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
 
-        <h2 class="text-lg font-semibold text-slate-200 mb-1">Pair Devices</h2>
-        <p class="text-xs text-slate-400 mb-5 max-w-xs">Scan this QR code from another device or use the built-in camera scanner below.</p>
+      <h2 class="text-xl font-bold text-slate-100 mb-1">Pair Devices</h2>
+      <p class="text-xs text-slate-400 mb-5 max-w-xs leading-relaxed">
+        Scan this QR code from another device or use the built-in camera scanner below.
+      </p>
 
-        <!-- QR Code Display Box -->
-        <div class="bg-white p-4 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative group min-h-[200px] min-w-[200px] flex items-center justify-center">
-          <div id="qrcode" class="transition-opacity duration-300"></div>
-          <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
-            <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
-            <span class="text-xs">Generating ID...</span>
-          </div>
+      <!-- QR Code Box -->
+      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[190px] min-w-[190px] flex items-center justify-center">
+        <div id="qrcode"></div>
+        <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
+          <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
+          <span class="text-xs">Generating ID...</span>
         </div>
+      </div>
 
-        <!-- In-App Camera Scan Button -->
-        <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 mb-4">
-          <i data-lucide="qr-code" class="w-4 h-4"></i>
-          Scan QR Code with Camera
+      <!-- Scan QR Code Button -->
+      <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+        <i data-lucide="qr-code" class="w-4 h-4"></i>
+        Scan QR Code with Camera
+      </button>
+    </div>
+
+    <!-- Transfer Activity Section -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col min-h-[200px]">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
+          <i data-lucide="arrow-up-down" class="w-4 h-4 text-cyan-400"></i>
+          Transfer Activity
+        </h3>
+        <button id="btn-clear-history" class="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          Clear
         </button>
-
-        <!-- Manual Connect Option -->
-        <div class="w-full space-y-3">
-          <div class="flex items-center gap-2 text-xs text-slate-400 my-2">
-            <div class="flex-1 h-px bg-slate-800"></div>
-            <span>OR CONNECT WITH ID</span>
-            <div class="flex-1 h-px bg-slate-800"></div>
-          </div>
-
-          <div class="flex gap-2">
-            <input id="my-peer-id" type="text" readonly value="Generating..." class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 font-mono focus:outline-none focus:border-slate-700 select-all">
-            <button id="btn-copy-id" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium transition flex items-center gap-1.5" title="Copy My ID">
-              <i data-lucide="copy" class="w-4 h-4"></i>
-              Copy
-            </button>
-          </div>
-
-          <div id="remote-connect-box" class="flex gap-2 pt-2">
-            <input id="target-peer-id" type="text" placeholder="Enter target Peer ID..." class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
-            <button id="btn-connect" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium transition flex items-center gap-1.5 shadow-lg shadow-indigo-600/20">
-              <i data-lucide="link" class="w-4 h-4"></i>
-              Connect
-            </button>
-          </div>
-        </div>
       </div>
 
-      <!-- Network Details Info -->
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 text-xs text-slate-400 space-y-2">
-        <div class="flex items-center gap-2 font-medium text-slate-300 mb-1">
-          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-          <span>Direct Local Peer-to-Peer</span>
-        </div>
-        <p class="leading-relaxed">Files and messages are encrypted in transit and passed directly between devices using WebRTC. No data is stored on servers.</p>
-      </div>
-    </section>
-
-    <!-- RIGHT PANEL: Text & File Transfer Interface -->
-    <section class="lg:col-span-7 flex flex-col gap-6">
-
-      <!-- Drag & Drop File Upload Area -->
-      <div id="drop-zone" class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 bg-slate-900/40 hover:bg-slate-900/70 rounded-2xl p-6 text-center transition-all cursor-pointer flex flex-col items-center justify-center min-h-[180px] relative group">
-        <input type="file" id="file-input" multiple class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
-        <div class="w-12 h-12 rounded-full bg-indigo-600/10 text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-          <i data-lucide="upload-cloud" class="w-6 h-6"></i>
-        </div>
-        <h3 class="text-sm font-semibold text-slate-200 mb-1">Drop files here or click to browse</h3>
-        <p class="text-xs text-slate-500">Supports documents, photos, videos & any file format</p>
-      </div>
-
-      <!-- Quick Text / URL Sender -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <label for="text-input" class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-            <i data-lucide="message-square" class="w-4 h-4 text-indigo-400"></i>
-            Send Instant Text or Link
-          </label>
-          <span class="text-[10px] text-slate-500">Press Ctrl+Enter to send</span>
-        </div>
-        <div class="flex gap-2">
-          <textarea id="text-input" rows="2" placeholder="Paste link or write text here..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
-          <button id="btn-send-text" class="px-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition flex flex-col items-center justify-center gap-1 shadow-lg shadow-indigo-600/20 shrink-0">
-            <i data-lucide="send" class="w-4 h-4"></i>
-            <span>Send</span>
-          </button>
+      <!-- Activity Log List -->
+      <div id="transfer-list" class="flex-1 space-y-3 overflow-y-auto max-h-[250px] pr-1">
+        <div id="empty-state" class="h-full min-h-[120px] flex flex-col items-center justify-center text-slate-600 text-center">
+          <i data-lucide="inbox" class="w-8 h-8 mb-2 opacity-40"></i>
+          <p class="text-xs">No activity yet.</p>
         </div>
       </div>
-
-      <!-- Transfer History & Feeds -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex-1 flex flex-col min-h-[300px]">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <i data-lucide="arrow-up-down" class="w-4 h-4 text-cyan-400"></i>
-            Transfer Activity
-          </h3>
-          <button id="btn-clear-history" class="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            Clear
-          </button>
-        </div>
-
-        <!-- Transfer Log List -->
-        <div id="transfer-list" class="flex-1 space-y-3 overflow-y-auto max-h-[360px] pr-1">
-          <!-- Empty State Placeholder -->
-          <div id="empty-state" class="h-full min-h-[200px] flex flex-col items-center justify-center text-slate-600 text-center">
-            <i data-lucide="inbox" class="w-10 h-10 mb-2 opacity-40"></i>
-            <p class="text-xs">No files or messages transferred yet.</p>
-            <p class="text-[11px] text-slate-600 mt-1">Connect devices and start sharing.</p>
-          </div>
-        </div>
-      </div>
-
-    </section>
+    </div>
 
   </main>
 
-  <!-- MODAL: Embedded In-App QR Code Scanner -->
+  <!-- MODAL: Camera Scanner -->
   <div id="scanner-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl flex flex-col gap-4 relative">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -208,8 +130,7 @@
         </button>
       </div>
 
-      <!-- Live Video Viewport Container -->
-      <div class="overflow-hidden rounded-xl bg-slate-950 min-h-[250px] border border-slate-800 flex items-center justify-center relative">
+      <div class="overflow-hidden rounded-xl bg-slate-950 min-h-[220px] border border-slate-800 flex items-center justify-center relative">
         <div id="reader" class="w-full"></div>
       </div>
 
@@ -217,33 +138,21 @@
     </div>
   </div>
 
-  <!-- JavaScript App Logic -->
+  <!-- JavaScript Logic -->
   <script>
-    // App State Configuration
-    const CHUNK_SIZE = 1048576; // 1MB WebRTC chunk transfer size
     let peer = null;
     let conn = null;
     let myPeerId = null;
     let html5QrcodeScanner = null;
 
-    // UI Element Selectors
+    // UI Selectors
     const statusBadge = document.getElementById('status-badge');
     const statusText = document.getElementById('status-text');
     const qrContainer = document.getElementById('qrcode');
     const qrLoader = document.getElementById('qr-loader');
-    const myPeerIdInput = document.getElementById('my-peer-id');
-    const targetPeerIdInput = document.getElementById('target-peer-id');
-    const btnConnect = document.getElementById('btn-connect');
-    const btnCopyId = document.getElementById('btn-copy-id');
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
-    const textInput = document.getElementById('text-input');
-    const btnSendText = document.getElementById('btn-send-text');
     const transferList = document.getElementById('transfer-list');
     const emptyState = document.getElementById('empty-state');
     const btnClearHistory = document.getElementById('btn-clear-history');
-
-    // Scanner Selectors
     const btnOpenScanner = document.getElementById('btn-open-scanner');
     const btnCloseScanner = document.getElementById('btn-close-scanner');
     const scannerModal = document.getElementById('scanner-modal');
@@ -251,40 +160,33 @@
     // Initialize Lucide Icons
     lucide.createIcons();
 
-    // Parse URL parameter if opened via direct scan on mobile
+    // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const targetFromUrl = urlParams.get('connect');
 
-    // -------------------------------------------------------------
-    // 1. Initialize PeerJS Connection
-    // -------------------------------------------------------------
     function initPeer() {
       peer = new Peer({ debug: 1 });
 
       peer.on('open', (id) => {
         myPeerId = id;
-        myPeerIdInput.value = id;
         qrLoader.classList.add('hidden');
 
-        // Generate QR code with connection URL
         const currentUrl = window.location.origin + window.location.pathname;
         const connectUrl = `${currentUrl}?connect=${id}`;
         
         qrContainer.innerHTML = '';
         new QRCode(qrContainer, {
           text: connectUrl,
-          width: 180,
-          height: 180,
+          width: 170,
+          height: 170,
           colorDark: "#0f172a",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M
         });
 
-        updateStatus('waiting', 'Ready for connection');
+        updateStatus('waiting', 'Ready');
 
-        // Auto-connect if URL has target peer param
         if (targetFromUrl) {
-          targetPeerIdInput.value = targetFromUrl;
           connectToPeer(targetFromUrl);
         }
       });
@@ -295,149 +197,65 @@
 
       peer.on('error', (err) => {
         console.error('PeerJS Error:', err);
-        updateStatus('error', 'Peer connection error');
+        updateStatus('error', 'Connection Error');
       });
     }
 
     function connectToPeer(targetId) {
       if (!targetId || targetId === myPeerId) return;
-      updateStatus('connecting', 'Connecting to peer...');
+      updateStatus('connecting', 'Connecting...');
       const outgoingConn = peer.connect(targetId, { reliable: true });
       setupConnection(outgoingConn);
     }
 
-    // -------------------------------------------------------------
-    // 2. Setup Active Data Channel Event Handlers
-    // -------------------------------------------------------------
     function setupConnection(connection) {
       conn = connection;
 
       conn.on('open', () => {
-        updateStatus('connected', 'Connected to Peer');
-        document.getElementById('remote-connect-box').classList.add('hidden');
-      });
-
-      let incomingFile = null;
-
-      conn.on('data', (data) => {
-        if (typeof data === 'object' && data.type === 'text') {
-          renderTextMessage(data.content, 'received');
-        } else if (typeof data === 'object' && data.type === 'file-start') {
-          incomingFile = {
-            name: data.name,
-            size: data.size,
-            mime: data.mime,
-            receivedSize: 0,
-            chunks: [],
-            elementId: createTransferCard(data.name, data.size, 'download')
-          };
-        } else if (typeof data === 'object' && data.type === 'file-chunk') {
-          if (!incomingFile) return;
-          incomingFile.chunks.push(data.chunk);
-          incomingFile.receivedSize += data.chunk.byteLength;
-
-          const progress = Math.min(100, Math.round((incomingFile.receivedSize / incomingFile.size) * 100));
-          updateCardProgress(incomingFile.elementId, progress);
-
-          if (incomingFile.receivedSize >= incomingFile.size) {
-            const blob = new Blob(incomingFile.chunks, { type: incomingFile.mime });
-            const downloadUrl = URL.createObjectURL(blob);
-            finalizeDownloadCard(incomingFile.elementId, downloadUrl, incomingFile.name);
-            incomingFile = null;
-          }
-        }
+        updateStatus('connected', 'Connected');
+        addActivityLog('Connected to peer.');
       });
 
       conn.on('close', () => {
-        updateStatus('waiting', 'Disconnected. Ready.');
-        document.getElementById('remote-connect-box').classList.remove('hidden');
+        updateStatus('waiting', 'Disconnected');
+        addActivityLog('Disconnected from peer.');
       });
     }
 
-    // -------------------------------------------------------------
-    // 3. File & Text Sending Logic
-    // -------------------------------------------------------------
-    function sendTextMessage() {
-      const text = textInput.value.trim();
-      if (!text) return;
-
-      if (!conn || !conn.open) {
-        alert('Please connect to a peer first.');
-        return;
+    function updateStatus(state, message) {
+      statusText.textContent = message;
+      if (state === 'connected') {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
+      } else if (state === 'connecting') {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-indigo-400 animate-ping';
+      } else {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
       }
-
-      conn.send({ type: 'text', content: text });
-      renderTextMessage(text, 'sent');
-      textInput.value = '';
     }
 
-    function sendFiles(files) {
-      if (!files || files.length === 0) return;
-
-      if (!conn || !conn.open) {
-        alert('Please connect to a peer before transferring files.');
-        return;
-      }
-
-      Array.from(files).forEach(file => {
-        const cardId = createTransferCard(file.name, file.size, 'upload');
-
-        conn.send({
-          type: 'file-start',
-          name: file.name,
-          size: file.size,
-          mime: file.type || 'application/octet-stream'
-        });
-
-        const reader = new FileReader();
-        let offset = 0;
-
-        reader.onload = (e) => {
-          if (!conn || !conn.open) return;
-          conn.send({
-            type: 'file-chunk',
-            chunk: e.target.result
-          });
-
-          offset += e.target.result.byteLength;
-          const progress = Math.min(100, Math.round((offset / file.size) * 100));
-          updateCardProgress(cardId, progress);
-
-          if (offset < file.size) {
-            readNextChunk();
-          } else {
-            finalizeUploadCard(cardId);
-          }
-        };
-
-        function readNextChunk() {
-          const slice = file.slice(offset, offset + CHUNK_SIZE);
-          reader.readAsArrayBuffer(slice);
-        }
-
-        readNextChunk();
-      });
+    function addActivityLog(text) {
+      if (emptyState) emptyState.style.display = 'none';
+      const item = document.createElement('div');
+      item.className = 'p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-xs text-slate-300 flex justify-between items-center';
+      item.innerHTML = `
+        <span>${text}</span>
+        <span class="text-[10px] text-slate-500">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      `;
+      transferList.appendChild(item);
+      transferList.scrollTop = transferList.scrollHeight;
     }
 
-    // -------------------------------------------------------------
-    // 4. In-App QR Scanner Modal Logic
-    // -------------------------------------------------------------
+    // Scanner Modal Handlers
     function openScanner() {
       scannerModal.classList.remove('hidden');
-      
       if (!html5QrcodeScanner) {
         html5QrcodeScanner = new Html5Qrcode("reader");
       }
-
-      const config = { fps: 10, qrbox: { width: 200, height: 200 } };
-
-      html5QrcodeScanner.start(
-        { facingMode: "environment" },
-        config,
-        onScanSuccess,
-        onScanFailure
-      ).catch(err => {
-        console.error("Unable to start scanner:", err);
+      const config = { fps: 10, qrbox: { width: 180, height: 180 } };
+      html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess, () => {}).catch(err => {
         alert("Camera access failed or permission denied.");
         closeScanner();
       });
@@ -445,12 +263,7 @@
 
     function closeScanner() {
       if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
-        html5QrcodeScanner.stop().then(() => {
-          scannerModal.classList.add('hidden');
-        }).catch(err => {
-          console.error("Failed to stop scanner:", err);
-          scannerModal.classList.add('hidden');
-        });
+        html5QrcodeScanner.stop().then(() => scannerModal.classList.add('hidden')).catch(() => scannerModal.classList.add('hidden'));
       } else {
         scannerModal.classList.add('hidden');
       }
@@ -458,188 +271,20 @@
 
     function onScanSuccess(decodedText) {
       let scannedPeerId = decodedText;
-
-      // Extract peer ID if decoded text is a URL with 'connect' parameter
       try {
         if (decodedText.includes('connect=')) {
           const parsedUrl = new URL(decodedText);
           scannedPeerId = parsedUrl.searchParams.get('connect') || decodedText;
         }
-      } catch (e) {
-        // Not a URL, fallback to raw text
-      }
+      } catch (e) {}
 
-      targetPeerIdInput.value = scannedPeerId;
       closeScanner();
       connectToPeer(scannedPeerId);
     }
 
-    function onScanFailure(error) {
-      // Ignored: continuous scanning mode
-    }
-
-    // -------------------------------------------------------------
-    // 5. UI Helper Functions
-    // -------------------------------------------------------------
-    function updateStatus(state, message) {
-      statusText.textContent = message;
-      if (state === 'connected') {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
-        statusBadge.querySelector('span').className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
-      } else if (state === 'connecting') {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
-        statusBadge.querySelector('span').className = 'w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping';
-      } else {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
-        statusBadge.querySelector('span').className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
-      }
-    }
-
-    function hideEmptyState() {
-      if (emptyState) emptyState.style.display = 'none';
-    }
-
-    function formatBytes(bytes) {
-      if (bytes === 0) return '0 B';
-      const k = 1024;
-      const sizes = ['B', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-    }
-
-    function renderTextMessage(text, direction) {
-      hideEmptyState();
-      const isSent = direction === 'sent';
-      const card = document.createElement('div');
-      card.className = `p-3 rounded-xl border text-xs flex flex-col gap-1 ${
-        isSent 
-          ? 'bg-indigo-950/40 border-indigo-800/50 text-indigo-100 ml-6' 
-          : 'bg-slate-800/80 border-slate-700/60 text-slate-100 mr-6'
-      }`;
-
-      const isUrl = /^https?:\/\//i.test(text);
-      const contentHtml = isUrl 
-        ? `<a href="${text}" target="_blank" class="underline text-cyan-400 break-all">${text}</a>`
-        : `<p class="whitespace-pre-wrap break-all">${text}</p>`;
-
-      card.innerHTML = `
-        <div class="flex items-center justify-between text-[10px] text-slate-400">
-          <span class="font-medium">${isSent ? 'Sent Text' : 'Received Text'}</span>
-          <span>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-        </div>
-        ${contentHtml}
-      `;
-
-      transferList.appendChild(card);
-      transferList.scrollTop = transferList.scrollHeight;
-    }
-
-    function createTransferCard(fileName, fileSize, direction) {
-      hideEmptyState();
-      const cardId = 'card-' + Math.random().toString(36).substr(2, 9);
-      const isUpload = direction === 'upload';
-
-      const card = document.createElement('div');
-      card.id = cardId;
-      card.className = 'bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col gap-2';
-
-      card.innerHTML = `
-        <div class="flex items-center gap-3">
-          <div class="p-2 rounded-lg ${isUpload ? 'bg-indigo-500/10 text-indigo-400' : 'bg-cyan-500/10 text-cyan-400'} shrink-0">
-            <i data-lucide="${isUpload ? 'upload' : 'download'}" class="w-4 h-4"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-xs font-medium text-slate-200 truncate">${fileName}</p>
-            <p class="text-[10px] text-slate-500">${formatBytes(fileSize)}</p>
-          </div>
-          <div class="card-status text-xs font-mono font-medium text-slate-400">0%</div>
-        </div>
-        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-          <div class="card-progress bg-indigo-500 h-full w-0 transition-all duration-150"></div>
-        </div>
-      `;
-
-      transferList.appendChild(card);
-      lucide.createIcons({ props: {}, nameAttr: 'data-lucide' });
-      transferList.scrollTop = transferList.scrollHeight;
-      return cardId;
-    }
-
-    function updateCardProgress(cardId, progress) {
-      const card = document.getElementById(cardId);
-      if (!card) return;
-      card.querySelector('.card-progress').style.width = `${progress}%`;
-      card.querySelector('.card-status').textContent = `${progress}%`;
-    }
-
-    function finalizeUploadCard(cardId) {
-      const card = document.getElementById(cardId);
-      if (!card) return;
-      card.querySelector('.card-status').innerHTML = '<span class="text-emerald-400 flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> Sent</span>';
-      lucide.createIcons();
-    }
-
-    function finalizeDownloadCard(cardId, downloadUrl, fileName) {
-      const card = document.getElementById(cardId);
-      if (!card) return;
-      
-      const statusDiv = card.querySelector('.card-status');
-      statusDiv.innerHTML = `
-        <a href="${downloadUrl}" download="${fileName}" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[11px] font-medium transition flex items-center gap-1">
-          <i data-lucide="download" class="w-3 h-3"></i>
-          Save
-        </a>
-      `;
-      lucide.createIcons();
-    }
-
-    // -------------------------------------------------------------
-    // 6. Event Listeners Initialization
-    // -------------------------------------------------------------
-    btnConnect.addEventListener('click', () => {
-      connectToPeer(targetPeerIdInput.value.trim());
-    });
-
-    btnCopyId.addEventListener('click', () => {
-      if (!myPeerId) return;
-      document.execCommand('copy');
-      navigator.clipboard?.writeText(myPeerId);
-      btnCopyId.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Copied';
-      lucide.createIcons();
-      setTimeout(() => {
-        btnCopyId.innerHTML = '<i data-lucide="copy" class="w-4 h-4"></i> Copy';
-        lucide.createIcons();
-      }, 2000);
-    });
-
-    btnSendText.addEventListener('click', sendTextMessage);
-    textInput.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'Enter') sendTextMessage();
-    });
-
+    // Event Listeners
     btnOpenScanner.addEventListener('click', openScanner);
     btnCloseScanner.addEventListener('click', closeScanner);
-
-    fileInput.addEventListener('change', (e) => sendFiles(e.target.files));
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropZone.classList.add('drag-over');
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-      }, false);
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      sendFiles(dt.files);
-    });
 
     btnClearHistory.addEventListener('click', () => {
       transferList.innerHTML = '';
@@ -647,8 +292,12 @@
       emptyState.style.display = 'flex';
     });
 
-    // Start App on Window Load
     window.addEventListener('load', initPeer);
   </script>
+
+  
+
+
+  
 </body>
 </html>
