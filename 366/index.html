@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DayTrack • Advanced Year & Date Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass-pill {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-indigo {
+            box-shadow: 0 0 60px -15px rgba(99, 102, 241, 0.4);
+        }
+        .glow-purple {
+            box-shadow: 0 0 60px -15px rgba(168, 85, 247, 0.4);
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.8s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans antialiased transition-colors duration-500 relative overflow-x-hidden">
+
+    <!-- Ambient Glowing Background Orbs -->
+    <div class="fixed top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-indigo-500/20 dark:bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[45rem] h-[45rem] bg-purple-500/20 dark:bg-purple-600/15 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+
+    <!-- Header Navigation -->
+    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex justify-between items-center z-10">
+        <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg glow-indigo">
+                <i class="fa-solid fa-calendar-star text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-display font-bold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-brand-600 to-purple-600 dark:from-white dark:via-brand-400 dark:to-purple-400">
+                    DayTrack
+                </h1>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Advanced Time & Year Analytics Hub</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <!-- Toast Notification Box -->
+            <div id="toast" class="hidden opacity-0 transition-all duration-300 fixed bottom-6 right-6 z-50 glass-panel px-4 py-3 rounded-2xl text-xs font-semibold flex items-center gap-2 shadow-2xl text-brand-600 dark:text-brand-400 border-brand-500/30">
+                <i class="fa-solid fa-circle-check text-sm"></i>
+                <span id="toastMsg">Copied to clipboard!</span>
+            </div>
+
+            <!-- Dark / Light Mode Toggle -->
+            <button id="themeToggle" class="p-3 rounded-2xl glass-panel text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm active:scale-95" title="Toggle Theme">
+                <i id="themeIcon" class="fa-solid fa-sun text-amber-400 text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 flex-grow py-4 space-y-8 z-10">
+
+        <!-- SECTION 1: HERO CLOCK & REAL-TIME BANNER -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden glow-indigo">
+            <div class="absolute -right-12 -top-12 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+                <!-- Live Clock Display -->
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2.5">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-brand-500/10 dark:bg-brand-400/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                            LIVE SYSTEM TIME
+                        </span>
+                        <span id="timeZoneText" class="text-xs font-medium text-slate-400 dark:text-slate-500">Local Timezone</span>
+                    </div>
+
+                    <h2 id="liveClock" class="font-display font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-slate-900 dark:text-white my-1 tabular-nums">
+                        00:00:00 <span class="text-2xl sm:text-4xl font-normal text-slate-400 dark:text-slate-500">AM</span>
+                    </h2>
+
+                    <div class="flex flex-wrap items-center gap-3 text-slate-600 dark:text-slate-300 font-medium text-sm sm:text-base">
+                        <span id="liveDateStr" class="flex items-center gap-2">
+                            <i class="fa-regular fa-calendar-days text-brand-500"></i>
+                            Loading date...
+                        </span>
+                        <span class="text-slate-300 dark:text-slate-700">•</span>
+                        <span id="liveWeekNo" class="text-slate-500 dark:text-slate-400">Week 0</span>
+                    </div>
+                </div>
+
+                <!-- Leap Year Status & Explanation Box -->
+                <div class="w-full lg:w-auto glass-pill p-5 sm:p-6 rounded-2xl flex flex-col gap-3 min-w-[280px]">
+                    <div class="flex items-center justify-between gap-4">
+                        <span class="text-xs uppercase font-bold tracking-wider text-slate-400">Current Year Status</span>
+                        <button onclick="toggleLeapModal()" class="text-xs text-brand-500 hover:text-brand-400 font-medium underline flex items-center gap-1">
+                            <i class="fa-solid fa-circle-info"></i> Why Leap Year?
+                        </button>
+                    </div>
+
+                    <div id="leapYearBadge" class="px-4 py-2.5 rounded-xl flex items-center gap-3 font-semibold text-sm transition-all shadow-sm">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                    <p id="leapYearInfoText" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Checking calendar cycle calculations...
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: METRICS DASHBOARD GRID -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <!-- Card 1: Day of Year (With Radial Progress) -->
+            <div class="glass-panel rounded-3xl p-6 shadow-xl hover:translate-y-[-4px] transition-all duration-300 flex flex-col justify-between group">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs uppercase tracking-wider font-bold text-slate-400">Day of the Year</span>
+                    <div class="w-10 h-10 rounded-2xl bg-brand-500/10 text-brand-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-sun-plant-wilt text-lg"></i>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between my-2">
+                    <div>
+                        <div class="flex items-baseline gap-1">
+                            <span id="currentDayNo" class="font-display font-extrabold text-4xl sm:text-5xl text-brand-600 dark:text-brand-400 tabular-nums">0</span>
+                            <span id="totalDaysInYear" class="text-lg font-bold text-slate-400 dark:text-slate-500">/ 365</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Current Day Progress</p>
+                    </div>
+
+                    <!-- Mini Radial Progress SVG -->
+                    <div class="relative w-16 h-16 flex items-center justify-center">
+                        <svg class="w-16 h-16">
+                            <circle class="text-slate-200 dark:text-slate-800" stroke-width="5" stroke="currentColor" fill="transparent" r="26" cx="32" cy="32"/>
+                            <circle id="radialCircle" class="progress-ring__circle text-brand-500" stroke-width="5" stroke-linecap="round" stroke="currentColor" fill="transparent" r="26" cx="32" cy="32" stroke-dasharray="163.36" stroke-dashoffset="163.36"/>
+                        </svg>
+                        <span id="radialPercent" class="absolute text-[10px] font-extrabold text-slate-700 dark:text-slate-300">0%</span>
+                    </div>
+                </div>
+
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden mt-2">
+                    <div id="yearProgressBar" class="bg-gradient-to-r from-brand-500 to-purple-500 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Card 2: Days Remaining (Back Count) -->
+            <div class="glass-panel rounded-3xl p-6 shadow-xl hover:translate-y-[-4px] transition-all duration-300 flex flex-col justify-between group">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs uppercase tracking-wider font-bold text-slate-400">Back Count</span>
+                    <div class="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-hourglass-start text-lg"></i>
+                    </div>
+                </div>
+
+                <div class="my-2">
+                    <div class="flex items-baseline gap-2">
+                        <span id="daysRemainingNo" class="font-display font-extrabold text-4xl sm:text-5xl text-purple-600 dark:text-purple-400 tabular-nums">0</span>
+                        <span class="text-sm font-semibold text-slate-500">Days Left</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Remaining until New Year</p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-xmark text-purple-400"></i> Countdown
+                    </span>
+                    <span id="remainingWeeksText" class="font-medium text-slate-500 dark:text-slate-400">0 Weeks Left</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Year Completed Percentage -->
+            <div class="glass-panel rounded-3xl p-6 shadow-xl hover:translate-y-[-4px] transition-all duration-300 flex flex-col justify-between group">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs uppercase tracking-wider font-bold text-slate-400">Year Completed</span>
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-chart-pie text-lg"></i>
+                    </div>
+                </div>
+
+                <div class="my-2">
+                    <span id="yearPercent" class="font-display font-extrabold text-4xl sm:text-5xl text-emerald-600 dark:text-emerald-400 tabular-nums">0.0%</span>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Annual Progress Elapsed</p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
+                    <span>Passed: <strong id="passedDaysText" class="text-slate-700 dark:text-slate-300">0</strong> days</span>
+                    <button onclick="copyCurrentMetrics()" class="hover:text-brand-500 transition-colors flex items-center gap-1" title="Copy Stats">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 4: Month & Season Insights -->
+            <div class="glass-panel rounded-3xl p-6 shadow-xl hover:translate-y-[-4px] transition-all duration-300 flex flex-col justify-between group">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs uppercase tracking-wider font-bold text-slate-400">Month & Season</span>
+                    <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-cloud-sun text-lg"></i>
+                    </div>
+                </div>
+
+                <div class="my-2">
+                    <div class="flex items-baseline gap-2">
+                        <span id="monthDayProgress" class="font-display font-extrabold text-3xl sm:text-4xl text-amber-600 dark:text-amber-400 tabular-nums">--</span>
+                    </div>
+                    <p id="seasonName" class="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-1">Current Season</p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
+                    <span id="monthNameText">Month Progress</span>
+                    <span id="monthPercentText" class="font-bold text-amber-500">0%</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION 3: ADVANCED DATE & DAY-OF-YEAR CALCULATOR -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden glow-purple">
+            <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 gap-4">
+                <div>
+                    <h3 class="font-display font-bold text-2xl text-slate-900 dark:text-white flex items-center gap-2.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-brand-500"></i>
+                        Date & Birthday Analyzer
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        Select any custom date or birthday to instantly calculate day of year, remaining days, leap status, and zodiac details.
+                    </p>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="setPresetDate('today')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-600 transition-all shadow-sm">
+                        Today
+                    </button>
+                    <button onclick="setPresetDate('dob')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-600 transition-all shadow-sm">
+                        15 Dec 1996
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8 items-center">
+                
+                <!-- Date Input Controller -->
+                <div class="lg:col-span-5 space-y-4">
+                    <label for="customDatePicker" class="block text-xs uppercase font-bold tracking-wider text-slate-500 dark:text-slate-400">
+                        Choose a Specific Date:
+                    </label>
+                    <div class="relative">
+                        <input type="date" id="customDatePicker" class="w-full px-5 py-4 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white font-semibold text-lg shadow-inner transition-all cursor-pointer">
+                    </div>
+                    <div class="p-4 rounded-2xl bg-brand-500/5 border border-brand-500/10 text-xs text-slate-500 dark:text-slate-400 space-y-1">
+                        <p class="font-semibold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i> Pro Tip:
+                        </p>
+                        <p>Input your birth date to discover exactly which day of the year (Day 1 to 366) you were born on!</p>
+                    </div>
+                </div>
+
+                <!-- Divider Arrow -->
+                <div class="lg:col-span-1 flex justify-center text-slate-300 dark:text-slate-700">
+                    <i class="fa-solid fa-chevron-right text-2xl hidden lg:block animate-pulse"></i>
+                    <i class="fa-solid fa-chevron-down text-2xl lg:hidden"></i>
+                </div>
+
+                <!-- Results Display Card -->
+                <div class="lg:col-span-6 bg-slate-50 dark:bg-slate-900/80 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-inner">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+                        <div>
+                            <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Analyzed Date</span>
+                            <h4 id="calcSelectedDateStr" class="font-display font-bold text-xl text-slate-900 dark:text-white">Select a date...</h4>
+                        </div>
+                        <span id="calcLeapBadge" class="px-3 py-1.5 rounded-xl text-xs font-bold">--</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
+                        <!-- Day of Year -->
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
+                            <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Day of Year</span>
+                            <span id="calcDayNo" class="font-display font-extrabold text-3xl text-brand-600 dark:text-brand-400 block my-0.5">--</span>
+                            <span id="calcTotalDays" class="text-[11px] text-slate-500 font-medium">Out of 365</span>
+                        </div>
+
+                        <!-- Days Left in Selected Year -->
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
+                            <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Remaining Days</span>
+                            <span id="calcDaysLeft" class="font-display font-extrabold text-3xl text-purple-600 dark:text-purple-400 block my-0.5">--</span>
+                            <span class="text-[11px] text-slate-500 font-medium">In that year</span>
+                        </div>
+
+                        <!-- Zodiac Sign -->
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-sm col-span-2 sm:col-span-1">
+                            <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Zodiac Sign</span>
+                            <span id="calcZodiac" class="font-display font-bold text-lg text-amber-500 block my-1">--</span>
+                            <span id="calcDayOfWeek" class="text-[11px] text-slate-500 font-medium block">Weekday</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Explaining Leap Year -->
+    <div id="leapModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl relative border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="font-display font-bold text-xl text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-earth-americas text-brand-500"></i> Why Do We Have Leap Years?
+                </h3>
+                <button onclick="toggleLeapModal()" class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-colors flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p>
+                    It takes Earth approximately <strong>365 days and 6 hours</strong> (365.2422 days) to complete its orbit around the Sun.
+                </p>
+                <p>
+                    Since a standard calendar year is exactly 365 days, those extra ~6 hours accumulate over 4 years into a full 24-hour day (6 × 4 = 24 hours).
+                </p>
+                <div class="p-3.5 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs font-semibold text-brand-600 dark:text-brand-300">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Added Day: February 29th (366 total days).
+                </div>
+                <p class="text-xs text-slate-400">
+                    *Century rule: Years divisible by 100 are NOT leap years unless they are also divisible by 400 (e.g., 2000 was a leap year, but 1900 was not).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 text-center text-xs text-slate-400 border-t border-slate-200 dark:border-slate-800/80 mt-12 z-10">
+        <p>DayTrack Dashboard • Precision Astronomical & Calendar Calculator</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- Theme Engine ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function initTheme() {
+            if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = 'fa-solid fa-moon text-slate-700 text-lg';
+            } else {
+                document.documentElement.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-sun text-amber-400 text-lg';
+            }
+        }
+        initTheme();
+
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            themeIcon.className = isDark ? 'fa-solid fa-sun text-amber-400 text-lg' : 'fa-solid fa-moon text-slate-700 text-lg';
+        });
+
+        // --- Calendar Helper Functions ---
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        function getDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start + (start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000;
+            return Math.floor(diff / (1000 * 60 * 60 * 24));
+        }
+
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            return weekNo;
+        }
+
+        function getZodiacSign(day, month) {
+            const signs = [
+                { name: "Capricorn ♑", cutoff: 20 },
+                { name: "Aquarius ♒", cutoff: 19 },
+                { name: "Pisces ♓", cutoff: 21 },
+                { name: "Aries ♈", cutoff: 20 },
+                { name: "Taurus ♉", cutoff: 21 },
+                { name: "Gemini ♊", cutoff: 22 },
+                { name: "Cancer ♋", cutoff: 23 },
+                { name: "Leo ♌", cutoff: 23 },
+                { name: "Virgo ♍", cutoff: 23 },
+                { name: "Libra ♎", cutoff: 24 },
+                { name: "Scorpio ♏", cutoff: 23 },
+                { name: "Sagittarius ♐", cutoff: 22 }
+            ];
+
+            let signIndex = month - 1;
+            if (day < signs[signIndex].cutoff) {
+                signIndex = (signIndex + 11) % 12;
+            }
+            return signs[signIndex].name;
+        }
+
+        function getSeason(month) {
+            if (month >= 3 && month <= 5) return "Spring Season 🌸";
+            if (month >= 6 && month <= 8) return "Summer Season ☀️";
+            if (month >= 9 && month <= 11) return "Autumn Season 🍂";
+            return "Winter Season ❄️";
+        }
+
+        // --- Real-time Clock & Live Engine ---
+        function updateDashboard() {
+            const now = new Date();
+
+            // 1. Time Display
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+
+            document.getElementById('liveClock').innerHTML = `
+                ${String(hours).padStart(2, '0')}:${minutes}:${seconds}
+                <span class="text-2xl sm:text-4xl font-normal text-slate-400 dark:text-slate-500">${ampm}</span>
+            `;
+
+            // 2. Date String & Week
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('liveDateStr').innerHTML = `<i class="fa-regular fa-calendar-days text-brand-500"></i> ${now.toLocaleDateString('en-US', options)}`;
+            document.getElementById('liveWeekNo').textContent = `Week ${getWeekNumber(now)}`;
+
+            // 3. Year Metrics
+            const year = now.getFullYear();
+            const leap = isLeapYear(year);
+            const totalDays = leap ? 366 : 365;
+            const dayNo = getDayOfYear(now);
+            const daysLeft = totalDays - dayNo;
+            const percent = ((dayNo / totalDays) * 100).toFixed(1);
+
+            document.getElementById('currentDayNo').textContent = dayNo;
+            document.getElementById('totalDaysInYear').textContent = `/ ${totalDays}`;
+            document.getElementById('daysRemainingNo').textContent = daysLeft;
+            document.getElementById('yearPercent').textContent = `${percent}%`;
+            document.getElementById('passedDaysText').textContent = dayNo;
+            document.getElementById('remainingWeeksText').textContent = `${Math.ceil(daysLeft / 7)} Weeks Left`;
+
+            // 4. Progress Bars
+            document.getElementById('yearProgressBar').style.width = `${percent}%`;
+
+            // Radial Ring calculation
+            const circle = document.getElementById('radialCircle');
+            const circumference = 2 * Math.PI * 26; // r=26 -> ~163.36
+            const offset = circumference - (percent / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            document.getElementById('radialPercent').textContent = `${Math.round(percent)}%`;
+
+            // 5. Month & Season Card
+            const daysInCurrentMonth = new Date(year, now.getMonth() + 1, 0).getDate();
+            const monthDay = now.getDate();
+            const monthPercent = Math.round((monthDay / daysInCurrentMonth) * 100);
+            
+            document.getElementById('monthDayProgress').textContent = `Day ${monthDay}/${daysInCurrentMonth}`;
+            document.getElementById('seasonName').textContent = getSeason(now.getMonth() + 1);
+            document.getElementById('monthNameText').textContent = `${now.toLocaleString('default', { month: 'long' })} Progress`;
+            document.getElementById('monthPercentText').textContent = `${monthPercent}%`;
+
+            // 6. Leap Year Badge Updates
+            const leapBadge = document.getElementById('leapYearBadge');
+            const leapInfoText = document.getElementById('leapYearInfoText');
+
+            if (leap) {
+                leapBadge.className = 'px-4 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold text-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20';
+                leapBadge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> ${year} is a Leap Year`;
+                leapInfoText.textContent = `This year has 366 days (includes Feb 29). Next leap year is in ${year + 4}.`;
+            } else {
+                leapBadge.className = 'px-4 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold text-sm bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/40 dark:border-slate-700/50';
+                leapBadge.innerHTML = `<i class="fa-solid fa-calendar text-slate-400 text-base"></i> ${year} is a Standard Year`;
+                const nextLeap = year + (4 - (year % 4));
+                leapInfoText.textContent = `This year has 365 days. The next leap year will be ${nextLeap}.`;
+            }
+        }
+
+        // --- Custom Date Analyzer ---
+        const customDatePicker = document.getElementById('customDatePicker');
+
+        function analyzeDate(dateStr) {
+            if (!dateStr) return;
+            const targetDate = new Date(dateStr + "T00:00:00");
+            if (isNaN(targetDate.getTime())) return;
+
+            const year = targetDate.getFullYear();
+            const leap = isLeapYear(year);
+            const totalDays = leap ? 366 : 365;
+            const dayNo = getDayOfYear(targetDate);
+            const daysLeft = totalDays - dayNo;
+            const weekday = targetDate.toLocaleDateString('en-US', { weekday: 'long' });
+            const zodiac = getZodiacSign(targetDate.getDate(), targetDate.getMonth() + 1);
+
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('calcSelectedDateStr').textContent = targetDate.toLocaleDateString('en-US', options);
+            document.getElementById('calcDayNo').textContent = `Day ${dayNo}`;
+            document.getElementById('calcTotalDays').textContent = `Out of ${totalDays} days in ${year}`;
+            document.getElementById('calcDaysLeft').textContent = daysLeft;
+            document.getElementById('calcZodiac').textContent = zodiac;
+            document.getElementById('calcDayOfWeek').textContent = weekday;
+
+            const leapBadge = document.getElementById('calcLeapBadge');
+            if (leap) {
+                leapBadge.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20';
+                leapBadge.textContent = 'Leap Year (366 Days)';
+            } else {
+                leapBadge.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400';
+                leapBadge.textContent = 'Standard Year (365 Days)';
+            }
+        }
+
+        function setPresetDate(type) {
+            let dateVal = '';
+            const today = new Date();
+
+            if (type === 'today') {
+                dateVal = today.toISOString().split('T')[0];
+            } else if (type === 'dob') {
+                dateVal = '1996-12-15';
+            }
+
+            customDatePicker.value = dateVal;
+            analyzeDate(dateVal);
+        }
+
+        customDatePicker.addEventListener('change', (e) => {
+            analyzeDate(e.target.value);
+        });
+
+        // --- Modals & Toast Utilities ---
+        function toggleLeapModal() {
+            const modal = document.getElementById('leapModal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            } else {
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function copyCurrentMetrics() {
+            const dayNo = document.getElementById('currentDayNo').textContent;
+            const daysLeft = document.getElementById('daysRemainingNo').textContent;
+            const text = `Today is Day ${dayNo} of the year (${daysLeft} days remaining). Tracked via DayTrack!`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Stats copied to clipboard!");
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.remove('opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 3000);
+        }
+
+        // --- Application Init ---
+        window.onload = function() {
+            updateDashboard();
+            setInterval(updateDashboard, 1000);
+
+            // Default analyzer to today's date
+            setPresetDate('today');
+        };
+    </script>
+</body>
+</html>
