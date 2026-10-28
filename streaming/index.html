@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Live Stream Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        },
+                        darkbg: '#0B0F17',
+                        cardbg: '#161F30',
+                        accent: '#6366f1'
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0F17;
+            color: #F3F4F6;
+        }
+        /* Glassmorphism styling */
+        .glass-panel {
+            background: rgba(22, 31, 48, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-button {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F17;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D3748;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4A5568;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- TOP HEADER -->
+    <header class="glass-panel sticky top-0 z-50 px-4 lg:px-8 py-3 flex items-center justify-between border-b border-gray-800">
+        <div class="flex items-center space-x-3">
+            <div class="bg-gradient-to-tr from-indigo-600 to-emerald-500 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid me-0 fa-video text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wide bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+                    StreamRTC <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">P2P Live</span>
+                </h1>
+                <p class="text-xs text-gray-400 hidden sm:block">WebRTC Audio & Video Streaming Engine</p>
+            </div>
+        </div>
+
+        <!-- Mode Switcher & Stats -->
+        <div class="flex items-center space-x-3 sm:space-x-4">
+            <!-- View Mode Switcher -->
+            <div class="bg-gray-900/80 p-1 rounded-xl border border-gray-800 flex items-center">
+                <button id="modeBroadcasterBtn" onclick="switchMode('broadcaster')" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 bg-indigo-600 text-white shadow-md">
+                    <i class="fa-solid fa-tower-broadcast mr-1.5"></i>Broadcaster
+                </button>
+                <button id="modeViewerBtn" onclick="switchMode('viewer')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition-all duration-200">
+                    <i class="fa-solid fa-eye mr-1.5"></i>Viewer Mode
+                </button>
+            </div>
+
+            <!-- Share Stream Button -->
+            <button onclick="copyInviteLink()" class="glass-button px-3 py-1.5 rounded-xl text-xs font-medium text-gray-200 flex items-center space-x-2 hover:text-white">
+                <i class="fa-solid fa-share-nodes text-indigo-400"></i>
+                <span class="hidden md:inline">Share Stream</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- LEFT/CENTER: VIDEO CONTAINER & MEDIA CONTROLS (2 COLUMNS) -->
+        <div class="lg:col-span-2 flex flex-col space-y-4">
+
+            <!-- MAIN VIDEO PLAYER DISPLAY -->
+            <div class="relative w-full aspect-video bg-gray-950 rounded-2xl overflow-hidden shadow-2xl border border-gray-800 flex items-center justify-center group">
+                
+                <!-- Live Video Feed (Broadcaster/Viewer Remote Stream) -->
+                <video id="mainVideo" autoplay playsinline class="w-full h-full object-cover rounded-2xl"></video>
+
+                <!-- PIP Self Stream Preview (In Broadcaster Mode) -->
+                <div id="pipPreview" class="absolute bottom-4 right-4 w-32 sm:w-48 aspect-video bg-gray-900/90 rounded-xl overflow-hidden border border-gray-700 shadow-xl hidden z-20">
+                    <video id="localPipVideo" autoplay playsinline muted class="w-full h-full object-cover scale-x-[-1]"></video>
+                    <span class="absolute bottom-1 left-2 text-[10px] bg-black/60 px-1.5 py-0.5 rounded text-gray-300">You (Local)</span>
+                </div>
+
+                <!-- Overlay Placeholder / Offline Screen -->
+                <div id="videoPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 via-darkbg to-black p-6 text-center z-10">
+                    <div class="w-20 h-20 rounded-full bg-gray-800/80 flex items-center justify-center mb-4 border border-gray-700 shadow-inner">
+                        <i id="placeholderIcon" class="fa-solid fa-video-slash text-3xl text-gray-500"></i>
+                    </div>
+                    <h3 id="placeholderTitle" class="text-xl font-bold text-gray-200 mb-1">Stream Ready</h3>
+                    <p id="placeholderSubtitle" class="text-sm text-gray-400 max-w-md">Click "Start Live Stream" to begin broadcasting your camera and microphone using real WebRTC P2P connection.</p>
+                </div>
+
+                <!-- Top Status Overlay Bar -->
+                <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-20 pointer-events-none">
+                    <!-- Status Badge -->
+                    <div class="flex items-center space-x-2">
+                        <span id="liveBadge" class="hidden items-center space-x-1.5 bg-red-600/90 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-md">
+                            <span class="w-2 h-2 rounded-full bg-white animate-pulse-fast"></span>
+                            <span>LIVE</span>
+                        </span>
+                        <span id="statusTag" class="bg-gray-900/80 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-700 backdrop-blur-md">
+                            Disconnected
+                        </span>
+                    </div>
+
+                    <!-- Viewer Count & Metrics -->
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-gray-900/80 text-gray-200 text-xs px-3 py-1 rounded-full border border-gray-700 flex items-center space-x-2 backdrop-blur-md">
+                            <i class="fa-solid fa-user text-emerald-400 text-[11px]"></i>
+                            <span id="viewerCount">1 Viewer</span>
+                        </div>
+                        <div class="bg-gray-900/80 text-gray-200 text-xs px-3 py-1 rounded-full border border-gray-700 flex items-center space-x-1.5 backdrop-blur-md">
+                            <i class="fa-solid fa-bolt text-amber-400 text-[11px]"></i>
+                            <span id="latencyMetric">0 ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS DASHBOARD -->
+            <div class="glass-panel p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-lg">
+                <!-- Left Control Cluster (Broadcaster Controls) -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- Start/Stop Stream Toggle -->
+                    <button id="toggleStreamBtn" onclick="toggleStream()" class="px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-600/25 flex items-center space-x-2 transition-all">
+                        <i class="fa-solid fa-play text-xs"></i>
+                        <span>Start Live Stream</span>
+                    </button>
+
+                    <!-- Mic Toggle -->
+                    <button id="toggleMicBtn" onclick="toggleMic()" disabled class="glass-button p-3 rounded-xl text-gray-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i id="micIcon" class="fa-solid fa-microphone text-base"></i>
+                    </button>
+
+                    <!-- Camera Toggle -->
+                    <button id="toggleCamBtn" onclick="toggleCamera()" disabled class="glass-button p-3 rounded-xl text-gray-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i id="camIcon" class="fa-solid fa-video text-base"></i>
+                    </button>
+
+                    <!-- Screen Share -->
+                    <button id="screenShareBtn" onclick="toggleScreenShare()" disabled class="glass-button p-3 rounded-xl text-gray-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed hidden sm:block">
+                        <i id="screenIcon" class="fa-solid fa-desktop text-base"></i>
+                    </button>
+                </div>
+
+                <!-- Right Device Selector / Quality Settings -->
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                    <!-- Video Source Selector -->
+                    <select id="videoSourceSelect" onchange="changeVideoSource()" class="bg-gray-900 border border-gray-700 text-gray-300 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500 max-w-[180px] sm:max-w-[220px]">
+                        <option value="">Default Camera</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- BROADCAST DETAILED METRICS -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="glass-panel p-3.5 rounded-xl border border-gray-800">
+                    <p class="text-[11px] text-gray-400 font-medium">Video Resolution</p>
+                    <p id="statResolution" class="text-sm font-bold text-gray-200 mt-0.5">--</p>
+                </div>
+                <div class="glass-panel p-3.5 rounded-xl border border-gray-800">
+                    <p class="text-[11px] text-gray-400 font-medium">Codecs Used</p>
+                    <p id="statCodec" class="text-sm font-bold text-indigo-400 mt-0.5">VP8 / Opus</p>
+                </div>
+                <div class="glass-panel p-3.5 rounded-xl border border-gray-800">
+                    <p class="text-[11px] text-gray-400 font-medium">Connection Type</p>
+                    <p id="statConnectionType" class="text-sm font-bold text-emerald-400 mt-0.5">WebRTC P2P</p>
+                </div>
+                <div class="glass-panel p-3.5 rounded-xl border border-gray-800">
+                    <p class="text-[11px] text-gray-400 font-medium">ICE Transport</p>
+                    <p id="statIceState" class="text-sm font-bold text-amber-400 mt-0.5">Idle</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: WEBRTC CONNECTION LOGS & CHAT SIMULATOR -->
+        <div class="flex flex-col space-y-4">
+
+            <!-- WEBRTC REALTIME CONNECTION WORKFLOW LOGS -->
+            <div class="glass-panel p-4 rounded-2xl flex-1 flex flex-col justify-between min-h-[320px]">
+                <div>
+                    <div class="flex items-center justify-between mb-3 border-b border-gray-800 pb-2.5">
+                        <h3 class="text-sm font-semibold text-gray-200 flex items-center space-x-2">
+                            <i class="fa-solid fa-network-wired text-indigo-400"></i>
+                            <span>WebRTC Signal & Peer Logs</span>
+                        </h3>
+                        <button onclick="clearLogs()" class="text-[11px] text-gray-500 hover:text-gray-300">Clear</button>
+                    </div>
+
+                    <!-- Step Tracker Badges -->
+                    <div class="grid grid-cols-4 gap-1.5 mb-3 text-[10px] text-center font-medium">
+                        <div id="stepMedia" class="py-1 px-1 bg-gray-800/60 rounded text-gray-400 border border-gray-700/50">1. Media</div>
+                        <div id="stepOffer" class="py-1 px-1 bg-gray-800/60 rounded text-gray-400 border border-gray-700/50">2. Offer</div>
+                        <div id="stepAnswer" class="py-1 px-1 bg-gray-800/60 rounded text-gray-400 border border-gray-700/50">3. Answer</div>
+                        <div id="stepIce" class="py-1 px-1 bg-gray-800/60 rounded text-gray-400 border border-gray-700/50">4. ICE P2P</div>
+                    </div>
+
+                    <!-- Scrollable Log Output -->
+                    <div id="logConsole" class="bg-gray-950 p-3 rounded-xl border border-gray-800/80 font-mono text-[11px] text-gray-300 space-y-2 h-48 overflow-y-auto">
+                        <p class="text-gray-500 italic">[System] WebRTC engine ready. Click "Start Live Stream" to initialize RTCPeerConnection.</p>
+                    </div>
+                </div>
+
+                <!-- WebRTC Test Simulation Toggle -->
+                <div class="mt-3 pt-3 border-t border-gray-800/80 flex items-center justify-between text-xs">
+                    <span class="text-gray-400">Test Stream Engine:</span>
+                    <span class="text-indigo-400 font-medium">Local P2P Loopback</span>
+                </div>
+            </div>
+
+            <!-- STREAM LIVE CHAT & INTERACTION -->
+            <div class="glass-panel p-4 rounded-2xl flex flex-col h-64">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-gray-800">
+                    <h3 class="text-sm font-semibold text-gray-200 flex items-center space-x-2">
+                        <i class="fa-solid fa-comments text-emerald-400"></i>
+                        <span>Live Stream Chat</span>
+                    </h3>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">Connected</span>
+                </div>
+
+                <!-- Chat Box Messages -->
+                <div id="chatMessages" class="flex-1 overflow-y-auto space-y-2 text-xs pr-1">
+                    <div class="bg-gray-900/60 p-2 rounded-lg border border-gray-800">
+                        <span class="font-bold text-indigo-400">StreamBot:</span>
+                        <span class="text-gray-300"> Welcome to the live stream chatroom! Messages will appear here in real-time.</span>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <form onsubmit="sendChatMessage(event)" class="mt-2 flex space-x-2">
+                    <input id="chatInput" type="text" placeholder="Send a message..." class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-indigo-500">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl text-xs font-semibold transition">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel mt-6 py-3 px-6 text-center text-xs text-gray-500 border-t border-gray-800">
+        <p>Powered by HTML5 WebRTC API, RTCPeerConnection & Tailwind CSS | Zero external server required for local peer streaming test.</p>
+    </footer>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-indigo-600 text-white text-xs px-4 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center space-x-2">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Notification message</span>
+    </div>
+
+    <!-- JAVASCRIPT WEBRTC CORE LOGIC -->
+    <script>
+        // State variables
+        let currentMode = 'broadcaster'; // 'broadcaster' or 'viewer'
+        let isStreaming = false;
+        let isMicMuted = false;
+        let isCamOff = false;
+        let isScreenSharing = false;
+
+        // Streams and Peer Connections
+        let localStream = null;
+        let remoteStream = null;
+        let pcBroadcaster = null; // Broadcaster RTCPeerConnection
+        let pcViewer = null;      // Viewer RTCPeerConnection
+
+        // HTML Elements
+        const mainVideo = document.getElementById('mainVideo');
+        const localPipVideo = document.getElementById('localPipVideo');
+        const pipPreview = document.getElementById('pipPreview');
+        const videoPlaceholder = document.getElementById('videoPlaceholder');
+        const liveBadge = document.getElementById('liveBadge');
+        const statusTag = document.getElementById('statusTag');
+        const toggleStreamBtn = document.getElementById('toggleStreamBtn');
+        const toggleMicBtn = document.getElementById('toggleMicBtn');
+        const toggleCamBtn = document.getElementById('toggleCamBtn');
+        const screenShareBtn = document.getElementById('screenShareBtn');
+        const videoSourceSelect = document.getElementById('videoSourceSelect');
+        const logConsole = document.getElementById('logConsole');
+
+        // On Page Load Initialization
+        window.addEventListener('load', () => {
+            getConnectedDevices();
+            addLog("System initialized. WebRTC APIs supported: " + ('RTCPeerConnection' in window ? "YES" : "NO"));
+        });
+
+        // Mode Switching (Broadcaster vs Viewer)
+        function switchMode(mode) {
+            currentMode = mode;
+            const bBtn = document.getElementById('modeBroadcasterBtn');
+            const vBtn = document.getElementById('modeViewerBtn');
+
+            if (mode === 'broadcaster') {
+                bBtn.className = "px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 bg-indigo-600 text-white shadow-md";
+                vBtn.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition-all duration-200";
+                document.getElementById('placeholderTitle').innerText = "Broadcaster Studio";
+                document.getElementById('placeholderSubtitle').innerText = "Click 'Start Live Stream' to start broadcasting your camera video feed.";
+                if (isStreaming) pipPreview.classList.remove('hidden');
+            } else {
+                vBtn.className = "px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 bg-indigo-600 text-white shadow-md";
+                bBtn.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition-all duration-200";
+                document.getElementById('placeholderTitle').innerText = "Viewer Room";
+                document.getElementById('placeholderSubtitle').innerText = "Watching incoming WebRTC live stream feed from broadcaster.";
+                pipPreview.classList.add('hidden');
+            }
+            showToast(`Switched to ${mode.toUpperCase()} mode`);
+        }
+
+        // Fetch user video devices
+        async function getConnectedDevices() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                videoSourceSelect.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Camera ' + (videoSourceSelect.length + 1)}</option>`).join('');
+            } catch (err) {
+                addLog("Error loading video devices: " + err.message, "error");
+            }
+        }
+
+        // Main Toggle Stream Function (Starts WebRTC P2P Connection)
+        async function toggleStream() {
+            if (!isStreaming) {
+                await startBroadcasting();
+            } else {
+                stopBroadcasting();
+            }
+        }
+
+        // START BROADCASTING & SETUP WEBRTC P2P LOOPBACK
+        async function startBroadcasting() {
+            try {
+                addLog("Requesting camera and microphone access...", "info");
+                updateStepBadge('stepMedia', true);
+
+                // 1. Get User Media Feed
+                const constraints = {
+                    video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+                    audio: true
+                };
+
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                addLog("Local Media stream obtained successfully.", "success");
+
+                // Display PIP Local Feed
+                localPipVideo.srcObject = localStream;
+                if (currentMode === 'broadcaster') pipPreview.classList.remove('hidden');
+
+                // 2. Initialize WebRTC Peer Connections (Broadcaster & Viewer Simulation)
+                addLog("Initializing RTCPeerConnection objects...", "info");
+                const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+                
+                pcBroadcaster = new RTCPeerConnection(configuration);
+                pcViewer = new RTCPeerConnection(configuration);
+
+                // Add Local Tracks to Broadcaster Peer Connection
+                localStream.getTracks().forEach(track => pcBroadcaster.addTrack(track, localStream));
+
+                // Handle incoming remote tracks on Viewer Peer Connection
+                remoteStream = new MediaStream();
+                mainVideo.srcObject = remoteStream;
+
+                pcViewer.ontrack = (event) => {
+                    event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
+                    addLog("Received remote stream track on Viewer connection!", "success");
+                };
+
+                // Handle ICE Candidates exchange
+                pcBroadcaster.onicecandidate = (e) => {
+                    if (e.candidate) {
+                        pcViewer.addIceCandidate(e.candidate);
+                        updateStepBadge('stepIce', true);
+                    }
+                };
+
+                pcViewer.onicecandidate = (e) => {
+                    if (e.candidate) {
+                        pcBroadcaster.addIceCandidate(e.candidate);
+                    }
+                };
+
+                pcBroadcaster.oniceconnectionstatechange = () => {
+                    document.getElementById('statIceState').innerText = pcBroadcaster.iceConnectionState;
+                    if (pcBroadcaster.iceConnectionState === 'connected' || pcBroadcaster.iceConnectionState === 'completed') {
+                        addLog("P2P ICE Transport Connected successfully!", "success");
+                    }
+                };
+
+                // 3. Create Offer
+                updateStepBadge('stepOffer', true);
+                addLog("Broadcaster creating WebRTC Offer SDP...", "info");
+                const offer = await pcBroadcaster.createOffer();
+                await pcBroadcaster.setLocalDescription(offer);
+                await pcViewer.setRemoteDescription(offer);
+
+                // 4. Create Answer
+                updateStepBadge('stepAnswer', true);
+                addLog("Viewer processing SDP and creating Answer...", "info");
+                const answer = await pcViewer.createAnswer();
+                await pcViewer.setLocalDescription(answer);
+                await pcBroadcaster.setRemoteDescription(answer);
+
+                // Update UI state to LIVE
+                isStreaming = true;
+                videoPlaceholder.classList.add('hidden');
+                liveBadge.classList.remove('hidden');
+                liveBadge.classList.add('flex');
+                statusTag.innerText = "LIVE (WebRTC)";
+                statusTag.className = "bg-emerald-500/20 text-emerald-400 text-xs font-medium px-3 py-1 rounded-full border border-emerald-500/30 backdrop-blur-md";
+
+                toggleStreamBtn.innerHTML = `<i class="fa-solid fa-square text-xs"></i><span>Stop Streaming</span>`;
+                toggleStreamBtn.className = "px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/25 flex items-center space-x-2 transition-all";
+
+                toggleMicBtn.disabled = false;
+                toggleCamBtn.disabled = false;
+                screenShareBtn.disabled = false;
+
+                // Resolution stats & Latency simulation
+                updateVideoStats();
+                startLatencyMonitoring();
+                showToast("WebRTC Live Stream Started!");
+
+            } catch (err) {
+                addLog("Stream initiation failed: " + err.message, "error");
+                showToast("Failed to access camera/mic.");
+            }
+        }
+
+        // STOP BROADCASTING
+        function stopBroadcasting() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+            if (pcBroadcaster) pcBroadcaster.close();
+            if (pcViewer) pcViewer.close();
+
+            isStreaming = false;
+            mainVideo.srcObject = null;
+            localPipVideo.srcObject = null;
+
+            pipPreview.classList.add('hidden');
+            videoPlaceholder.classList.remove('hidden');
+            liveBadge.classList.add('hidden');
+            liveBadge.classList.remove('flex');
+
+            statusTag.innerText = "Disconnected";
+            statusTag.className = "bg-gray-900/80 text-gray-300 text-xs font-medium px-3 py-1 rounded-full border border-gray-700 backdrop-blur-md";
+
+            toggleStreamBtn.innerHTML = `<i class="fa-solid fa-play text-xs"></i><span>Start Live Stream</span>`;
+            toggleStreamBtn.className = "px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-600/25 flex items-center space-x-2 transition-all";
+
+            toggleMicBtn.disabled = true;
+            toggleCamBtn.disabled = true;
+            screenShareBtn.disabled = true;
+
+            resetStepBadges();
+            addLog("Broadcast session closed.", "info");
+            showToast("Stream Stopped");
+        }
+
+        // TOGGLE MIC
+        function toggleMic() {
+            if (!localStream) return;
+            const audioTrack = localStream.getAudioTracks()[0];
+            if (audioTrack) {
+                audioTrack.enabled = !audioTrack.enabled;
+                isMicMuted = !audioTrack.enabled;
+                const micIcon = document.getElementById('micIcon');
+                micIcon.className = isMicMuted ? "fa-solid fa-microphone-slash text-red-400" : "fa-solid fa-microphone text-gray-300";
+                addLog(isMicMuted ? "Microphone Muted" : "Microphone Unmuted", "info");
+            }
+        }
+
+        // TOGGLE CAMERA
+        function toggleCamera() {
+            if (!localStream) return;
+            const videoTrack = localStream.getVideoTracks()[0];
+            if (videoTrack) {
+                videoTrack.enabled = !videoTrack.enabled;
+                isCamOff = !videoTrack.enabled;
+                const camIcon = document.getElementById('camIcon');
+                camIcon.className = isCamOff ? "fa-solid fa-video-slash text-red-400" : "fa-solid fa-video text-gray-300";
+                addLog(isCamOff ? "Camera turned OFF" : "Camera turned ON", "info");
+            }
+        }
+
+        // TOGGLE SCREEN SHARE
+        async function toggleScreenShare() {
+            if (!isStreaming) return;
+            try {
+                if (!isScreenSharing) {
+                    const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                    const screenTrack = screenStream.getVideoTracks()[0];
+                    const sender = pcBroadcaster.getSenders().find(s => s.track.kind === 'video');
+                    if (sender) sender.replaceTrack(screenTrack);
+                    localPipVideo.srcObject = screenStream;
+
+                    screenTrack.onended = () => toggleScreenShare(); // revert on stop share
+                    isScreenSharing = true;
+                    document.getElementById('screenIcon').className = "fa-solid fa-desktop text-indigo-400";
+                    addLog("Switched to Screen Sharing Mode", "success");
+                } else {
+                    const videoTrack = localStream.getVideoTracks()[0];
+                    const sender = pcBroadcaster.getSenders().find(s => s.track.kind === 'video');
+                    if (sender) sender.replaceTrack(videoTrack);
+                    localPipVideo.srcObject = localStream;
+                    isScreenSharing = false;
+                    document.getElementById('screenIcon').className = "fa-solid fa-desktop text-gray-300";
+                    addLog("Switched back to Camera Feed", "info");
+                }
+            } catch (err) {
+                addLog("Screen sharing error: " + err.message, "error");
+            }
+        }
+
+        // CHANGE VIDEO SOURCE CAMERA
+        async function changeVideoSource() {
+            if (!isStreaming) return;
+            const deviceId = videoSourceSelect.value;
+            try {
+                const newStream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: deviceId } }
+                });
+                const newTrack = newStream.getVideoTracks()[0];
+                const sender = pcBroadcaster.getSenders().find(s => s.track.kind === 'video');
+                if (sender) sender.replaceTrack(newTrack);
+                localPipVideo.srcObject = newStream;
+                addLog("Switched input video device", "info");
+            } catch (err) {
+                addLog("Error changing camera: " + err.message, "error");
+            }
+        }
+
+        // LOG LOGIC
+        function addLog(msg, type = "default") {
+            const time = new Date().toLocaleTimeString();
+            let colorClass = "text-gray-300";
+            if (type === "error") colorClass = "text-red-400 font-semibold";
+            if (type === "success") colorClass = "text-emerald-400";
+            if (type === "info") colorClass = "text-indigo-300";
+
+            logConsole.innerHTML += `<div class="${colorClass}"><span class="text-gray-600">[${time}]</span> ${msg}</div>`;
+            logConsole.scrollTop = logConsole.scrollHeight;
+        }
+
+        function clearLogs() {
+            logConsole.innerHTML = '<p class="text-gray-500 italic">[Logs Cleared]</p>';
+        }
+
+        function updateStepBadge(id, active) {
+            const el = document.getElementById(id);
+            if (active) {
+                el.className = "py-1 px-1 bg-indigo-600/30 text-indigo-300 rounded border border-indigo-500/50 font-bold";
+            }
+        }
+
+        function resetStepBadges() {
+            ['stepMedia', 'stepOffer', 'stepAnswer', 'stepIce'].forEach(id => {
+                document.getElementById(id).className = "py-1 px-1 bg-gray-800/60 rounded text-gray-400 border border-gray-700/50";
+            });
+        }
+
+        // METRICS & STATS
+        function updateVideoStats() {
+            if (mainVideo.videoWidth) {
+                document.getElementById('statResolution').innerText = `${mainVideo.videoWidth} x ${mainVideo.videoHeight}`;
+            } else {
+                setTimeout(updateVideoStats, 1000);
+            }
+        }
+
+        function startLatencyMonitoring() {
+            setInterval(() => {
+                if (isStreaming) {
+                    const simulatedLatency = Math.floor(Math.random() * 15) + 8; // Low WebRTC latency (8-23ms)
+                    document.getElementById('latencyMetric').innerText = `${simulatedLatency} ms`;
+                } else {
+                    document.getElementById('latencyMetric').innerText = `0 ms`;
+                }
+            }, 2000);
+        }
+
+        // CHAT SIMULATOR
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML += `
+                <div class="bg-indigo-950/40 p-2 rounded-lg border border-indigo-800/50">
+                    <span class="font-bold text-emerald-400">You:</span>
+                    <span class="text-gray-200"> ${escapeHtml(msg)}</span>
+                </div>
+            `;
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // COPY INVITE LINK
+        function copyInviteLink() {
+            const dummyUrl = window.location.href + "?room=live-webrtc-stream";
+            const tempInput = document.createElement("input");
+            tempInput.value = dummyUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast("Viewer Stream Link Copied to Clipboard!");
+        }
+
+        // TOAST SYSTEM
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
