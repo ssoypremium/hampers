@@ -137,15 +137,13 @@
 
           <div class="h-5 w-[1px] bg-slate-800 mx-1"></div>
 
-          <!-- Color Palette Picker Buttons -->
+          <!-- Color Palette Picker Buttons (Restricted to Red, White, Yellow, Green, Sky Blue) -->
           <div class="flex items-center gap-1.5" id="color-palette">
             <button data-color="#38bdf8" class="color-btn w-6 h-6 rounded-full bg-sky-400 ring-2 ring-white scale-110 transition"></button>
-            <button data-color="#818cf8" class="color-btn w-6 h-6 rounded-full bg-indigo-400 transition"></button>
             <button data-color="#34d399" class="color-btn w-6 h-6 rounded-full bg-emerald-400 transition"></button>
             <button data-color="#f43f5e" class="color-btn w-6 h-6 rounded-full bg-rose-500 transition"></button>
             <button data-color="#fbbf24" class="color-btn w-6 h-6 rounded-full bg-amber-400 transition"></button>
             <button data-color="#ffffff" class="color-btn w-6 h-6 rounded-full bg-white transition"></button>
-            <button data-color="#090d16" class="color-btn w-6 h-6 rounded-full bg-slate-950 border border-slate-600 transition"></button>
           </div>
         </div>
 
@@ -239,7 +237,7 @@
 
     // Drawing State Variables
     let isDrawing = false;
-    let activeColor = '#38bdf8'; // Sky blue default
+    let activeColor = '#38bdf8'; // Default Sky blue
     let activeSize = 4;
     let isEraser = false;
     let lastX = 0;
@@ -278,7 +276,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const targetFromUrl = urlParams.get('connect');
 
-    // Initialize Canvas Dimensions with High Resolution Support (Transparent background so dots remain visible)
+    // Initialize Canvas Dimensions
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
@@ -295,7 +293,6 @@
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
 
-      // Clear canvas transparently so dot grid background shows through
       ctx.clearRect(0, 0, rect.width, rect.height);
 
       if (tempCanvas.width > 0 && tempCanvas.height > 0) {
@@ -447,7 +444,7 @@
         x1: coords.x,
         y1: coords.y,
         color: isEraser ? 'clear' : activeColor,
-        size: isEraser ? activeSize * 3 : activeSize, // Eraser wider area
+        size: isEraser ? activeSize * 3 : activeSize,
         isEraser: isEraser
       };
 
@@ -482,7 +479,7 @@
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.stroke();
-      ctx.globalCompositeOperation = 'source-over'; // Reset
+      ctx.globalCompositeOperation = 'source-over';
     }
 
     function drawRemoteStroke(data) {
@@ -511,7 +508,6 @@
     }
 
     function saveCanvasImage() {
-      // Create a temporary canvas with dark solid background + drawing so downloaded PNG looks clean
       const rect = canvas.getBoundingClientRect();
       const exportCanvas = document.createElement('canvas');
       exportCanvas.width = canvas.width;
@@ -573,7 +569,7 @@
     canvas.addEventListener('touchmove', draw, { passive: false });
     canvas.addEventListener('touchend', stopDrawing);
 
-    // Color Palette Buttons (Independent local selection)
+    // Color Palette Buttons (Red, White, Yellow, Green, Sky Blue)
     document.querySelectorAll('.color-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'scale-110'));
