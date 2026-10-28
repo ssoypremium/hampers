@@ -3,189 +3,208 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Batch Encrypted A4 Label Studio</title>
+  <title>O2 QR Code Generator - Max Density A4 Sheet</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body { background-color: #020617; color: #f8fafc; font-family: system-ui, sans-serif; }
+    
+    /* QR Label Box Style (Dashed Outline for Easy Cutting) */
+    .qr-card {
+      border: 1px dashed #64748b;
+      padding: 4px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Print Specific Styles for Pure White A4 Page */
     @media print {
-      body * { visibility: hidden; }
-      #printable-sheet, #printable-sheet * { visibility: visible; }
-      #printable-sheet { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+      body { background-color: #ffffff !important; color: #000000 !important; padding: 0 !important; }
       .no-print { display: none !important; }
-      @page { size: A4 portrait; margin: 8mm; }
+      #a4-print-area {
+        background: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        width: 100% !important;
+      }
+      .qr-grid-layout {
+        display: grid !important;
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important; /* 6 QR Codes per Row */
+        gap: 6px !important;
+      }
+      .qr-card {
+        border: 1px dashed #000000 !important; /* Sharp Cut Lines for Scissors */
+        padding: 3px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+      }
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start p-4 antialiased">
+<body class="min-h-screen p-3 sm:p-5 flex flex-col items-center">
 
-  <!-- Control Form -->
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-xl w-full flex flex-col gap-4 shadow-2xl mb-6 no-print">
-    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-      <h2 class="text-base font-bold text-white flex items-center gap-2">
-        <i data-lucide="layers" class="w-5 h-5 text-indigo-400"></i> Batch Label Queue Generator
+  <!-- Header Section -->
+  <header class="w-full max-w-5xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3 no-print">
+    <div>
+      <h1 class="text-lg font-bold bg-gradient-to-r from-indigo-400 to-teal-300 bg-clip-text text-transparent">
+        O2 QR Code Generator
+      </h1>
+      <p class="text-xs text-slate-400">High-Density A4 Printable Sheet (Only QR & Cut Lines)</p>
+    </div>
+    <button onclick="window.print()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 shadow-lg transition">
+      <i data-lucide="printer" class="w-4 h-4"></i> Print A4 Sheet
+    </button>
+  </header>
+
+  <main class="w-full max-w-5xl flex flex-col gap-4">
+
+    <!-- Input Form -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-2xl no-print">
+      <h2 class="text-xs font-bold text-slate-200 mb-3 flex items-center gap-2">
+        <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Add Item Details
       </h2>
-      <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/30">A4 Cut-Grid</span>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div class="sm:col-span-2">
+          <label class="text-[11px] text-slate-400">Item Description / Name:</label>
+          <input type="text" id="item-name" placeholder="e.g. Hair Oil" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 mt-1">
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400">Quantity (QR Count):</label>
+          <input type="number" id="item-qty" value="1" min="1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 mt-1 font-mono">
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400">Rate / Price (₹):</label>
+          <input type="number" id="item-price" step="0.01" value="0.00" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 mt-1 font-mono">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-3">
+        <button onclick="clearAllQRs()" class="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear All
+        </button>
+        <button onclick="generateQRCodes()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-lg transition">
+          <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> Add & Generate
+        </button>
+      </div>
     </div>
 
-    <!-- Input Fields -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-      <div class="col-span-2">
-        <label class="text-[11px] text-slate-400">Item Name:</label>
-        <input type="text" id="input-name" value="Wireless Mouse" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500">
+    <!-- A4 Printable Grid Area -->
+    <div id="a4-print-area" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl min-h-[500px]">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-4 no-print">
+        <span class="text-xs font-semibold text-slate-300">A4 Printable Sheet Layout</span>
+        <span id="total-count-badge" class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Total QRs: 0</span>
       </div>
-      <div class="col-span-2">
-        <label class="text-[11px] text-slate-400">Declaration / Desc:</label>
-        <input type="text" id="input-desc" value="Ergonomic 2.4G" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500">
-      </div>
-      <div>
-        <label class="text-[11px] text-slate-400">Price (₹):</label>
-        <input type="number" id="input-price" value="499.00" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none">
-      </div>
-      <div>
-        <label class="text-[11px] text-slate-400">Scan Qty:</label>
-        <input type="number" id="input-qty" value="1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none">
-      </div>
-      <div class="col-span-2">
-        <label class="text-[11px] text-indigo-400 font-bold">Label Copies to Print:</label>
-        <input type="number" id="input-copies" value="10" class="w-full bg-indigo-950/40 border border-indigo-800/60 rounded-lg px-2.5 py-1 text-xs text-indigo-200 font-bold focus:outline-none">
+
+      <div id="qr-grid" class="qr-grid-layout grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-2 justify-center">
+        <div id="empty-msg" class="col-span-full py-16 text-center text-slate-500 text-xs">
+          No QR codes generated yet. Add an item above!
+        </div>
       </div>
     </div>
 
-    <button onclick="addItemToQueue()" class="py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg">
-      <i data-lucide="plus" class="w-4 h-4"></i> Add Item to Print Queue
-    </button>
-
-    <!-- Queue Table -->
-    <div class="overflow-x-auto max-h-[140px] border border-slate-800 rounded-xl bg-slate-950">
-      <table class="w-full text-left text-[11px]">
-        <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
-          <tr>
-            <th class="p-2">Item Name</th>
-            <th class="p-2">Price</th>
-            <th class="p-2">Print Copies</th>
-            <th class="p-2 text-center">Action</th>
-          </tr>
-        </thead>
-        <tbody id="queue-tbody" class="divide-y divide-slate-800/50 text-slate-300 font-mono">
-          <!-- Queue rows -->
-        </tbody>
-      </table>
-    </div>
-
-    <button onclick="window.print()" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg">
-      <i data-lucide="printer" class="w-4 h-4"></i> Print / Download A4 PDF Sheet
-    </button>
-  </div>
-
-  <!-- Printable A4 Sheet Grid -->
-  <div id="printable-sheet" class="bg-white p-4 rounded-lg shadow-2xl w-[210mm] min-h-[297mm] flex flex-col text-black">
-    <div class="text-center mb-3 border-b border-gray-300 pb-2">
-      <h3 class="text-sm font-bold tracking-widest text-gray-800">BATCH ENCRYPTED PRODUCT LABELS</h3>
-      <p class="text-[10px] text-gray-500">Cut-Border Grid Layout (45mm x 32mm)</p>
-    </div>
-
-    <div id="labels-grid" class="grid grid-cols-4 gap-2 flex-1 justify-items-center">
-      <!-- Generated Labels Injected Here -->
-    </div>
-  </div>
+  </main>
 
   <script>
-    lucide.createIcons();
-    let itemQueue = [];
     const SECRET_KEY = "CAM_SYNC_SECRET_BILLING_KEY";
+    let qrItemsList = [];
 
-    function encryptData(text) {
-      let result = '';
-      for (let i = 0; i < text.length; i++) {
-        result += String.fromCharCode(text.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
+    lucide.createIcons();
+
+    function encryptData(obj) {
+      const jsonString = JSON.stringify(obj);
+      let encrypted = '';
+      for (let i = 0; i < jsonString.length; i++) {
+        encrypted += String.fromCharCode(jsonString.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
       }
-      return "ENC:" + btoa(result);
+      return "ENC:" + btoa(encrypted);
     }
 
-    function addItemToQueue() {
-      const name = document.getElementById('input-name').value.trim();
-      const desc = document.getElementById('input-desc').value.trim();
-      const price = parseFloat(document.getElementById('input-price').value) || 0;
-      const qty = parseInt(document.getElementById('input-qty').value) || 1;
-      const copies = parseInt(document.getElementById('input-copies').value) || 1;
+    function generateQRCodes() {
+      const name = document.getElementById('item-name').value.trim();
+      const qty = parseInt(document.getElementById('item-qty').value) || 1;
+      const price = parseFloat(document.getElementById('item-price').value) || 0;
 
-      if (!name) return;
-
-      itemQueue.push({ id: Date.now(), name, desc, price, qty, copies });
-      renderQueue();
-      renderA4Grid();
-    }
-
-    function renderQueue() {
-      const tbody = document.getElementById('queue-tbody');
-      tbody.innerHTML = '';
-      
-      if (itemQueue.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-600">Queue is empty. Add items above.</td></tr>`;
+      if (!name) {
+        alert("Please enter Item Description/Name!");
         return;
       }
 
-      itemQueue.forEach((item, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="p-2 font-sans font-medium text-indigo-300">${item.name}</td>
-          <td class="p-2">₹${item.price.toFixed(2)}</td>
-          <td class="p-2 text-emerald-400 font-bold">${item.copies} Labels</td>
-          <td class="p-2 text-center">
-            <button onclick="removeFromQueue(${item.id})" class="text-rose-400 hover:text-rose-300"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-      lucide.createIcons();
+      const payloadObj = {
+        name: name,
+        qty: 1,
+        price: price
+      };
+
+      const encryptedPayload = encryptData(payloadObj);
+
+      for (let i = 0; i < qty; i++) {
+        qrItemsList.push({
+          id: Date.now() + Math.random(),
+          payload: encryptedPayload
+        });
+      }
+
+      renderQRGrid();
+
+      document.getElementById('item-name').value = '';
+      document.getElementById('item-qty').value = '1';
+      document.getElementById('item-price').value = '0.00';
     }
 
-    window.removeFromQueue = function(id) {
-      itemQueue = itemQueue.filter(i => i.id !== id);
-      renderQueue();
-      renderA4Grid();
-    };
-
-    function renderA4Grid() {
-      const grid = document.getElementById('labels-grid');
+    function renderQRGrid() {
+      const grid = document.getElementById('qr-grid');
       grid.innerHTML = '';
 
-      itemQueue.forEach(item => {
-        const rawJson = JSON.stringify({ name: item.name, desc: item.desc, price: item.price, qty: item.qty });
-        const encryptedPayload = encryptData(rawJson);
+      if (qrItemsList.length === 0) {
+        grid.innerHTML = `<div id="empty-msg" class="col-span-full py-16 text-center text-slate-500 text-xs">No QR codes generated yet. Add an item above!</div>`;
+        document.getElementById('total-count-badge').textContent = `Total QRs: 0`;
+        return;
+      }
 
-        for (let i = 0; i < item.copies; i++) {
-          const labelBox = document.createElement('div');
-          labelBox.className = "w-[45mm] h-[32mm] border-2 border-dashed border-gray-400 p-1.5 flex flex-col items-center justify-between bg-white rounded-sm box-border relative";
+      document.getElementById('total-count-badge').textContent = `Total QRs: ${qrItemsList.length}`;
 
-          labelBox.innerHTML = `
-            <div class="text-[9px] font-bold text-gray-800 truncate w-full text-center leading-tight">${item.name}</div>
-            <div class="qr-placeholder w-[22mm] h-[22mm] flex items-center justify-center my-0.5"></div>
-            <div class="text-[7.5px] font-mono text-gray-500 truncate w-full text-center">${item.desc}</div>
-          `;
+      qrItemsList.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "qr-card rounded flex items-center justify-center relative";
+        
+        const qrContainerId = `qrcode-${index}`;
 
-          grid.appendChild(labelBox);
+        card.innerHTML = `
+          <button onclick="removeSingleQR(${index})" class="no-print absolute -top-2 -right-2 text-rose-500 hover:text-rose-700 bg-slate-900 rounded-full p-0.5">
+            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+          </button>
+          <div id="${qrContainerId}" class="p-0.5"></div>
+        `;
 
-          const qrPlace = labelBox.querySelector('.qr-placeholder');
-          new QRCode(qrPlace, {
-            text: encryptedPayload,
-            width: 80,
-            height: 80,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.M
-          });
-        }
+        grid.appendChild(card);
+
+        // Optimized QR Size for maximum A4 fit
+        new QRCode(document.getElementById(qrContainerId), {
+          text: item.payload,
+          width: 80,
+          height: 80,
+          correctLevel: QRCode.CorrectLevel.M
+        });
       });
+
       lucide.createIcons();
     }
 
-    // Auto-add initial item for quick preview
-    window.onload = () => {
-      addItemToQueue();
-    };
+    function removeSingleQR(index) {
+      qrItemsList.splice(index, 1);
+      renderQRGrid();
+    }
+
+    function clearAllQRs() {
+      qrItemsList = [];
+      renderQRGrid();
+    }
   </script>
 </body>
 </html>
