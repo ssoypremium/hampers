@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SlideSync Remote with Preview</title>
+  <title>SlideSync Remote with Auto-Clear</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -160,7 +160,6 @@
     let peer = null, conn = null, myPeerId = null, html5QrcodeScanner = null;
     let isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Presentation State
     let slidesList = [];
     let currentSlideIndex = 0;
 
@@ -187,6 +186,9 @@
       if (state === 'connected') {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
+      } else {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
       }
     }
 
@@ -247,18 +249,33 @@
         
         if (data.type === 'slide-change') {
           displaySlideOnPC(data.imageData);
+        } else if (data.type === 'clear-slide') {
+          clearSlideOnPC();
         } else if (data.type === 'toggle-fullscreen') {
           togglePCFullscreen();
         }
       });
 
       conn.on('close', () => {
-        updateStatus('disconnected', 'Disconnected');
-        addLog('Connection closed.');
+        handleDisconnection();
       });
     }
 
-    // Handle Mobile Image Selection
+    function handleDisconnection() {
+      updateStatus('disconnected', 'Disconnected');
+      addLog('Connection closed.');
+
+      // Clear PC Slide View and show placeholder
+      presentationSlide.classList.add('hidden');
+      presentationSlide.src = '';
+      pcPlaceholder.classList.remove('hidden');
+
+      // Show QR code pairing section again if needed, or reload state
+      pairingSection.classList.remove('hidden');
+      mobileRemoteSection.classList.add('hidden');
+      pcViewerSection.classList.add('hidden');
+    }
+
     document.getElementById('image-input').addEventListener('change', async (e) => {
       const files = Array.from(e.target.files);
       if (files.length === 0) return;
@@ -290,7 +307,6 @@
         btnPrev.disabled = (currentSlideIndex === 0);
         btnNext.disabled = (currentSlideIndex === slidesList.length - 1);
 
-        // Update mobile preview thumbnail
         mobilePreviewPlaceholder.classList.add('hidden');
         mobilePreviewImg.src = slidesList[currentSlideIndex];
         mobilePreviewImg.classList.remove('hidden');
@@ -340,6 +356,13 @@
       presentationSlide.src = imageData;
       presentationSlide.classList.remove('hidden');
       addLog('Slide updated on PC viewer.');
+    }
+
+    function clearSlideOnPC() {
+      presentationSlide.classList.add('hidden');
+      presentationSlide.src = '';
+      pcPlaceholder.classList.remove('hidden');
+      addLog('PC slide cleared.');
     }
 
     function togglePCFullscreen() {
