@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>O2 Board - P2P Collaborative Whiteboard</title>
+  <title>O2 Board</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -50,10 +50,11 @@
       touch-action: none;
     }
 
-    /* Color button selected state indicator */
-    .color-btn.active {
-      ring-width: 2px;
-      transform: scale(1.15);
+    /* Dot Grid Background Pattern for Whiteboard Canvas Container */
+    .dot-grid-bg {
+      background-color: #090d16;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
     }
   </style>
 </head>
@@ -67,7 +68,7 @@
       </div>
       <div>
         <h1 class="text-base sm:text-lg font-bold tracking-wide bg-gradient-to-r from-indigo-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">O2 Board</h1>
-        <p class="text-[11px] text-slate-400">P2P Collaborative Canvas</p>
+        <p class="text-[11px] text-slate-400">Secure Private Tunnels</p>
       </div>
     </div>
 
@@ -138,13 +139,11 @@
 
           <!-- Color Palette Picker Buttons -->
           <div class="flex items-center gap-1.5" id="color-palette">
-            <button data-color="#38bdf8" class="color-btn w-6 h-6 rounded-full bg-sky-400 ring-2 ring-white scale-110 transition"></button>
-            <button data-color="#818cf8" class="color-btn w-6 h-6 rounded-full bg-indigo-400 transition"></button>
+            <button data-color="#38bdf8" class="color-btn w-6 h-6 rounded-full bg-sky-400 transition"></button>
             <button data-color="#34d399" class="color-btn w-6 h-6 rounded-full bg-emerald-400 transition"></button>
             <button data-color="#f43f5e" class="color-btn w-6 h-6 rounded-full bg-rose-500 transition"></button>
             <button data-color="#fbbf24" class="color-btn w-6 h-6 rounded-full bg-amber-400 transition"></button>
             <button data-color="#ffffff" class="color-btn w-6 h-6 rounded-full bg-white transition"></button>
-            <button data-color="#090d16" class="color-btn w-6 h-6 rounded-full bg-slate-950 border border-slate-600 transition"></button>
           </div>
         </div>
 
@@ -171,8 +170,8 @@
         </div>
       </div>
 
-      <!-- Canvas Container -->
-      <div class="relative w-full h-[450px] sm:h-[520px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-inner flex items-center justify-center">
+      <!-- Canvas Container with Dot Grid Background -->
+      <div class="relative w-full h-[450px] sm:h-[520px] dot-grid-bg rounded-xl border border-slate-800 overflow-hidden shadow-inner flex items-center justify-center">
         <canvas id="whiteboard" class="w-full h-full cursor-crosshair"></canvas>
         
         <!-- Live Remote Drawing Indicator Badge -->
@@ -236,9 +235,13 @@
     let myPeerId = null;
     let html5QrcodeScanner = null;
 
+    // Available Color Palette Array for Random Selection
+    const availableColors = ['#38bdf8', '#34d399', '#f43f5e', '#fbbf24', '#ffffff'];
+    // Randomly select one color on every new page load/session
+    let activeColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+
     // Drawing State Variables
     let isDrawing = false;
-    let activeColor = '#38bdf8'; // Sky blue default
     let activeSize = 4;
     let isEraser = false;
     let lastX = 0;
@@ -273,16 +276,27 @@
     // Initialize Lucide Icons
     lucide.createIcons();
 
+    // Set the randomly selected color active visually on startup
+    function initRandomColorUI() {
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        const btnColor = btn.getAttribute('data-color');
+        if (btnColor === activeColor) {
+          btn.classList.add('ring-2', 'ring-white', 'scale-110');
+        } else {
+          btn.classList.remove('ring-2', 'ring-white', 'scale-110');
+        }
+      });
+    }
+
     // Check URL parameters for direct connection link
     const urlParams = new URLSearchParams(window.location.search);
     const targetFromUrl = urlParams.get('connect');
 
-    // Initialize Canvas Dimensions with High Resolution Support
+    // Initialize Canvas Dimensions
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
       
-      // Save canvas content before resize
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = canvas.width;
       tempCanvas.height = canvas.height;
@@ -295,11 +309,8 @@
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
 
-      // Fill dark background
-      ctx.fillStyle = '#090d16';
-      ctx.fillRect(0, 0, rect.width, rect.height);
+      ctx.clearRect(0, 0, rect.width, rect.height);
 
-      // Restore drawing content if existed
       if (tempCanvas.width > 0 && tempCanvas.height > 0) {
         ctx.drawImage(tempCanvas, 0, 0, tempCanvas.width / dpr, tempCanvas.height / dpr, 0, 0, rect.width, rect.height);
       }
@@ -360,7 +371,6 @@
         updateStatus('connected', 'Connected');
         addLog('Successfully paired with peer device!');
         
-        // Swap QR View with Collaborative Whiteboard View
         qrCard.classList.add('hidden');
         whiteboardCard.classList.remove('hidden');
         resizeCanvas();
@@ -381,7 +391,6 @@
         updateStatus('waiting', 'Peer Disconnected');
         addLog('Peer disconnected.');
         
-        // Swap back to QR card if connection drops
         whiteboardCard.classList.add('hidden');
         qrCard.classList.remove('hidden');
       });
@@ -424,7 +433,6 @@
         clientY = e.touches[0].clientY;
       }
 
-      // Return normalized 0..1 scale coordinates to ensure perfect alignment across different screens
       return {
         x: (clientX - rect.left) / rect.width,
         y: (clientY - rect.top) / rect.height
@@ -451,15 +459,13 @@
         y0: lastY,
         x1: coords.x,
         y1: coords.y,
-        color: isEraser ? '#090d16' : activeColor,
-        size: activeSize,
+        color: isEraser ? 'clear' : activeColor,
+        size: isEraser ? activeSize * 3 : activeSize,
         isEraser: isEraser
       };
 
-      // Draw locally
       renderLine(strokeData, rect.width, rect.height);
 
-      // Send to peer via WebRTC data channel
       if (conn && conn.open) {
         conn.send(strokeData);
       }
@@ -476,18 +482,26 @@
       ctx.beginPath();
       ctx.moveTo(data.x0 * width, data.y0 * height);
       ctx.lineTo(data.x1 * width, data.y1 * height);
-      ctx.strokeStyle = data.color;
+      
+      if (data.isEraser) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.strokeStyle = 'rgba(0,0,0,1)';
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = data.color;
+      }
+
       ctx.lineWidth = data.size;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.stroke();
+      ctx.globalCompositeOperation = 'source-over';
     }
 
     function drawRemoteStroke(data) {
       const rect = canvas.getBoundingClientRect();
       renderLine(data, rect.width, rect.height);
 
-      // Show temporary "Remote User Drawing..." indicator
       remoteIndicator.style.opacity = '1';
       clearTimeout(remoteHideTimeout);
       remoteHideTimeout = setTimeout(() => {
@@ -497,8 +511,7 @@
 
     function clearLocalCanvas() {
       const rect = canvas.getBoundingClientRect();
-      ctx.fillStyle = '#090d16';
-      ctx.fillRect(0, 0, rect.width, rect.height);
+      ctx.clearRect(0, 0, rect.width, rect.height);
     }
 
     function clearCanvasAction() {
@@ -511,9 +524,19 @@
     }
 
     function saveCanvasImage() {
+      const rect = canvas.getBoundingClientRect();
+      const exportCanvas = document.createElement('canvas');
+      exportCanvas.width = canvas.width;
+      exportCanvas.height = canvas.height;
+      const expCtx = exportCanvas.getContext('2d');
+
+      expCtx.fillStyle = '#090d16';
+      expCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+      expCtx.drawImage(canvas, 0, 0);
+
       const link = document.createElement('a');
-      link.download = `O2-Whiteboard-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.download = `O2-Board-${Date.now()}.png`;
+      link.href = exportCanvas.toDataURL('image/png');
       link.click();
       addLog('Canvas image downloaded.');
     }
@@ -562,14 +585,13 @@
     canvas.addEventListener('touchmove', draw, { passive: false });
     canvas.addEventListener('touchend', stopDrawing);
 
-    // Color Palette Buttons
+    // Color Palette Buttons Selection
     document.querySelectorAll('.color-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'scale-110'));
         e.currentTarget.classList.add('ring-2', 'ring-white', 'scale-110');
         activeColor = e.currentTarget.getAttribute('data-color');
         
-        // Switch to pen mode automatically when choosing color
         isEraser = false;
         toolPen.className = 'p-2 rounded-lg bg-indigo-600 text-white shadow-md transition flex items-center justify-center';
         toolEraser.className = 'p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center';
@@ -622,6 +644,7 @@
 
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('load', () => {
+      initRandomColorUI(); // Initialize random starting color UI on load
       initPeer();
       resizeCanvas();
     });
