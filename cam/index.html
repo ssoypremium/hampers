@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CamSync Studio - Manual Download Gallery</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PeerJS for WebRTC Peer-to-Peer Connection -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+  <!-- QRCode.js for QR Code Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- HTML5-QRCode for In-App QR Code Scanner -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body { background-color: #020617; color: #f8fafc; font-family: sans-serif; }
+    #reader video { border-radius: 0.75rem; object-fit: cover; width: 100% !important; }
+    #camera-preview { border-radius: 0.75rem; object-fit: cover; width: 100%; height: 100%; }
+    .mirror { transform: scaleX(-1); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start p-3 sm:p-5 antialiased">
+
+  <!-- Header -->
+  <header class="w-full max-w-4xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30 flex items-center justify-center">
+        <i data-lucide="camera" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-teal-300 bg-clip-text text-transparent">CamSync Studio</h1>
+        <p class="text-[11px] text-slate-400">Manual Download & Gallery Station</p>
+      </div>
+    </div>
+    <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
+      <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+      <span id="status-text">Initializing...</span>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="w-full max-w-4xl flex flex-col gap-4">
+
+    <!-- STEP 1: Pairing QR Code Card -->
+    <div id="pairing-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center">
+      <h2 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+        <i data-lucide="qr-code" class="w-5 h-5 text-indigo-400"></i> Pair Devices
+      </h2>
+      <p class="text-xs text-slate-400 mb-5 max-w-sm leading-relaxed">
+        PC par yeh page khula rakhein. Mobile se "Scan PC QR Code" dabakar PC screen ka QR code scan karein.
+      </p>
+
+      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[200px] min-w-[200px] flex items-center justify-center">
+        <div id="qrcode"></div>
+        <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
+          <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
+          <span class="text-xs">Generating Peer ID...</span>
+        </div>
+      </div>
+
+      <div class="w-full max-w-xs flex flex-col gap-2">
+        <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25">
+          <i data-lucide="camera" class="w-4 h-4"></i> Scan PC QR Code
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Mobile Camera Interface -->
+    <div id="mobile-cam-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <span class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
+          <i data-lucide="smartphone" class="w-4 h-4"></i> Mobile Camera Control
+        </span>
+        <button id="btn-switch-cam" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs rounded-lg flex items-center gap-1 text-slate-300">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Switch Cam
+        </button>
+      </div>
+
+      <div class="relative w-full h-[380px] bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+        <video id="camera-preview" autoplay playsinline></video>
+        <div id="cam-error" class="hidden absolute inset-0 bg-slate-950 p-4 text-center text-rose-400 flex flex-col items-center justify-center gap-2">
+          <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+          <p class="text-xs">Please allow camera permissions in browser settings.</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+        <span class="text-[11px] text-slate-400">Apply Filter:</span>
+        <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
+          <button data-filter="none" class="filter-btn px-3 py-1 bg-indigo-600 rounded-lg whitespace-nowrap">Normal</button>
+          <button data-filter="vintage" class="filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap">Vintage</button>
+          <button data-filter="bw" class="filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap">B&amp;W</button>
+          <button data-filter="warm" class="filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap">Warm</button>
+          <button data-filter="cool" class="filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap">Cool</button>
+        </div>
+      </div>
+
+      <button id="btn-capture-photo" class="py-3.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
+        <i data-lucide="aperture" class="w-5 h-5"></i> CAPTURE &amp; SEND TO PC
+      </button>
+    </div>
+
+    <!-- STEP 3: PC Gallery Station with Manual Download Options -->
+    <div id="pc-dashboard-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+          <i data-lucide="monitor" class="w-4 h-4"></i> PC Gallery (Manual Download Option)
+        </span>
+      </div>
+
+      <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 min-h-[250px]">
+        <div id="gallery-empty" class="col-span-full flex flex-col items-center justify-center p-8 text-slate-600 text-center">
+          <i data-lucide="image" class="w-10 h-10 mb-2 opacity-30"></i>
+          <p class="text-xs">No photos received yet. Click photos from mobile!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Log -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex flex-col">
+      <h3 class="text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
+        <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i> Session Log
+      </h3>
+      <div id="activity-log" class="space-y-1 max-h-[70px] overflow-y-auto text-[11px] text-slate-500 font-mono">
+        <div>Ready for WebRTC peer connection.</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: Scanner -->
+  <div id="scanner-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-sm w-full flex flex-col gap-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
+          <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i> Scan PC Screen QR
+        </h3>
+        <button id="btn-close-scanner" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="overflow-hidden rounded-xl bg-black min-h-[200px]">
+        <div id="reader" class="w-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="hidden-canvas" class="hidden"></canvas>
+
+  <script>
+    let peer = null, conn = null, myPeerId = null, html5QrcodeScanner = null;
+    let currentStream = null, facingMode = "environment", currentFilterCSS = "none";
+    let isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    const statusBadge = document.getElementById('status-badge'), statusText = document.getElementById('status-text');
+    const pairingSection = document.getElementById('pairing-section'), mobileCamSection = document.getElementById('mobile-cam-section'), pcDashboardSection = document.getElementById('pc-dashboard-section');
+    const qrContainer = document.getElementById('qrcode'), qrLoader = document.getElementById('qr-loader');
+    const videoPreview = document.getElementById('camera-preview'), activityLog = document.getElementById('activity-log');
+    const galleryContainer = document.getElementById('gallery-container'), galleryEmpty = document.getElementById('gallery-empty');
+
+    lucide.createIcons();
+
+    function addLog(msg) {
+      const item = document.createElement('div');
+      item.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      activityLog.appendChild(item);
+      activityLog.scrollTop = activityLog.scrollHeight;
+    }
+
+    function updateStatus(state, msg) {
+      statusText.textContent = msg;
+      if (state === 'connected') {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
+      }
+    }
+
+    function initPeer() {
+      peer = new Peer({ debug: 1 });
+
+      peer.on('open', (id) => {
+        myPeerId = id;
+        qrLoader.classList.add('hidden');
+        
+        const pairingUrl = `${window.location.origin}${window.location.pathname}?connect=${id}`;
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, { text: pairingUrl, width: 175, height: 175 });
+
+        updateStatus('waiting', 'Ready for Connection');
+        addLog('Generated connection ID.');
+
+        const targetFromUrl = new URLSearchParams(window.location.search).get('connect');
+        if (targetFromUrl) {
+          connectToPeer(targetFromUrl);
+        }
+      });
+
+      peer.on('connection', (c) => setupConnection(c));
+      peer.on('error', (err) => {
+        console.error(err);
+        updateStatus('error', 'Peer Error');
+      });
+    }
+
+    function connectToPeer(targetId) {
+      if (!targetId || targetId === myPeerId) return;
+      updateStatus('connecting', 'Connecting...');
+      addLog(`Connecting to PC endpoint...`);
+      const outgoingConn = peer.connect(targetId, { reliable: true });
+      setupConnection(outgoingConn);
+    }
+
+    function setupConnection(connection) {
+      conn = connection;
+
+      conn.on('open', () => {
+        updateStatus('connected', 'Paired & Connected');
+        addLog('Device connected successfully!');
+
+        pairingSection.classList.add('hidden');
+
+        const targetFromUrl = new URLSearchParams(window.location.search).get('connect');
+        if (isMobile || targetFromUrl) {
+          mobileCamSection.classList.remove('hidden');
+          startCamera();
+        } else {
+          pcDashboardSection.classList.remove('hidden');
+        }
+      });
+
+      conn.on('data', (data) => {
+        if (data && data.type === 'photo') {
+          addPhotoToGalleryPC(data.imageData);
+        }
+      });
+
+      conn.on('close', () => {
+        updateStatus('disconnected', 'Disconnected');
+        addLog('Connection closed.');
+        stopCamera();
+      });
+    }
+
+    async function startCamera() {
+      stopCamera();
+      try {
+        currentStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } }
+        });
+        videoPreview.srcObject = currentStream;
+
+        if (facingMode === 'user') {
+          videoPreview.classList.add('mirror');
+        } else {
+          videoPreview.classList.remove('mirror');
+        }
+
+        document.getElementById('cam-error').classList.add('hidden');
+        addLog('Camera preview active.');
+      } catch (err) {
+        document.getElementById('cam-error').classList.remove('hidden');
+        addLog('Camera access permission error.');
+      }
+    }
+
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(t => t.stop());
+        currentStream = null;
+      }
+    }
+
+    document.getElementById('btn-switch-cam').addEventListener('click', () => {
+      facingMode = (facingMode === "environment") ? "user" : "environment";
+      startCamera();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.className = 'filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap');
+        e.currentTarget.className = 'filter-btn px-3 py-1 bg-indigo-600 rounded-lg whitespace-nowrap';
+
+        const f = e.currentTarget.getAttribute('data-filter');
+        if (f === 'vintage') currentFilterCSS = 'sepia(0.6) contrast(1.2) brightness(0.9)';
+        else if (f === 'bw') currentFilterCSS = 'grayscale(1) contrast(1.5)';
+        else if (f === 'warm') currentFilterCSS = 'sepia(0.3) saturate(1.4)';
+        else if (f === 'cool') currentFilterCSS = 'hue-rotate(30deg) saturate(1.2)';
+        else currentFilterCSS = 'none';
+
+        videoPreview.style.filter = currentFilterCSS;
+      });
+    });
+
+    document.getElementById('btn-capture-photo').addEventListener('click', () => {
+      if (!videoPreview.srcObject) return;
+
+      const canvas = document.getElementById('hidden-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = videoPreview.videoWidth || 1280;
+      canvas.height = videoPreview.videoHeight || 720;
+
+      if (facingMode === 'user') {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
+
+      ctx.filter = currentFilterCSS;
+      ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+      const imageData = canvas.toDataURL('image/png');
+
+      if (conn && conn.open) {
+        conn.send({ type: 'photo', imageData: imageData });
+        addLog('Photo sent to PC gallery!');
+      } else {
+        addLog('Error: Connection not active.');
+      }
+    });
+
+    // Add Photo to PC Gallery with Manual Download Button
+    function addPhotoToGalleryPC(imageData) {
+      if (galleryEmpty) galleryEmpty.style.display = 'none';
+
+      const card = document.createElement('div');
+      card.className = 'bg-slate-950 border border-slate-800 rounded-xl overflow-hidden flex flex-col shadow-md';
+
+      const imgWrapper = document.createElement('div');
+      imgWrapper.className = 'relative aspect-video w-full bg-slate-900 overflow-hidden';
+      imgWrapper.innerHTML = `<img src="${imageData}" class="w-full h-full object-cover">`;
+
+      const actionArea = document.createElement('div');
+      actionArea.className = 'p-2.5 flex items-center justify-between gap-2 bg-slate-900/50 border-t border-slate-800';
+
+      const timeLabel = document.createElement('span');
+      timeLabel.className = 'text-[10px] text-slate-400';
+      timeLabel.textContent = new Date().toLocaleTimeString();
+
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'flex items-center gap-1.5';
+
+      // Download Button
+      const downloadBtn = document.createElement('a');
+      downloadBtn.href = imageData;
+      downloadBtn.download = `CamSync_${Date.now()}.png`;
+      downloadBtn.className = 'px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium flex items-center gap-1 transition';
+      downloadBtn.innerHTML = `<i data-lucide="download" class="w-3.5 h-3.5"></i> Download`;
+
+      // Delete Preview Button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'p-1 bg-slate-800 hover:bg-rose-600/20 hover:text-rose-400 text-slate-400 rounded-lg text-xs transition';
+      deleteBtn.innerHTML = `<i data-lucide="trash-2" class="w-3.5 h-3.5"></i>`;
+      deleteBtn.onclick = () => card.remove();
+
+      btnGroup.appendChild(downloadBtn);
+      btnGroup.appendChild(deleteBtn);
+
+      actionArea.appendChild(timeLabel);
+      actionArea.appendChild(btnGroup);
+
+      card.appendChild(imgWrapper);
+      card.appendChild(actionArea);
+
+      galleryContainer.prepend(card);
+      lucide.createIcons();
+      addLog('Photo received in PC Gallery.');
+    }
+
+    document.getElementById('btn-open-scanner').addEventListener('click', () => {
+      document.getElementById('scanner-modal').classList.remove('hidden');
+      if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
+      
+      html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 180 }, (text) => {
+        document.getElementById('scanner-modal').classList.add('hidden');
+        if (html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
+        
+        let targetPeerId = text;
+        if (text.includes('connect=')) {
+          try { targetPeerId = new URL(text).searchParams.get('connect'); } catch(e){}
+        }
+        connectToPeer(targetPeerId);
+      }).catch(() => addLog('Scanner access denied.'));
+    });
+
+    document.getElementById('btn-close-scanner').addEventListener('click', () => {
+      document.getElementById('scanner-modal').classList.add('hidden');
+      if (html5QrcodeScanner && html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
+    });
+
+    window.addEventListener('load', initPeer);
+  </script>
+</body>
+</html>
