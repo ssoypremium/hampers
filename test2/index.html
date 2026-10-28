@@ -2,134 +2,493 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Encrypted QR A4 Label Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ScanBilling Pro - Manual Confirm & Beep</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- PeerJS for WebRTC -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <!-- QRCode.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- HTML5-QRCode Scanner -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HTML2PDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
-    body { background-color: #020617; color: #f8fafc; font-family: system-ui, sans-serif; }
-    
-    /* A4 Print & Border Styles */
-    @media print {
-      body * { visibility: hidden; }
-      #printable-sheet, #printable-sheet * { visibility: visible; }
-      #printable-sheet { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
-      .no-print { display: none !important; }
-      @page { size: A4 portrait; margin: 8mm; }
-    }
+    body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+    #reader video { border-radius: 0.75rem; object-fit: cover; width: 100% !important; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start p-4 antialiased">
+<body class="min-h-screen flex flex-col items-center justify-start p-3 sm:p-5 antialiased">
 
-  <!-- Control Form (Screen Only) -->
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xl w-full flex flex-col gap-4 shadow-2xl mb-8 no-print">
-    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-      <h2 class="text-base font-bold text-white flex items-center gap-2">
-        <i data-lucide="lock" class="w-5 h-5 text-indigo-400"></i> Encrypted A4 QR Sheet Studio
+  <!-- Header -->
+  <header class="w-full max-w-5xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30 flex items-center justify-center">
+        <i data-lucide="scan-line" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-indigo-400 to-teal-300 bg-clip-text text-transparent">ScanBilling Pro</h1>
+        <p class="text-[11px] text-slate-400">Green Light + Manual Add Button Billing</p>
+      </div>
+    </div>
+    <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
+      <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+      <span id="status-text">Initializing...</span>
+    </div>
+  </header>
+
+  <main class="w-full max-w-5xl flex flex-col gap-4">
+
+    <!-- STEP 1: Pairing QR Code Card -->
+    <div id="pairing-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center">
+      <h2 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+        <i data-lucide="qr-code" class="w-5 h-5 text-indigo-400"></i> Pair Mobile Scanner with PC
       </h2>
-      <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-500/30">Secure Encrypted Data</span>
-    </div>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <div>
-        <label class="text-xs text-slate-400">Item Name:</label>
-        <input type="text" id="item-name" value="Wireless Mouse" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400">Declaration / Desc:</label>
-        <input type="text" id="item-desc" value="Ergonomic 2.4G" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400">Hidden Price (₹):</label>
-        <input type="number" id="item-price" value="499.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400">Default Qty per Scan:</label>
-        <input type="number" id="item-qty" value="1" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-      </div>
-    </div>
-    
-    <div class="flex gap-2">
-      <button onclick="generateA4Sheet()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg transition">
-        Generate Encrypted Grid
-      </button>
+      <p class="text-xs text-slate-400 mb-5 max-w-sm leading-relaxed">
+        PC screen par yeh page open rakhein. Mobile se "Scan PC QR Code" daba kar QR scan karein.
+      </p>
 
-      <button onclick="window.print()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-lg transition">
-        <i data-lucide="printer" class="w-4 h-4"></i> Print / Save A4 (PDF)
+      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[200px] min-w-[200px] flex items-center justify-center">
+        <div id="qrcode"></div>
+        <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
+          <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
+          <span class="text-xs">Generating Session...</span>
+        </div>
+      </div>
+
+      <button id="btn-open-scanner" class="py-2.5 px-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 shadow-lg">
+        <i data-lucide="camera" class="w-4 h-4"></i> Scan PC QR Code
       </button>
     </div>
-  </div>
 
-  <!-- Printable A4 Sheet Grid Container -->
-  <div id="printable-sheet" class="bg-white p-4 rounded-lg shadow-2xl w-[210mm] min-h-[297mm] flex flex-col text-black">
-    <div class="text-center mb-3 border-b border-gray-300 pb-2">
-      <h3 id="sheet-title" class="text-sm font-bold tracking-widest text-gray-800">ENCRYPTED PRODUCT LABELS</h3>
-      <p class="text-[10px] text-gray-500">Cut-Border Grid (45mm x 30mm) - Scannable via ScanBilling App Only</p>
+    <!-- STEP 2: Mobile Barcode Scanner Unit -->
+    <div id="mobile-scanner-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <span class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
+          <i data-lucide="smartphone" class="w-4 h-4"></i> Mobile Scanner Unit
+        </span>
+        <span id="scan-status-indicator" class="text-[11px] text-slate-400 font-mono flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-slate-600"></span> Ready to Scan
+        </span>
+      </div>
+
+      <!-- Camera Scanner View -->
+      <div class="overflow-hidden rounded-xl bg-black min-h-[260px] relative border border-slate-800">
+        <div id="barcode-reader" class="w-full"></div>
+        
+        <!-- Flash Green Overlay on Scan -->
+        <div id="green-light-flash" class="absolute inset-0 bg-emerald-500/30 border-4 border-emerald-400 pointer-events-none opacity-0 transition-opacity duration-200 flex items-center justify-center">
+          <span class="bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i> SCANNED!
+          </span>
+        </div>
+      </div>
+
+      <!-- Scanned Item Confirmation Box -->
+      <div id="scanned-item-card" class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col gap-2">
+        <div class="text-[11px] text-slate-400 font-medium">Scanned Code / Item:</div>
+        <div id="scanned-code-display" class="text-sm font-bold font-mono text-emerald-400 bg-slate-900 p-2 rounded border border-slate-800 truncate">
+          No item scanned yet.
+        </div>
+
+        <div class="flex items-center gap-2 mt-1">
+          <div class="flex items-center border border-slate-800 bg-slate-900 rounded-xl px-2 py-1 gap-2">
+            <span class="text-[11px] text-slate-400">Qty:</span>
+            <button onclick="adjustMobileQty(-1)" class="w-6 h-6 bg-slate-800 text-white rounded font-bold">-</button>
+            <span id="mobile-qty-val" class="font-mono text-sm font-bold text-white px-1">1</span>
+            <button onclick="adjustMobileQty(1)" class="w-6 h-6 bg-slate-800 text-white rounded font-bold">+</button>
+          </div>
+
+          <button id="btn-add-to-bill" disabled class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:bg-slate-800 disabled:text-slate-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> ADD TO BILL (SEND TO PC)
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Grid Layout with Cut Borders -->
-    <div class="grid grid-cols-4 gap-2 flex-1 justify-items-center">
-      <!-- Dynamic Labels Injected Here -->
+    <!-- STEP 3: PC Billing Station Interface -->
+    <div id="pc-billing-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+          <i data-lucide="monitor" class="w-4 h-4"></i> PC Billing Station
+        </span>
+        <div class="flex items-center gap-2">
+          <button id="btn-download-bill" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs rounded-lg flex items-center gap-1 transition shadow">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Download Bill (PDF)
+          </button>
+          <button id="btn-clear-bill" class="px-3 py-1 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-xs rounded-lg flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear Bill
+          </button>
+        </div>
+      </div>
+
+      <!-- Printable Area -->
+      <div id="printable-bill-area" class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="mb-4 pb-2 border-b border-slate-800 flex justify-between items-center">
+          <div>
+            <h3 class="text-sm font-bold text-white">INVOICE / BILLING RECEIPT</h3>
+            <p class="text-[10px] text-slate-400">Date: <span id="bill-date"></span></p>
+          </div>
+          <div class="text-right text-[10px] text-indigo-400 font-mono">ScanBilling System</div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="p-3">#</th>
+                <th class="p-3">Item Name / Desc</th>
+                <th class="p-3">Qty</th>
+                <th class="p-3">Price (₹)</th>
+                <th class="p-3">Total (₹)</th>
+                <th class="p-3 text-center no-print">Action</th>
+              </tr>
+            </thead>
+            <tbody id="bill-items-table" class="divide-y divide-slate-800/60">
+              <tr id="empty-row">
+                <td colspan="6" class="p-6 text-center text-slate-500">No items added yet. Scan & press "ADD TO BILL" on mobile!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Summary & Discount Area -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 pt-4 border-t border-slate-800 gap-4">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <label class="text-xs text-slate-400 whitespace-nowrap">Discount (%):</label>
+            <input type="number" id="discount-input" value="0" min="0" max="100" class="w-24 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
+          </div>
+
+          <div class="flex flex-col items-end gap-1 w-full sm:w-auto text-right">
+            <div class="text-xs text-slate-400">Subtotal: <span id="subtotal-val" class="text-white font-mono">₹0.00</span></div>
+            <div class="text-xs text-slate-400">Discount Amt: <span id="discount-val" class="text-rose-400 font-mono">₹0.00</span></div>
+            <div class="text-sm font-bold text-emerald-400">Grand Total: <span id="grand-total-val" class="font-mono text-base">₹0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session Log -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex flex-col">
+      <h3 class="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1.5">
+        <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i> Activity Log
+      </h3>
+      <div id="activity-log" class="space-y-1 max-h-[60px] overflow-y-auto text-[11px] text-slate-500 font-mono">
+        <div>System ready.</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pairing Scanner Modal -->
+  <div id="scanner-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-sm w-full flex flex-col gap-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
+          <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i> Scan PC QR Code
+        </h3>
+        <button id="btn-close-scanner" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="overflow-hidden rounded-xl bg-black min-h-[200px]">
+        <div id="reader" class="w-full"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    lucide.createIcons();
-
-    // Simple XOR Cipher for Encrypting QR Payload
+    let peer = null, conn = null, myPeerId = null, html5QrcodeScanner = null, barcodeScanner = null;
+    let isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let billItems = [];
+    
+    let currentScannedPayload = null;
+    let mobileQty = 1;
     const SECRET_KEY = "CAM_SYNC_SECRET_BILLING_KEY";
 
-    function encryptData(text) {
-      let result = '';
-      for (let i = 0; i < text.length; i++) {
-        result += String.fromCharCode(text.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
-      }
-      return "ENC:" + btoa(result);
+    const statusBadge = document.getElementById('status-badge'), statusText = document.getElementById('status-text');
+    const pairingSection = document.getElementById('pairing-section'), mobileScannerSection = document.getElementById('mobile-scanner-section'), pcBillingSection = document.getElementById('pc-billing-section');
+    const qrContainer = document.getElementById('qrcode'), qrLoader = document.getElementById('qr-loader');
+    const activityLog = document.getElementById('activity-log'), billItemsTable = document.getElementById('bill-items-table');
+    const discountInput = document.getElementById('discount-input'), subtotalVal = document.getElementById('subtotal-val'), discountVal = document.getElementById('discount-val'), grandTotalVal = document.getElementById('grand-total-val');
+    const billDateSpan = document.getElementById('bill-date');
+    const greenLightFlash = document.getElementById('green-light-flash'), scannedCodeDisplay = document.getElementById('scanned-code-display'), btnAddTobill = document.getElementById('btn-add-to-bill');
+
+    lucide.createIcons();
+    billDateSpan.textContent = new Date().toLocaleDateString();
+
+    function addLog(msg) {
+      const item = document.createElement('div');
+      item.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      activityLog.appendChild(item);
+      activityLog.scrollTop = activityLog.scrollHeight;
     }
 
-    function generateA4Sheet() {
-      const name = document.getElementById('item-name').value;
-      const desc = document.getElementById('item-desc').value;
-      const price = parseFloat(document.getElementById('item-price').value) || 0;
-      const qty = parseInt(document.getElementById('item-qty').value) || 1;
+    function updateStatus(state, msg) {
+      statusText.textContent = msg;
+      if (state === 'connected') {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
+      }
+    }
 
-      const rawJson = JSON.stringify({ name, desc, price, qty });
-      const encryptedPayload = encryptData(rawJson);
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(900, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.12);
+      } catch (e) {}
+    }
 
-      const gridContainer = document.querySelector('#printable-sheet .grid');
-      gridContainer.innerHTML = ''; 
+    function decryptData(ciphertext) {
+      try {
+        if (!ciphertext.startsWith("ENC:")) return null;
+        const base64Decoded = atob(ciphertext.replace("ENC:", ""));
+        let result = '';
+        for (let i = 0; i < base64Decoded.length; i++) {
+          result += String.fromCharCode(base64Decoded.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
+        }
+        return JSON.parse(result);
+      } catch (e) {
+        return null;
+      }
+    }
 
-      document.getElementById('sheet-title').textContent = (name.toUpperCase() || "PRODUCT") + " - ENCRYPTED LABELS";
+    function initPeer() {
+      peer = new Peer({ debug: 1 });
+      peer.on('open', (id) => {
+        myPeerId = id;
+        qrLoader.classList.add('hidden');
+        new QRCode(qrContainer, { text: `${window.location.origin}${window.location.pathname}?connect=${id}`, width: 175, height: 175 });
+        updateStatus('waiting', 'Ready for Connection');
+        addLog('Generated connection ID.');
 
-      // Create 24 Labels for Full A4 Page Fill with Cut Border
-      for (let i = 0; i < 24; i++) {
-        const labelBox = document.createElement('div');
-        // Border applied for easy cutting
-        labelBox.className = "w-[45mm] h-[32mm] border-2 border-dashed border-gray-400 p-1.5 flex flex-col items-center justify-between bg-white rounded-sm box-border relative";
-        
-        labelBox.innerHTML = `
-          <div class="text-[9px] font-bold text-gray-800 truncate w-full text-center leading-tight">${name}</div>
-          <div class="qr-placeholder w-[22mm] h-[22mm] flex items-center justify-center my-0.5"></div>
-          <div class="text-[7.5px] font-mono text-gray-500 truncate w-full text-center">${desc}</div>
-        `;
+        const targetFromUrl = new URLSearchParams(window.location.search).get('connect');
+        if (targetFromUrl) connectToPeer(targetFromUrl);
+      });
 
-        gridContainer.appendChild(labelBox);
+      peer.on('connection', (c) => setupConnection(c));
+    }
 
-        const qrPlace = labelBox.querySelector('.qr-placeholder');
-        new QRCode(qrPlace, {
-          text: encryptedPayload,
-          width: 80,
-          height: 80,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M
+    function connectToPeer(targetId) {
+      if (!targetId || targetId === myPeerId) return;
+      updateStatus('connecting', 'Connecting...');
+      setupConnection(peer.connect(targetId, { reliable: true }));
+    }
+
+    function setupConnection(connection) {
+      conn = connection;
+      conn.on('open', () => {
+        updateStatus('connected', 'Paired & Connected');
+        addLog('Connected successfully!');
+        pairingSection.classList.add('hidden');
+
+        const targetFromUrl = new URLSearchParams(window.location.search).get('connect');
+        if (isMobile || targetFromUrl) {
+          mobileScannerSection.classList.remove('hidden');
+          startMobileBarcodeScanner();
+        } else {
+          pcBillingSection.classList.remove('hidden');
+        }
+      });
+
+      conn.on('data', (data) => {
+        if (data && data.type === 'add-to-bill') {
+          processScannedData(data.code, data.qty);
+        }
+      });
+
+      conn.on('close', () => {
+        updateStatus('disconnected', 'Disconnected');
+        addLog('Connection closed.');
+        if (barcodeScanner && barcodeScanner.isScanning) barcodeScanner.stop();
+      });
+    }
+
+    function startMobileBarcodeScanner() {
+      barcodeScanner = new Html5Qrcode("barcode-reader");
+      barcodeScanner.start(
+        { facingMode: "environment" },
+        { fps: 15, qrbox: { width: 250, height: 150 } },
+        (decodedText) => {
+          if (currentScannedPayload === decodedText) return; // Prevent continuous flash for same static frame
+
+          currentScannedPayload = decodedText;
+          mobileQty = 1;
+          document.getElementById('mobile-qty-val').textContent = "1";
+
+          // Trigger Green Light & Beep
+          playBeepSound();
+          if (navigator.vibrate) navigator.vibrate(80);
+
+          greenLightFlash.classList.remove('opacity-0');
+          setTimeout(() => greenLightFlash.classList.add('opacity-0'), 400);
+
+          // Parse for mobile display
+          const decrypted = decryptData(decodedText);
+          if (decrypted) {
+            scannedCodeDisplay.textContent = `${decrypted.name} (₹${decrypted.price})`;
+          } else {
+            scannedCodeDisplay.textContent = decodedText;
+          }
+
+          // Enable Add Button
+          btnAddTobill.disabled = false;
+        },
+        (error) => {}
+      ).catch(err => addLog('Camera permission error.'));
+    }
+
+    window.adjustMobileQty = function(delta) {
+      mobileQty = Math.max(1, mobileQty + delta);
+      document.getElementById('mobile-qty-val').textContent = mobileQty;
+    };
+
+    btnAddTobill.addEventListener('click', () => {
+      if (!currentScannedPayload) return;
+
+      if (conn && conn.open) {
+        conn.send({
+          type: 'add-to-bill',
+          code: currentScannedPayload,
+          qty: mobileQty
         });
+        addLog(`Sent to PC: ${currentScannedPayload} (Qty: ${mobileQty})`);
+
+        // Reset Mobile Card State
+        scannedCodeDisplay.textContent = "Added to PC Bill! Ready for next scan.";
+        btnAddTobill.disabled = true;
+        currentScannedPayload = null;
       }
-      lucide.createIcons();
+    });
+
+    function processScannedData(rawText, addQty = 1) {
+      let itemData = { name: rawText, qty: addQty, price: 0.00 };
+
+      const decrypted = decryptData(rawText);
+      if (decrypted) {
+        itemData.name = `${decrypted.name} (${decrypted.desc || ''})`;
+        itemData.qty = (parseInt(decrypted.qty) || 1) * addQty;
+        itemData.price = parseFloat(decrypted.price) || 0.00;
+      }
+
+      addItemToBill(itemData);
     }
 
-    window.onload = generateA4Sheet;
+    function addItemToBill(itemData) {
+      const existing = billItems.find(item => item.name === itemData.name);
+      if (existing) {
+        existing.qty += itemData.qty;
+      } else {
+        billItems.push({ id: Date.now(), ...itemData });
+      }
+      renderBillTable();
+    }
+
+    function renderBillTable() {
+      billItemsTable.innerHTML = '';
+      if (billItems.length === 0) {
+        billItemsTable.innerHTML = `<tr id="empty-row"><td colspan="6" class="p-6 text-center text-slate-500">No items added yet. Scan & press "ADD TO BILL" on mobile!</td></tr>`;
+        calculateTotals();
+        return;
+      }
+
+      billItems.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-900/40 transition';
+        tr.innerHTML = `
+          <td class="p-3 text-slate-400">${index + 1}</td>
+          <td class="p-3 font-mono font-medium text-indigo-300">${item.name}</td>
+          <td class="p-3">
+            <input type="number" min="1" value="${item.qty}" onchange="updateItem(${item.id}, 'qty', this.value)" class="w-16 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-white focus:outline-none focus:border-indigo-500 font-mono">
+          </td>
+          <td class="p-3">
+            <input type="number" step="0.01" min="0" value="${item.price.toFixed(2)}" onchange="updateItem(${item.id}, 'price', this.value)" class="w-24 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-white focus:outline-none focus:border-indigo-500 font-mono" placeholder="0.00">
+          </td>
+          <td class="p-3 font-mono text-emerald-400 font-medium">₹${(item.qty * item.price).toFixed(2)}</td>
+          <td class="p-3 text-center no-print">
+            <button onclick="removeItem(${item.id})" class="p-1 text-slate-500 hover:text-rose-400 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </td>
+        `;
+        billItemsTable.appendChild(tr);
+      });
+      lucide.createIcons();
+      calculateTotals();
+    }
+
+    window.updateItem = function(id, field, val) {
+      const item = billItems.find(i => i.id === id);
+      if (item) {
+        item[field] = field === 'qty' ? parseInt(val) || 1 : parseFloat(val) || 0;
+        renderBillTable();
+      }
+    }
+
+    window.removeItem = function(id) {
+      billItems = billItems.filter(i => i.id !== id);
+      renderBillTable();
+    }
+
+    document.getElementById('btn-clear-bill').addEventListener('click', () => {
+      billItems = [];
+      renderBillTable();
+    });
+
+    function calculateTotals() {
+      let subtotal = billItems.reduce((acc, item) => acc + (item.qty * item.price), 0);
+      let discountPct = parseFloat(discountInput.value) || 0;
+      let discountAmount = (subtotal * discountPct) / 100;
+      let grandTotal = subtotal - discountAmount;
+
+      subtotalVal.textContent = `₹${subtotal.toFixed(2)}`;
+      discountVal.textContent = `-₹${discountAmount.toFixed(2)}`;
+      grandTotalVal.textContent = `₹${grandTotal.toFixed(2)}`;
+    }
+
+    discountInput.addEventListener('input', calculateTotals);
+
+    document.getElementById('btn-download-bill').addEventListener('click', () => {
+      if (billItems.length === 0) {
+        alert("Bill is empty!");
+        return;
+      }
+      const element = document.getElementById('printable-bill-area');
+      const opt = {
+        margin:       10,
+        filename:     `Invoice_${Date.now()}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    });
+
+    document.getElementById('btn-open-scanner').addEventListener('click', () => {
+      document.getElementById('scanner-modal').classList.remove('hidden');
+      if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
+      html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 180 }, (text) => {
+        document.getElementById('scanner-modal').classList.add('hidden');
+        if (html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
+        let targetPeerId = text.includes('connect=') ? new URL(text).searchParams.get('connect') : text;
+        connectToPeer(targetPeerId);
+      }).catch(() => addLog('Scanner denied.'));
+    });
+
+    document.getElementById('btn-close-scanner').addEventListener('click', () => {
+      document.getElementById('scanner-modal').classList.add('hidden');
+      if (html5QrcodeScanner && html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
+    });
+
+    window.addEventListener('load', initPeer);
   </script>
 </body>
 </html>
