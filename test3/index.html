@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>O2 Remote Mouse & Keyboard Hub</title>
+  <title>O2 Typing Practice & Remote Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -20,11 +20,11 @@
   <header class="w-full max-w-md mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
     <div class="flex items-center gap-2">
       <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
-        <i data-lucide="mouse-pointer-click" class="w-5 h-5"></i>
+        <i data-lucide="keyboard" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-sm font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Remote Control</h1>
-        <p class="text-[10px] text-slate-400">Phone to PC Mouse & Keyboard</p>
+        <h1 class="text-sm font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Typing Practice Hub</h1>
+        <p class="text-[10px] text-slate-400">Mobile Controller & PC Practice Game</p>
       </div>
     </div>
     <div id="status-badge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
@@ -38,7 +38,7 @@
     <!-- QR Handshake Card -->
     <div id="qr-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col items-center text-center">
       <h2 class="text-sm font-bold text-slate-100 mb-1">Pair Device</h2>
-      <p class="text-xs text-slate-400 mb-3">Scan this QR code from your phone to connect as a remote control.</p>
+      <p class="text-xs text-slate-400 mb-3">Scan this QR code from your mobile phone to start remote typing practice.</p>
       <div class="bg-white p-2.5 rounded-xl border-4 border-slate-800 mb-3 relative min-h-[150px] min-w-[150px] flex items-center justify-center">
         <div id="qrcode"></div>
         <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
@@ -51,39 +51,39 @@
       </button>
     </div>
 
-    <!-- Remote Controller Interface (Hidden until connected on mobile or active on remote) -->
+    <!-- Controller & Practice Interface (Hidden until connected) -->
     <div id="control-section" class="hidden flex flex-col gap-4">
       
-      <!-- Touchpad Area -->
-      <div id="touchpad" class="bg-slate-900 border-2 border-dashed border-slate-700 rounded-2xl h-48 flex flex-col items-center justify-center select-none cursor-pointer relative shadow-inner active:border-indigo-500">
-        <i data-lucide="move" class="w-6 h-6 text-slate-600 mb-1"></i>
-        <span class="text-xs font-semibold text-slate-400">Touchpad Area (Swipe to move mouse)</span>
-        <div class="absolute bottom-2 w-full flex justify-around px-4">
-          <button id="btn-left-click" class="px-6 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold border border-slate-700 shadow">LEFT CLICK</button>
-          <button id="btn-right-click" class="px-6 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold border border-slate-700 shadow">RIGHT CLICK</button>
+      <!-- Typing Practice Game Box -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3">
+        <div class="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2">
+          <span>Target Practice Word:</span>
+          <span id="target-word" class="font-mono text-emerald-400 font-bold text-sm">O2_SECURE</span>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="practice-input" placeholder="Type here to practice..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
+          <button id="btn-submit-word" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow">Send</button>
         </div>
       </div>
 
-      <!-- Remote Keyboard Input -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2">
-        <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="keyboard" class="w-4 h-4 text-cyan-400"></i> Remote Keyboard Type
-        </label>
-        <div class="flex gap-2">
-          <input type="text" id="type-input" placeholder="Type text to send to PC..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
-          <button id="btn-send-text" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">Send</button>
+      <!-- Touchpad Controller -->
+      <div id="touchpad" class="bg-slate-900 border-2 border-dashed border-slate-700 rounded-2xl h-36 flex flex-col items-center justify-center select-none cursor-pointer relative shadow-inner">
+        <i data-lucide="move" class="w-5 h-5 text-slate-600 mb-1"></i>
+        <span class="text-xs font-semibold text-slate-400">Mobile Touchpad (Swipe to Move Mouse)</span>
+        <div class="absolute bottom-2 w-full flex justify-around px-4">
+          <button id="btn-left-click" class="px-5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[11px] font-bold border border-slate-700">CLICK</button>
         </div>
       </div>
 
     </div>
 
-    <!-- PC Receiver Logs / Status Display -->
+    <!-- PC Receiver Logs / Practice Score -->
     <div id="receiver-log-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2">
       <h3 class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-        <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i> PC Receiver Activity
+        <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> PC Game Practice Output
       </h3>
-      <div id="log-content" class="bg-slate-950 p-3 rounded-xl text-[11px] font-mono text-emerald-400 h-28 overflow-y-auto border border-slate-800">
-        Waiting for remote commands...
+      <div id="log-content" class="bg-slate-950 p-3 rounded-xl text-[11px] font-mono text-cyan-300 h-32 overflow-y-auto border border-slate-800">
+        Waiting for typing commands...
       </div>
     </div>
 
@@ -93,7 +93,7 @@
   <div id="scanner-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-sm w-full shadow-2xl flex flex-col gap-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-1">Scan QR</h3>
+        <h3 class="text-xs font-semibold text-slate-200">Scan QR</h3>
         <button id="btn-close-scanner" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div class="overflow-hidden rounded-xl bg-black min-h-[200px]"><div id="reader" class="w-full"></div></div>
@@ -102,13 +102,14 @@
 
   <script>
     let peer = null, conn = null, myPeerId = null, html5QrcodeScanner = null;
-    let isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    let wordsList = ["O2_HUB", "SECURE_TUNNEL", "PEERJS_FAST", "TYPING_GAME", "CIPHER_TEXT"];
+    let currentWordIndex = 0;
 
     const statusBadge = document.getElementById('status-badge'), statusText = document.getElementById('status-text');
     const qrCard = document.getElementById('qr-card'), controlSection = document.getElementById('control-section');
     const qrContainer = document.getElementById('qrcode'), qrLoader = document.getElementById('qr-loader');
     const logContent = document.getElementById('log-content');
-    const touchpad = document.getElementById('touchpad'), typeInput = document.getElementById('type-input');
+    const touchpad = document.getElementById('touchpad'), practiceInput = document.getElementById('practice-input'), targetWord = document.getElementById('target-word');
 
     lucide.createIcons();
 
@@ -142,13 +143,17 @@
       });
 
       conn.on('data', (data) => {
-        // PC Side execution of incoming phone commands
         if (data.type === 'mousemove') {
-          logContent.innerHTML += `<div>[Mouse Move] dx: ${data.dx}, dy: ${data.dy}</div>`;
-        } else if (data.type === 'click') {
-          logContent.innerHTML += `<div>[Mouse Click] ${data.button}</div>`;
+          logContent.innerHTML += `<div>[Mouse Move] X: ${data.dx}, Y: ${data.dy}</div>`;
         } else if (data.type === 'type') {
-          logContent.innerHTML += `<div>[Keyboard Type] ${data.text}</div>`;
+          let expected = targetWord.textContent.trim();
+          if (data.text === expected) {
+            logContent.innerHTML += `<div class="text-emerald-400">[Success] Typed: ${data.text} (Correct!)</div>`;
+            currentWordIndex = (currentWordIndex + 1) % wordsList.length;
+            targetWord.textContent = wordsList[currentWordIndex];
+          } else {
+            logContent.innerHTML += `<div class="text-rose-400">[Failed] Typed: ${data.text} (Expected: ${expected})</div>`;
+          }
         }
         logContent.scrollTop = logContent.scrollHeight;
       });
@@ -166,7 +171,6 @@
       }
     }
 
-    // Touchpad Move Events (Phone Side)
     let startX = 0, startY = 0;
     touchpad.addEventListener('touchstart', (e) => {
       startX = e.touches[0].clientX;
@@ -175,28 +179,22 @@
 
     touchpad.addEventListener('touchmove', (e) => {
       if (!conn || !conn.open) return;
-      let currentX = e.touches[0].clientX;
-      let currentY = e.touches[0].clientY;
-      let dx = currentX - startX;
-      let dy = currentY - startY;
-      startX = currentX;
-      startY = currentY;
-
+      let dx = e.touches[0].clientX - startX;
+      let dy = e.touches[0].clientY - startY;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
       conn.send({ type: 'mousemove', dx: dx, dy: dy });
     });
 
     document.getElementById('btn-left-click').addEventListener('click', () => {
       if (conn && conn.open) conn.send({ type: 'click', button: 'LEFT' });
     });
-    document.getElementById('btn-right-click').addEventListener('click', () => {
-      if (conn && conn.open) conn.send({ type: 'click', button: 'RIGHT' });
-    });
 
-    document.getElementById('btn-send-text').addEventListener('click', () => {
-      let text = typeInput.value.trim();
+    document.getElementById('btn-submit-word').addEventListener('click', () => {
+      let text = practiceInput.value.trim();
       if (!text || !conn || !conn.open) return;
       conn.send({ type: 'type', text: text });
-      typeInput.value = '';
+      practiceInput.value = '';
     });
 
     document.getElementById('btn-open-scanner').addEventListener('click', () => {
