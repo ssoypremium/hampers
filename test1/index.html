@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>O2 Board - Real-Time P2P Collaborative Whiteboard</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PeerJS for WebRTC Peer-to-Peer Connection -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+  <!-- QRCode.js for QR Code Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- HTML5-QRCode for In-App QR Code Scanner -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* Scanner video styling */
+    #reader video {
+      border-radius: 0.75rem;
+      object-fit: cover;
+      width: 100% !important;
+    }
+
+    /* Touch Canvas Setup */
+    canvas {
+      touch-action: none;
+    }
+
+    /* Active Tool Styling */
+    .tool-btn.active {
+      background-color: #4f46e5 !important;
+      color: #ffffff !important;
+      border-color: #6366f1 !important;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+    }
+
+    .grid-btn.active {
+      background-color: #3b82f6 !important;
+      color: #ffffff !important;
+      border-color: #60a5fa !important;
+    }
+
+    .color-btn.active {
+      ring-width: 2px;
+      transform: scale(1.2);
+    }
+
+    /* Floating Remote Cursor Pointer */
+    #remote-cursor {
+      pointer-events: none;
+      transition: transform 0.04s linear, opacity 0.2s ease;
+      z-index: 40;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-2 sm:p-4 antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="w-full max-w-5xl mb-3 flex items-center justify-between border-b border-slate-800 pb-3">
+    <div class="flex items-center gap-3">
+      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30 flex items-center justify-center">
+        <i data-lucide="layout" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold tracking-wide bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">O2 Board</h1>
+        <p class="text-[11px] text-slate-400">P2P Live Canvas & Grid Tools</p>
+      </div>
+    </div>
+
+    <!-- User Color Indicator & Connection Status -->
+    <div class="flex items-center gap-2">
+      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] text-slate-300">
+        <span class="text-slate-400">Your Color:</span>
+        <span id="user-color-indicator" class="w-3.5 h-3.5 rounded-full border border-white/40 shadow-sm"></span>
+      </div>
+
+      <!-- Status Badge -->
+      <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span id="status-text">Initializing...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Area -->
+  <main class="w-full max-w-5xl flex flex-col gap-3">
+
+    <!-- QR Handshake Card (Visible BEFORE Connection) -->
+    <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
+      <div class="absolute -right-10 -top-10 w-36 h-36 bg-indigo-500/10 rounded-full blur-2xl"></div>
+      <div class="absolute -left-10 -bottom-10 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl"></div>
+
+      <h2 class="text-xl font-bold text-slate-100 mb-1 flex items-center gap-2">
+        <i data-lucide="qr-code" class="w-5 h-5 text-indigo-400"></i> Pair Devices
+      </h2>
+      <p class="text-xs text-slate-400 mb-5 max-w-sm leading-relaxed">
+        Scan this QR code from another device or open the camera scanner below to connect instantly.
+      </p>
+
+      <!-- QR Code Container -->
+      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[190px] min-w-[190px] flex items-center justify-center">
+        <div id="qrcode"></div>
+        <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
+          <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
+          <span class="text-xs">Generating Peer ID...</span>
+        </div>
+      </div>
+
+      <!-- Pairing Controls -->
+      <div class="w-full max-w-xs flex flex-col gap-2.5">
+        <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25">
+          <i data-lucide="camera" class="w-4 h-4"></i>
+          Scan Peer QR Code
+        </button>
+
+        <button id="btn-copy-link" class="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-300 rounded-xl text-xs font-medium transition flex items-center justify-center gap-2 border border-slate-700">
+          <i data-lucide="copy" class="w-4 h-4"></i>
+          Copy Pairing Link
+        </button>
+      </div>
+    </div>
+
+    <!-- Collaborative Whiteboard Interface (Visible AFTER Connection) -->
+    <div id="whiteboard-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-2.5 sm:p-3 shadow-2xl flex flex-col gap-2.5 transition-all duration-300 hidden">
+      
+      <!-- Top Toolbar Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950/80 p-2 rounded-xl border border-slate-800/80">
+        
+        <!-- Drawing Tools -->
+        <div class="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 max-w-full scrollbar-none">
+          
+          <!-- Freehand Pen -->
+          <button id="tool-pen" title="Pencil / Freehand Brush" class="tool-btn active p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center">
+            <i data-lucide="pen-tool" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Eraser -->
+          <button id="tool-eraser" title="Eraser" class="tool-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center">
+            <i data-lucide="eraser" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Rectangle / Square -->
+          <button id="tool-rect" title="Rectangle / Square" class="tool-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center">
+            <i data-lucide="square" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Horizontal Line -->
+          <button id="tool-hline" title="Horizontal Line" class="tool-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center">
+            <i data-lucide="minus" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Vertical Line -->
+          <button id="tool-vline" title="Vertical Line" class="tool-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center rotate-90">
+            <i data-lucide="minus" class="w-4 h-4"></i>
+          </button>
+
+          <div class="h-5 w-[1px] bg-slate-800 mx-1"></div>
+
+          <!-- Color Palette Picker -->
+          <div class="flex items-center gap-1.5" id="color-palette">
+            <button data-color="#f43f5e" class="color-btn w-5 h-5 rounded-full bg-rose-500 transition"></button>
+            <button data-color="#fbbf24" class="color-btn w-5 h-5 rounded-full bg-amber-400 transition"></button>
+            <button data-color="#34d399" class="color-btn w-5 h-5 rounded-full bg-emerald-400 transition"></button>
+            <button data-color="#38bdf8" class="color-btn w-5 h-5 rounded-full bg-sky-400 transition"></button>
+            <button data-color="#6366f1" class="color-btn w-5 h-5 rounded-full bg-indigo-500 transition"></button>
+            <button data-color="#c084fc" class="color-btn w-5 h-5 rounded-full bg-purple-400 transition"></button>
+            <button data-color="#ffffff" class="color-btn w-5 h-5 rounded-full bg-white transition"></button>
+          </div>
+        </div>
+
+        <!-- Grid Modes & Action Tools -->
+        <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
+          
+          <!-- Grid Background Modes -->
+          <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+            <button id="grid-dots" title="Dots Grid" class="grid-btn active px-2 py-1 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 transition flex items-center gap-1">
+              <i data-lucide="dot" class="w-3.5 h-3.5"></i>
+              Dots
+            </button>
+            <button id="grid-lines" title="Line Grid" class="grid-btn px-2 py-1 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 transition flex items-center gap-1">
+              <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+              Lines
+            </button>
+            <button id="grid-none" title="Blank Canvas" class="grid-btn px-2 py-1 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 transition flex items-center gap-1">
+              <i data-lucide="square" class="w-3.5 h-3.5"></i>
+              None
+            </button>
+          </div>
+
+          <!-- Size Slider -->
+          <div class="flex items-center gap-1.5 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 text-xs">
+            <span class="text-[10px] text-slate-400 font-mono">Size</span>
+            <input id="brush-size" type="range" min="1" max="30" value="4" class="w-14 sm:w-20 accent-indigo-500 cursor-pointer">
+            <span id="brush-size-val" class="text-[10px] font-mono text-slate-300 w-4 text-right">4</span>
+          </div>
+
+          <div class="h-5 w-[1px] bg-slate-800"></div>
+
+          <!-- Undo -->
+          <button id="btn-undo" title="Undo" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center">
+            <i data-lucide="undo" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Redo -->
+          <button id="btn-redo" title="Redo" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center justify-center">
+            <i data-lucide="redo" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Clear Canvas -->
+          <button id="btn-clear-canvas" title="Clear Canvas" class="p-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 border border-slate-700 transition flex items-center justify-center">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Export PNG -->
+          <button id="btn-save-canvas" title="Export PNG" class="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center justify-center shadow-md">
+            <i data-lucide="download" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Canvas Canvas Box -->
+      <div class="relative w-full h-[460px] sm:h-[540px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-inner flex items-center justify-center">
+        <!-- Main Drawing Canvas -->
+        <canvas id="whiteboard" class="w-full h-full cursor-crosshair"></canvas>
+        
+        <!-- Preview Canvas for Shapes -->
+        <canvas id="preview-canvas" class="w-full h-full absolute inset-0 pointer-events-none"></canvas>
+
+        <!-- Floating Remote Cursor -->
+        <div id="remote-cursor" class="absolute left-0 top-0 opacity-0 flex items-center gap-1">
+          <svg class="w-4 h-4 text-indigo-400 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M3 3l7 18 3-7 7-3L3 3z"/>
+          </svg>
+          <span id="remote-cursor-label" class="px-1.5 py-0.5 rounded text-[9px] font-bold text-slate-900 shadow-md">Remote</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 flex flex-col min-h-[120px]">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
+          <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i>
+          Session Log
+        </h3>
+        <button id="btn-clear-log" class="text-[11px] text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
+          <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+          Clear
+        </button>
+      </div>
+
+      <!-- Activity List -->
+      <div id="activity-log" class="flex-1 space-y-1.5 overflow-y-auto max-h-[100px] pr-1">
+        <div id="empty-log" class="h-full min-h-[60px] flex flex-col items-center justify-center text-slate-600 text-center">
+          <i data-lucide="inbox" class="w-5 h-5 mb-1 opacity-40"></i>
+          <p class="text-[11px]">Ready for peer connection.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: Camera Scanner -->
+  <div id="scanner-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl flex flex-col gap-4 relative">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+          <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i>
+          Scan Peer QR Code
+        </h3>
+        <button id="btn-close-scanner" class="text-slate-400 hover:text-white transition p-1 rounded-lg hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="overflow-hidden rounded-xl bg-slate-950 min-h-[220px] border border-slate-800 flex items-center justify-center relative">
+        <div id="reader" class="w-full"></div>
+      </div>
+
+      <p class="text-[11px] text-slate-400 text-center">Point your camera at the QR code on the second device.</p>
+    </div>
+  </div>
+
+  <!-- JavaScript App Logic -->
+  <script>
+    // Palette of DISTINCT vibrant colors
+    const DISTINCT_PALETTE = [
+      '#f43f5e', // Rose / Red
+      '#fbbf24', // Amber / Gold
+      '#34d399', // Emerald / Green
+      '#38bdf8', // Sky Blue
+      '#818cf8', // Indigo / Purple
+      '#c084fc', // Violet
+      '#f472b6'  // Pink
+    ];
+
+    // Pick random unique color for this session
+    let myColor = DISTINCT_PALETTE[Math.floor(Math.random() * DISTINCT_PALETTE.length)];
+
+    // State
+    let peer = null;
+    let conn = null;
+    let myPeerId = null;
+    let html5QrcodeScanner = null;
+
+    let currentTool = 'pen'; // pen, eraser, rect, hline, vline
+    let activeColor = myColor;
+    let activeSize = 4;
+    let gridMode = 'dots'; // dots, lines, none
+    let isDrawing = false;
+
+    let startX = 0;
+    let startY = 0;
+    let lastX = 0;
+    let lastY = 0;
+
+    // Undo / Redo Stacks
+    const historyStack = [];
+    const redoStack = [];
+    const MAX_HISTORY = 25;
+
+    // DOM References
+    const statusBadge = document.getElementById('status-badge');
+    const statusText = document.getElementById('status-text');
+    const qrCard = document.getElementById('qr-card');
+    const whiteboardCard = document.getElementById('whiteboard-card');
+    const qrContainer = document.getElementById('qrcode');
+    const qrLoader = document.getElementById('qr-loader');
+    
+    const canvas = document.getElementById('whiteboard');
+    const ctx = canvas.getContext('2d');
+    const previewCanvas = document.getElementById('preview-canvas');
+    const pCtx = previewCanvas.getContext('2d');
+
+    const activityLog = document.getElementById('activity-log');
+    const emptyLog = document.getElementById('empty-log');
+    const userColorIndicator = document.getElementById('user-color-indicator');
+    const remoteCursor = document.getElementById('remote-cursor');
+    const remoteCursorLabel = document.getElementById('remote-cursor-label');
+
+    const brushSizeSlider = document.getElementById('brush-size');
+    const brushSizeVal = document.getElementById('brush-size-val');
+
+    const btnOpenScanner = document.getElementById('btn-open-scanner');
+    const btnCloseScanner = document.getElementById('btn-close-scanner');
+    const btnCopyLink = document.getElementById('btn-copy-link');
+    const scannerModal = document.getElementById('scanner-modal');
+
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Set User Color Indicator UI
+    userColorIndicator.style.backgroundColor = myColor;
+
+    // Select initial color in palette UI if available
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      if (btn.getAttribute('data-color') === myColor) {
+        btn.classList.add('active', 'ring-2', 'ring-white', 'scale-120');
+      }
+    });
+
+    // Parse URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetFromUrl = urlParams.get('connect');
+
+    // Canvas Sizing with High Resolution Support
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      // Temporary canvas to save current content across resizes
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      if (canvas.width > 0 && canvas.height > 0) {
+        tempCtx.drawImage(canvas, 0, 0);
+      }
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      previewCanvas.width = rect.width * dpr;
+      previewCanvas.height = rect.height * dpr;
+      pCtx.scale(dpr, dpr);
+
+      drawBackground();
+
+      if (tempCanvas.width > 0 && tempCanvas.height > 0) {
+        ctx.drawImage(tempCanvas, 0, 0, tempCanvas.width / dpr, tempCanvas.height / dpr, 0, 0, rect.width, rect.height);
+      }
+    }
+
+    function drawBackground() {
+      const rect = canvas.getBoundingClientRect();
+      ctx.fillStyle = '#090d16';
+      ctx.fillRect(0, 0, rect.width, rect.height);
+
+      if (gridMode === 'dots') {
+        ctx.fillStyle = '#334155';
+        const spacing = 24;
+        for (let x = spacing; x < rect.width; x += spacing) {
+          for (let y = spacing; y < rect.height; y += spacing) {
+            ctx.beginPath();
+            ctx.arc(x, y, 1.3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      } else if (gridMode === 'lines') {
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 0.8;
+        const spacing = 30;
+        for (let x = spacing; x < rect.width; x += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, rect.height);
+          ctx.stroke();
+        }
+        for (let y = spacing; y < rect.height; y += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(rect.width, y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Save Canvas State to Undo History
+    function saveHistory() {
+      if (historyStack.length >= MAX_HISTORY) {
+        historyStack.shift();
+      }
+      historyStack.push(canvas.toDataURL());
+      redoStack.length = 0; // Clear redo on new action
+    }
+
+    // PeerJS Setup
+    function initPeer() {
+      peer = new Peer({ debug: 1 });
+
+      peer.on('open', (id) => {
+        myPeerId = id;
+        qrLoader.classList.add('hidden');
+
+        const currentUrl = window.location.origin + window.location.pathname;
+        const connectUrl = `${currentUrl}?connect=${id}`;
+
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+          text: connectUrl,
+          width: 170,
+          height: 170,
+          colorDark: "#090d16",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
+        updateStatus('waiting', 'Ready for Connection');
+        addLog('Initialized peer endpoint.');
+
+        if (targetFromUrl) {
+          connectToPeer(targetFromUrl);
+        }
+      });
+
+      peer.on('connection', (incomingConn) => {
+        setupConnection(incomingConn);
+      });
+
+      peer.on('error', (err) => {
+        console.error('PeerJS Error:', err);
+        updateStatus('error', 'Peer Error');
+      });
+    }
+
+    function connectToPeer(targetId) {
+      if (!targetId || targetId === myPeerId) return;
+      updateStatus('connecting', 'Connecting...');
+      addLog(`Initiating pairing...`);
+      const outgoingConn = peer.connect(targetId, { reliable: true });
+      setupConnection(outgoingConn);
+    }
+
+    function setupConnection(connection) {
+      conn = connection;
+
+      conn.on('open', () => {
+        updateStatus('connected', 'Connected');
+        addLog('Successfully paired with peer device!');
+
+        // Auto hide QR code card and show full whiteboard canvas
+        qrCard.classList.add('hidden');
+        whiteboardCard.classList.remove('hidden');
+        resizeCanvas();
+        saveHistory();
+
+        // Share initial user color with peer
+        conn.send({ type: 'init-peer', color: myColor });
+      });
+
+      conn.on('data', (data) => {
+        if (typeof data !== 'object') return;
+
+        if (data.type === 'init-peer') {
+          setRemoteCursorColor(data.color);
+        } else if (data.type === 'draw-action') {
+          renderAction(data.action, ctx);
+          saveHistory();
+        } else if (data.type === 'cursor') {
+          updateRemoteCursor(data.x, data.y, data.color);
+        } else if (data.type === 'clear') {
+          drawBackground();
+          saveHistory();
+          addLog('Canvas cleared by remote peer.');
+        }
+      });
+
+      conn.on('close', () => {
+        updateStatus('waiting', 'Disconnected');
+        addLog('Peer disconnected.');
+        whiteboardCard.classList.add('hidden');
+        qrCard.classList.remove('hidden');
+      });
+    }
+
+    function setRemoteCursorColor(color) {
+      remoteCursor.querySelector('svg').style.color = color || '#818cf8';
+      remoteCursorLabel.style.backgroundColor = color || '#818cf8';
+    }
+
+    let hideCursorTimeout = null;
+    function updateRemoteCursor(normX, normY, color) {
+      const rect = canvas.getBoundingClientRect();
+      const px = normX * rect.width;
+      const py = normY * rect.height;
+
+      remoteCursor.style.transform = `translate(${px}px, ${py}px)`;
+      remoteCursor.style.opacity = '1';
+
+      if (color) setRemoteCursorColor(color);
+
+      clearTimeout(hideCursorTimeout);
+      hideCursorTimeout = setTimeout(() => {
+        remoteCursor.style.opacity = '0';
+      }, 2500);
+    }
+
+    function updateStatus(state, message) {
+      statusText.textContent = message;
+      if (state === 'connected') {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
+      } else if (state === 'connecting') {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-indigo-400 animate-ping';
+      } else {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+      }
+    }
+
+    function addLog(text) {
+      if (emptyLog) emptyLog.style.display = 'none';
+      const item = document.createElement('div');
+      item.className = 'p-2 rounded-lg bg-slate-950/70 border border-slate-800/80 text-[11px] text-slate-300 flex justify-between items-center';
+      item.innerHTML = `
+        <span>${text}</span>
+        <span class="text-[9px] font-mono text-slate-500">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+      `;
+      activityLog.appendChild(item);
+      activityLog.scrollTop = activityLog.scrollHeight;
+    }
+
+    // Drawing Normalized Coordinates
+    function getNormalizedCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      let clientX = e.clientX;
+      let clientY = e.clientY;
+
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }
+
+      return {
+        x: (clientX - rect.left) / rect.width,
+        y: (clientY - rect.top) / rect.height
+      };
+    }
+
+    // Drawing Engine Actions Rendering
+    function renderAction(action, targetCtx) {
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      targetCtx.strokeStyle = action.color;
+      targetCtx.fillStyle = action.color;
+      targetCtx.lineWidth = action.size;
+      targetCtx.lineCap = 'round';
+      targetCtx.lineJoin = 'round';
+
+      const x0 = action.x0 * width;
+      const y0 = action.y0 * height;
+      const x1 = action.x1 * width;
+      const y1 = action.y1 * height;
+
+      if (action.tool === 'pen' || action.tool === 'eraser') {
+        targetCtx.strokeStyle = action.tool === 'eraser' ? '#090d16' : action.color;
+        targetCtx.beginPath();
+        targetCtx.moveTo(x0, y0);
+        targetCtx.lineTo(x1, y1);
+        targetCtx.stroke();
+      } else if (action.tool === 'hline') {
+        targetCtx.beginPath();
+        targetCtx.moveTo(0, y0);
+        targetCtx.lineTo(width, y0);
+        targetCtx.stroke();
+      } else if (action.tool === 'vline') {
+        targetCtx.beginPath();
+        targetCtx.moveTo(x0, 0);
+        targetCtx.lineTo(x0, height);
+        targetCtx.stroke();
+      } else if (action.tool === 'rect') {
+        targetCtx.beginPath();
+        targetCtx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+      }
+    }
+
+    // Mouse & Touch Event Handlers
+    function startDrawing(e) {
+      isDrawing = true;
+      const coords = getNormalizedCoords(e);
+      startX = coords.x;
+      startY = coords.y;
+      lastX = coords.x;
+      lastY = coords.y;
+
+      if (currentTool === 'pen' || currentTool === 'eraser') {
+        saveHistory();
+      }
+    }
+
+    function draw(e) {
+      const coords = getNormalizedCoords(e);
+
+      // Send cursor motion to remote peer
+      if (conn && conn.open) {
+        conn.send({ type: 'cursor', x: coords.x, y: coords.y, color: myColor });
+      }
+
+      if (!isDrawing) return;
+      e.preventDefault();
+
+      const rect = canvas.getBoundingClientRect();
+      const currentAction = {
+        tool: currentTool,
+        x0: currentTool === 'pen' || currentTool === 'eraser' ? lastX : startX,
+        y0: currentTool === 'pen' || currentTool === 'eraser' ? lastY : startY,
+        x1: coords.x,
+        y1: coords.y,
+        color: activeColor,
+        size: activeSize
+      };
+
+      if (currentTool === 'pen' || currentTool === 'eraser') {
+        // Render directly to main canvas
+        renderAction(currentAction, ctx);
+        if (conn && conn.open) {
+          conn.send({ type: 'draw-action', action: currentAction });
+        }
+        lastX = coords.x;
+        lastY = coords.y;
+      } else {
+        // Preview shapes on secondary overlay canvas while dragging
+        pCtx.clearRect(0, 0, rect.width, rect.height);
+        renderAction(currentAction, pCtx);
+      }
+    }
+
+    function stopDrawing(e) {
+      if (!isDrawing) return;
+      isDrawing = false;
+
+      const rect = canvas.getBoundingClientRect();
+      pCtx.clearRect(0, 0, rect.width, rect.height);
+
+      if (currentTool !== 'pen' && currentTool !== 'eraser') {
+        let coords = { x: lastX, y: lastY };
+        if (e) {
+          coords = getNormalizedCoords(e);
+        }
+
+        const finalAction = {
+          tool: currentTool,
+          x0: startX,
+          y0: startY,
+          x1: coords.x || startX + 0.05,
+          y1: coords.y || startY + 0.05,
+          color: activeColor,
+          size: activeSize
+        };
+
+        saveHistory();
+        renderAction(finalAction, ctx);
+
+        if (conn && conn.open) {
+          conn.send({ type: 'draw-action', action: finalAction });
+        }
+      }
+    }
+
+    // Attach Canvas Event Listeners
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing);
+
+    // Tool Selection (Pen, Eraser, Rectangle, Horizontal Line, Vertical Line)
+    const toolsMap = {
+      'tool-pen': 'pen',
+      'tool-eraser': 'eraser',
+      'tool-rect': 'rect',
+      'tool-hline': 'hline',
+      'tool-vline': 'vline'
+    };
+
+    Object.keys(toolsMap).forEach(id => {
+      document.getElementById(id).addEventListener('click', (e) => {
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        currentTool = toolsMap[id];
+      });
+    });
+
+    // Grid Background Mode Buttons
+    const gridBtns = {
+      'grid-dots': 'dots',
+      'grid-lines': 'lines',
+      'grid-none': 'none'
+    };
+
+    Object.keys(gridBtns).forEach(id => {
+      document.getElementById(id).addEventListener('click', (e) => {
+        document.querySelectorAll('.grid-btn').forEach(b => b.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        gridMode = gridBtns[id];
+
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(canvas, 0, 0);
+
+        drawBackground();
+        ctx.drawImage(tempCanvas, 0, 0, tempCanvas.width / (window.devicePixelRatio || 1), tempCanvas.height / (window.devicePixelRatio || 1));
+        addLog(`Background grid switched to: ${gridMode}`);
+      });
+    });
+
+    // Color Selection
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active', 'ring-2', 'ring-white', 'scale-120'));
+        e.currentTarget.classList.add('active', 'ring-2', 'ring-white', 'scale-120');
+        activeColor = e.currentTarget.getAttribute('data-color');
+        myColor = activeColor;
+        userColorIndicator.style.backgroundColor = activeColor;
+      });
+    });
+
+    // Brush Size
+    brushSizeSlider.addEventListener('input', (e) => {
+      activeSize = parseInt(e.target.value);
+      brushSizeVal.textContent = activeSize;
+    });
+
+    // Undo & Redo
+    document.getElementById('btn-undo').addEventListener('click', () => {
+      if (historyStack.length > 0) {
+        redoStack.push(canvas.toDataURL());
+        const previousState = historyStack.pop();
+        const img = new Image();
+        img.onload = () => {
+          drawBackground();
+          ctx.drawImage(img, 0, 0, canvas.width / (window.devicePixelRatio || 1), canvas.height / (window.devicePixelRatio || 1));
+        };
+        img.src = previousState;
+        addLog('Undo action performed.');
+      }
+    });
+
+    document.getElementById('btn-redo').addEventListener('click', () => {
+      if (redoStack.length > 0) {
+        historyStack.push(canvas.toDataURL());
+        const nextState = redoStack.pop();
+        const img = new Image();
+        img.onload = () => {
+          drawBackground();
+          ctx.drawImage(img, 0, 0, canvas.width / (window.devicePixelRatio || 1), canvas.height / (window.devicePixelRatio || 1));
+        };
+        img.src = nextState;
+        addLog('Redo action performed.');
+      }
+    });
+
+    // Clear Canvas
+    document.getElementById('btn-clear-canvas').addEventListener('click', () => {
+      saveHistory();
+      drawBackground();
+      addLog('You cleared the whiteboard.');
+
+      if (conn && conn.open) {
+        conn.send({ type: 'clear' });
+      }
+    });
+
+    // Download Image PNG
+    document.getElementById('btn-save-canvas').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = `O2-Whiteboard-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      addLog('Board exported as PNG.');
+    });
+
+    // Camera Scanner Handlers
+    btnOpenScanner.addEventListener('click', () => {
+      scannerModal.classList.remove('hidden');
+      if (!html5QrcodeScanner) {
+        html5QrcodeScanner = new Html5Qrcode("reader");
+      }
+      const config = { fps: 10, qrbox: { width: 180, height: 180 } };
+      html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess, () => {}).catch(() => {
+        addLog('Camera access error.');
+        closeScanner();
+      });
+    });
+
+    btnCloseScanner.addEventListener('click', closeScanner);
+
+    function closeScanner() {
+      if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
+        html5QrcodeScanner.stop().then(() => scannerModal.classList.add('hidden')).catch(() => scannerModal.classList.add('hidden'));
+      } else {
+        scannerModal.classList.add('hidden');
+      }
+    }
+
+    function onScanSuccess(decodedText) {
+      let scannedPeerId = decodedText;
+      try {
+        if (decodedText.includes('connect=')) {
+          const parsedUrl = new URL(decodedText);
+          scannedPeerId = parsedUrl.searchParams.get('connect') || decodedText;
+        }
+      } catch (e) {}
+
+      closeScanner();
+      connectToPeer(scannedPeerId);
+    }
+
+    // Copy Pairing Link
+    btnCopyLink.addEventListener('click', () => {
+      if (!myPeerId) return;
+      const currentUrl = window.location.origin + window.location.pathname;
+      const connectUrl = `${currentUrl}?connect=${myPeerId}`;
+      
+      const el = document.createElement('textarea');
+      el.value = connectUrl;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+
+      addLog('Pairing link copied to clipboard.');
+    });
+
+    document.getElementById('btn-clear-log').addEventListener('click', () => {
+      activityLog.innerHTML = '';
+      activityLog.appendChild(emptyLog);
+      emptyLog.style.display = 'flex';
+    });
+
+    // Lifecycle
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('load', () => {
+      initPeer();
+      resizeCanvas();
+    });
+  </script>
+</body>
+</html>
