@@ -2,130 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O2 Secure Encryptor & Tunnel</title>
-  
-  <!-- Tailwind CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>O2 Remote Mouse & Keyboard Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- PeerJS for P2P connection -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <!-- QRCode.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <!-- HTML5-QRCode Scanner -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    body { background-color: #020617; color: #f8fafc; font-family: system-ui, sans-serif; touch-action: none; }
     #reader video { border-radius: 0.75rem; object-fit: cover; width: 100% !important; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-4 md:p-6 antialiased">
+<body class="min-h-screen flex flex-col items-center justify-start p-4 antialiased">
 
   <!-- Header -->
-  <header class="w-full max-w-xl mb-6 flex items-center justify-between border-b border-slate-800 pb-4">
-    <div class="flex items-center gap-3">
-      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">        
-        <i data-lucide="shield-check" class="w-5 h-5"></i>
+  <header class="w-full max-w-md mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
+    <div class="flex items-center gap-2">
+      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+        <i data-lucide="mouse-pointer-click" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Encryptor Hub</h1>
-        <p class="text-[11px] text-slate-400">Secure Tunnel & Cipher Station</p>
+        <h1 class="text-sm font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Remote Control</h1>
+        <p class="text-[10px] text-slate-400">Phone to PC Mouse & Keyboard</p>
       </div>
     </div>
-
-    <!-- Status Badge -->
-    <div id="status-badge" class="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
+    <div id="status-badge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
       <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
       <span id="status-text">Initializing...</span>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="w-full max-w-xl flex flex-col gap-5">
+  <main class="w-full max-w-md flex flex-col gap-4">
 
-    <!-- QR Handshake Card (Auto hides on connect) -->
-    <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col items-center text-center relative transition-all duration-300">
-      <h2 class="text-lg font-bold text-slate-100 mb-1">Pair Devices</h2>
-      <p class="text-xs text-slate-400 mb-4">Scan this QR code from mobile/PC to establish a secure tunnel.</p>
-      
-      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-4 relative min-h-[160px] min-w-[160px] flex items-center justify-center">
+    <!-- QR Handshake Card -->
+    <div id="qr-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col items-center text-center">
+      <h2 class="text-sm font-bold text-slate-100 mb-1">Pair Device</h2>
+      <p class="text-xs text-slate-400 mb-3">Scan this QR code from your phone to connect as a remote control.</p>
+      <div class="bg-white p-2.5 rounded-xl border-4 border-slate-800 mb-3 relative min-h-[150px] min-w-[150px] flex items-center justify-center">
         <div id="qrcode"></div>
         <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
-          <i data-lucide="loader-2" class="w-7 h-7 animate-spin text-indigo-400 mb-2"></i>
-          <span class="text-xs">Generating...</span>
+          <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-indigo-400 mb-1"></i>
+          <span class="text-[10px]">Generating...</span>
+        </div>
+      </div>
+      <button id="btn-open-scanner" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+        <i data-lucide="camera" class="w-4 h-4"></i> Scan QR Code
+      </button>
+    </div>
+
+    <!-- Remote Controller Interface (Hidden until connected on mobile or active on remote) -->
+    <div id="control-section" class="hidden flex flex-col gap-4">
+      
+      <!-- Touchpad Area -->
+      <div id="touchpad" class="bg-slate-900 border-2 border-dashed border-slate-700 rounded-2xl h-48 flex flex-col items-center justify-center select-none cursor-pointer relative shadow-inner active:border-indigo-500">
+        <i data-lucide="move" class="w-6 h-6 text-slate-600 mb-1"></i>
+        <span class="text-xs font-semibold text-slate-400">Touchpad Area (Swipe to move mouse)</span>
+        <div class="absolute bottom-2 w-full flex justify-around px-4">
+          <button id="btn-left-click" class="px-6 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold border border-slate-700 shadow">LEFT CLICK</button>
+          <button id="btn-right-click" class="px-6 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold border border-slate-700 shadow">RIGHT CLICK</button>
         </div>
       </div>
 
-      <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2">
-        <i data-lucide="qr-code" class="w-4 h-4"></i> Scan QR Code with Camera
-      </button>
-    </div>
-
-    <!-- Secret Key Configuration Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2">
-      <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-        <i data-lucide="key" class="w-4 h-4 text-amber-400"></i> Set Encryption Secret Key
-      </label>
-      <input type="text" id="secret-key-input" value="MY_SECURE_SECRET_2026" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-indigo-500" placeholder="Enter secret key...">
-      <p class="text-[10px] text-slate-500">Yeh key encryption algorithm ko badal degi. Dono devices par key same honi chahiye.</p>
-    </div>
-
-    <!-- Text Input / Paste Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col gap-3">
-      <div class="flex items-center justify-between">
+      <!-- Remote Keyboard Input -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2">
         <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> Input Data (Type or Paste)
+          <i data-lucide="keyboard" class="w-4 h-4 text-cyan-400"></i> Remote Keyboard Type
         </label>
-        <button id="btn-paste" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 rounded-lg transition flex items-center gap-1 border border-slate-700">
-          <i data-lucide="clipboard" class="w-3 h-3"></i> Paste
-        </button>
+        <div class="flex gap-2">
+          <input type="text" id="type-input" placeholder="Type text to send to PC..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
+          <button id="btn-send-text" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow">Send</button>
+        </div>
       </div>
 
-      <textarea id="text-input" rows="4" placeholder="Yaha text ya JSON data likhein ya paste karein..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 font-mono focus:outline-none focus:border-indigo-500 resize-y"></textarea>
-
-      <!-- Action Buttons: Encrypt & Decrypt -->
-      <div class="grid grid-cols-2 gap-2">
-        <button onclick="handleEncrypt()" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20">
-          <i data-lucide="lock" class="w-4 h-4"></i> Encrypt Data
-        </button>
-        <button onclick="handleDecrypt()" class="py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-600/20">
-          <i data-lucide="unlock" class="w-4 h-4"></i> Decrypt Data
-        </button>
-      </div>
     </div>
 
-    <!-- Output / Result Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="file-output" class="w-4 h-4 text-indigo-400"></i> Output Result
-        </span>
-        <button onclick="copyOutput()" id="btn-copy" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[11px] font-medium transition flex items-center gap-1">
-          <i data-lucide="copy" class="w-3 h-3"></i> Copy Output
-        </button>
-      </div>
-
-      <pre id="output-box" class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs font-mono text-emerald-400 min-h-[90px] max-h-48 overflow-y-auto whitespace-pre-wrap break-all">Result yaha show hoga...</pre>
-
-      <button onclick="sendToPeer()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg">
-        <i data-lucide="send" class="w-4 h-4"></i> Send Output to Connected Peer
-      </button>
-    </div>
-
-    <!-- Received Activity Log with Copy Button -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col min-h-[160px]">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="inbox" class="w-4 h-4 text-teal-400"></i> Peer Received Logs
-        </h3>
-        <button onclick="clearLogs()" class="text-xs text-slate-500 hover:text-slate-300 transition">Clear</button>
-      </div>
-      <div id="logs-list" class="flex-1 space-y-2 overflow-y-auto max-h-48">
-        <p class="text-xs text-slate-600 text-center py-4">No data received yet.</p>
+    <!-- PC Receiver Logs / Status Display -->
+    <div id="receiver-log-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2">
+      <h3 class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+        <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i> PC Receiver Activity
+      </h3>
+      <div id="log-content" class="bg-slate-950 p-3 rounded-xl text-[11px] font-mono text-emerald-400 h-28 overflow-y-auto border border-slate-800">
+        Waiting for remote commands...
       </div>
     </div>
 
@@ -133,33 +91,24 @@
 
   <!-- Scanner Modal -->
   <div id="scanner-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i> Scan QR Code
-        </h3>
-        <button id="btn-close-scanner" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-sm w-full shadow-2xl flex flex-col gap-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-1">Scan QR</h3>
+        <button id="btn-close-scanner" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
-      <div class="overflow-hidden rounded-xl bg-slate-950 min-h-[220px] border border-slate-800 flex items-center justify-center">
-        <div id="reader" class="w-full"></div>
-      </div>
+      <div class="overflow-hidden rounded-xl bg-black min-h-[200px]"><div id="reader" class="w-full"></div></div>
     </div>
   </div>
 
-  <!-- Script Logic -->
   <script>
     let peer = null, conn = null, myPeerId = null, html5QrcodeScanner = null;
+    let isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    const statusBadge = document.getElementById('status-badge');
-    const statusText = document.getElementById('status-text');
-    const qrCard = document.getElementById('qr-card');
-    const qrContainer = document.getElementById('qrcode');
-    const qrLoader = document.getElementById('qr-loader');
-    const textInput = document.getElementById('text-input');
-    const secretKeyInput = document.getElementById('secret-key-input');
-    const outputBox = document.getElementById('output-box');
-    const logsList = document.getElementById('logs-list');
-    const scannerModal = document.getElementById('scanner-modal');
+    const statusBadge = document.getElementById('status-badge'), statusText = document.getElementById('status-text');
+    const qrCard = document.getElementById('qr-card'), controlSection = document.getElementById('control-section');
+    const qrContainer = document.getElementById('qrcode'), qrLoader = document.getElementById('qr-loader');
+    const logContent = document.getElementById('log-content');
+    const touchpad = document.getElementById('touchpad'), typeInput = document.getElementById('type-input');
 
     lucide.createIcons();
 
@@ -171,16 +120,11 @@
       peer.on('open', (id) => {
         myPeerId = id;
         qrLoader.classList.add('hidden');
-        const connectUrl = `${window.location.origin}${window.location.pathname}?connect=${id}`;
-        
-        qrContainer.innerHTML = '';
-        new QRCode(qrContainer, { text: connectUrl, width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
+        new QRCode(qrContainer, { text: `${window.location.origin}${window.location.pathname}?connect=${id}`, width: 140, height: 140 });
         updateStatus('waiting', 'Ready');
         if (targetFromUrl) connectToPeer(targetFromUrl);
       });
-
       peer.on('connection', (incomingConn) => setupConnection(incomingConn));
-      peer.on('error', () => updateStatus('error', 'Error'));
     }
 
     function connectToPeer(targetId) {
@@ -193,13 +137,20 @@
       conn = connection;
       conn.on('open', () => {
         updateStatus('connected', 'Connected');
-        if (qrCard) qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+        qrCard.classList.add('hidden');
+        controlSection.classList.remove('hidden');
       });
 
       conn.on('data', (data) => {
-        if (data && data.type === 'payload') {
-          appendLog(data.content);
+        // PC Side execution of incoming phone commands
+        if (data.type === 'mousemove') {
+          logContent.innerHTML += `<div>[Mouse Move] dx: ${data.dx}, dy: ${data.dy}</div>`;
+        } else if (data.type === 'click') {
+          logContent.innerHTML += `<div>[Mouse Click] ${data.button}</div>`;
+        } else if (data.type === 'type') {
+          logContent.innerHTML += `<div>[Keyboard Type] ${data.text}</div>`;
         }
+        logContent.scrollTop = logContent.scrollHeight;
       });
 
       conn.on('close', () => updateStatus('waiting', 'Disconnected'));
@@ -208,114 +159,51 @@
     function updateStatus(state, msg) {
       statusText.textContent = msg;
       if (state === 'connected') {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+        statusBadge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
-        if (qrCard) qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
-      } else {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
-        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+        qrCard.classList.add('hidden');
+        controlSection.classList.remove('hidden');
       }
     }
 
-    function handleEncrypt() {
-      const text = textInput.value.trim();
-      const secretKey = secretKeyInput.value.trim() || "DEFAULT_KEY";
-      if (!text) { alert("Please enter text to encrypt!"); return; }
+    // Touchpad Move Events (Phone Side)
+    let startX = 0, startY = 0;
+    touchpad.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
 
-      let encrypted = '';
-      for (let i = 0; i < text.length; i++) {
-        encrypted += String.fromCharCode(text.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length));
-      }
-      const finalEncrypted = "ENC:" + btoa(encodeURIComponent(encrypted));
-      outputBox.textContent = finalEncrypted;
-    }
+    touchpad.addEventListener('touchmove', (e) => {
+      if (!conn || !conn.open) return;
+      let currentX = e.touches[0].clientX;
+      let currentY = e.touches[0].clientY;
+      let dx = currentX - startX;
+      let dy = currentY - startY;
+      startX = currentX;
+      startY = currentY;
 
-    function handleDecrypt() {
-      const ciphertext = textInput.value.trim();
-      const secretKey = secretKeyInput.value.trim() || "DEFAULT_KEY";
-      if (!ciphertext) { alert("Please enter encrypted text!"); return; }
+      conn.send({ type: 'mousemove', dx: dx, dy: dy });
+    });
 
-      try {
-        if (!ciphertext.startsWith("ENC:")) {
-          outputBox.textContent = "Error: Not a valid encrypted text (Missing 'ENC:' prefix).";
-          return;
-        }
-        const raw = atob(ciphertext.replace("ENC:", ""));
-        const decoded = decodeURIComponent(raw);
-        let decrypted = '';
-        for (let i = 0; i < decoded.length; i++) {
-          decrypted += String.fromCharCode(decoded.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length));
-        }
-        outputBox.textContent = decrypted;
-      } catch (e) {
-        outputBox.textContent = "Decryption failed! Secret key galat ho sakti hai ya format invalid hai.";
-      }
-    }
+    document.getElementById('btn-left-click').addEventListener('click', () => {
+      if (conn && conn.open) conn.send({ type: 'click', button: 'LEFT' });
+    });
+    document.getElementById('btn-right-click').addEventListener('click', () => {
+      if (conn && conn.open) conn.send({ type: 'click', button: 'RIGHT' });
+    });
 
-    function copyOutput() {
-      const text = outputBox.textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        alert("Output copied to clipboard!");
-      });
-    }
-
-    // Function to copy individual log item
-    window.copyLogItem = function(btnId, textId) {
-      const textEl = document.getElementById(textId);
-      const btnEl = document.getElementById(btnId);
-      const textToCopy = textEl.textContent;
-
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        btnEl.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> Copied!`;
-        lucide.createIcons();
-        setTimeout(() => {
-          btnEl.innerHTML = `<i data-lucide="copy" class="w-3 h-3"></i> Copy`;
-          lucide.createIcons();
-        }, 2000);
-      });
-    }
-
-    function sendToPeer() {
-      const text = outputBox.textContent;
-      if (!conn || !conn.open) { alert("Peer connected nahi hai!"); return; }
-      conn.send({ type: 'payload', content: text });
-      alert("Output sent successfully to peer!");
-    }
-
-    function appendLog(content) {
-      if (logsList.querySelector('p')) logsList.innerHTML = '';
-      const uniqueId = 'log-' + Math.random().toString(36).substr(2, 9);
-      const textId = 'text-' + uniqueId;
-      const btnId = 'btn-' + uniqueId;
-
-      const logCard = document.createElement('div');
-      logCard.className = "bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col gap-2 text-xs font-mono";
-      logCard.innerHTML = `
-        <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
-          <span class="text-[10px] text-teal-400 font-bold uppercase">Received Data</span>
-          <button onclick="copyLogItem('${btnId}', '${textId}')" id="${btnId}" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[10px] transition flex items-center gap-1">
-            <i data-lucide="copy" class="w-3 h-3"></i> Copy
-          </button>
-        </div>
-        <pre id="${textId}" class="text-cyan-300 whitespace-pre-wrap break-all">${content}</pre>
-      `;
-      logsList.appendChild(logCard);
-      lucide.createIcons();
-    }
-
-    function clearLogs() {
-      logsList.innerHTML = `<p class="text-xs text-slate-600 text-center py-4">No data received yet.</p>`;
-    }
-
-    document.getElementById('btn-paste').addEventListener('click', async () => {
-      try { textInput.value = await navigator.clipboard.readText(); } catch (e) { alert("Paste blocked"); }
+    document.getElementById('btn-send-text').addEventListener('click', () => {
+      let text = typeInput.value.trim();
+      if (!text || !conn || !conn.open) return;
+      conn.send({ type: 'type', text: text });
+      typeInput.value = '';
     });
 
     document.getElementById('btn-open-scanner').addEventListener('click', () => {
-      scannerModal.classList.remove('hidden');
+      document.getElementById('scanner-modal').classList.remove('hidden');
       if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
-      html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 180 }, (text) => {
-        scannerModal.classList.add('hidden');
+      html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 160 }, (text) => {
+        document.getElementById('scanner-modal').classList.add('hidden');
         if (html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
         let targetId = text.includes('connect=') ? new URL(text).searchParams.get('connect') : text;
         connectToPeer(targetId);
@@ -323,7 +211,7 @@
     });
 
     document.getElementById('btn-close-scanner').addEventListener('click', () => {
-      scannerModal.classList.add('hidden');
+      document.getElementById('scanner-modal').classList.add('hidden');
       if (html5QrcodeScanner && html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
     });
 
