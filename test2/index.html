@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ScanBilling Pro - Mobile Scanner & PC Billing</title>
+  <title>ScanBilling Pro - Thermal Style & Copy Text</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -24,7 +24,7 @@
       </div>
       <div>
         <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-indigo-400 to-teal-300 bg-clip-text text-transparent">ScanBilling Pro</h1>
-        <p class="text-[11px] text-slate-400">P2P Mobile Scanner & Billing System</p>
+        <p class="text-[11px] text-slate-400">Thermal Bill Receipt & Text Copy System</p>
       </div>
     </div>
     <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
@@ -77,7 +77,6 @@
           Scan a QR code...
         </div>
 
-        <!-- Quantity & Manual Price Controls -->
         <div class="grid grid-cols-2 gap-2">
           <div class="flex items-center border border-slate-800 bg-slate-900 rounded-xl px-2 py-1.5 justify-between">
             <span class="text-[11px] text-slate-400">Qty:</span>
@@ -102,63 +101,75 @@
 
     <!-- STEP 3: PC Billing Table -->
     <div id="pc-billing-section" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+      <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-2">
         <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
           <i data-lucide="monitor" class="w-4 h-4"></i> PC Billing Station
         </span>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="addManualItemModal()" class="px-3 py-1 bg-teal-600 hover:bg-teal-500 text-white text-xs rounded-lg flex items-center gap-1 transition shadow font-semibold">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Manual Item
+          </button>
+          <button onclick="copyBillText()" class="px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white text-xs rounded-lg flex items-center gap-1 transition shadow">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Text
+          </button>
           <button id="btn-download-bill" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs rounded-lg flex items-center gap-1 transition shadow">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i> Download Bill (PDF)
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF Bill
           </button>
           <button id="btn-clear-bill" class="px-3 py-1 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-xs rounded-lg flex items-center gap-1">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear Bill
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
           </button>
         </div>
       </div>
 
-      <div id="printable-bill-area" class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-        <div class="mb-4 pb-2 border-b border-slate-800 flex justify-between items-center">
-          <div>
-            <h3 class="text-sm font-bold text-white">INVOICE RECEIPT</h3>
-            <p class="text-[10px] text-slate-400">Date: <span id="bill-date"></span></p>
-          </div>
-          <div class="text-right text-[10px] text-indigo-400 font-mono">Decrypted P2P System</div>
+      <!-- Thermal Receipt Style Area (White background, Black text) -->
+      <div id="printable-bill-area" class="bg-white text-black p-5 rounded-xl border border-gray-300 font-mono shadow-inner">
+        <div class="mb-4 pb-2 border-b border-gray-400 text-center">
+          <h2 class="text-base font-bold tracking-wider">TAX INVOICE RECEIPT</h2>
+          <p class="text-[10px] text-gray-600">ScanBilling Pro System</p>
+          <p class="text-[10px] text-gray-600">Date: <span id="bill-date"></span></p>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
+            <thead class="border-b border-gray-400 text-gray-800">
               <tr>
-                <th class="p-2.5">#</th>
-                <th class="p-2.5">Item Name / Desc</th>
-                <th class="p-2.5">Qty</th>
-                <th class="p-2.5">Price (₹)</th>
-                <th class="p-2.5">Total (₹)</th>
-                <th class="p-2.5 text-center">Action</th>
+                <th class="py-1.5 px-1">#</th>
+                <th class="py-1.5 px-1">Item Name</th>
+                <th class="py-1.5 px-1">Qty</th>
+                <th class="py-1.5 px-1">Price</th>
+                <th class="py-1.5 px-1">Total</th>
+                <th class="py-1.5 px-1 text-center no-print">Action</th>
               </tr>
             </thead>
-            <tbody id="bill-items-table" class="divide-y divide-slate-800/60">
-              <tr id="empty-row"><td colspan="6" class="p-6 text-center text-slate-500">No items added yet. Scan & press "ADD TO BILL" on mobile!</td></tr>
+            <tbody id="bill-items-table" class="divide-y divide-gray-200">
+              <tr id="empty-row"><td colspan="6" class="p-6 text-center text-gray-500 font-sans">No items added yet. Scan via mobile or add manually!</td></tr>
             </tbody>
           </table>
         </div>
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 pt-4 border-t border-slate-800 gap-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 pt-3 border-t border-gray-400 gap-2 no-print">
           <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-400">Discount (%):</label>
-            <input type="number" id="discount-input" value="0" min="0" max="100" class="w-20 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white focus:outline-none">
+            <label class="text-xs text-gray-700 font-sans">Discount (%):</label>
+            <input type="number" id="discount-input" value="0" min="0" max="100" class="w-16 bg-gray-100 border border-gray-300 rounded px-2 py-1 text-xs text-black font-mono focus:outline-none">
           </div>
-          <div class="flex flex-col items-end gap-1 text-right">
-            <div class="text-xs text-slate-400">Subtotal: <span id="subtotal-val" class="text-white font-mono">₹0.00</span></div>
-            <div class="text-xs text-slate-400">Discount: <span id="discount-val" class="text-rose-400 font-mono">₹0.00</span></div>
-            <div class="text-sm font-bold text-emerald-400">Grand Total: <span id="grand-total-val" class="font-mono text-base">₹0.00</span></div>
+          <div class="flex flex-col items-end gap-0.5 text-right font-sans">
+            <div class="text-xs text-gray-600">Subtotal: <span id="subtotal-val" class="text-black font-mono font-bold">₹0.00</span></div>
+            <div class="text-xs text-gray-600">Discount: <span id="discount-val" class="text-rose-600 font-mono font-bold">-₹0.00</span></div>
+            <div class="text-sm font-bold text-black border-t border-gray-300 pt-1">Grand Total: <span id="grand-total-val" class="font-mono text-base font-extrabold">₹0.00</span></div>
           </div>
+        </div>
+
+        <!-- Print/PDF Grand Total Summary for Thermal Paper -->
+        <div class="mt-4 pt-3 border-t border-gray-400 text-right hidden sm:block font-bold text-sm">
+          <div>Subtotal: <span id="print-subtotal">₹0.00</span></div>
+          <div>Discount: <span id="print-discount">₹0.00</span></div>
+          <div class="text-base mt-1">GRAND TOTAL: <span id="print-grandtotal">₹0.00</span></div>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Modal -->
+  <!-- Scanner Modal -->
   <div id="scanner-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-sm w-full flex flex-col gap-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -166,6 +177,33 @@
         <button id="btn-close-scanner" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div class="overflow-hidden rounded-xl bg-black min-h-[200px]"><div id="reader" class="w-full"></div></div>
+    </div>
+  </div>
+
+  <!-- Manual Item Modal -->
+  <div id="manual-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full flex flex-col gap-3 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-xs font-bold text-white flex items-center gap-1.5"><i data-lucide="plus-circle" class="w-4 h-4 text-teal-400"></i> Add Item Manually</h3>
+        <button onclick="closeManualModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="flex flex-col gap-3">
+        <div>
+          <label class="text-[11px] text-slate-400">Item Name / Desc:</label>
+          <input type="text" id="manual-name" placeholder="e.g. Tea / Coffee" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-teal-500 mt-1">
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400">Quantity:</label>
+          <input type="number" id="manual-qty" value="1" min="1" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-teal-500 mt-1 font-mono">
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400">Price (₹):</label>
+          <input type="number" id="manual-price" value="0.00" step="0.01" min="0" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-teal-500 mt-1 font-mono">
+        </div>
+      </div>
+      <button onclick="submitManualItem()" class="mt-2 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition">
+        Add to Bill
+      </button>
     </div>
   </div>
 
@@ -183,7 +221,7 @@
     const mobilePriceInput = document.getElementById('mobile-price-input');
 
     lucide.createIcons();
-    document.getElementById('bill-date').textContent = new Date().toLocaleDateString();
+    document.getElementById('bill-date').textContent = new Date().toLocaleString();
 
     function updateStatus(state, msg) {
       statusText.textContent = msg;
@@ -333,31 +371,59 @@
       const existing = billItems.find(item => item.name === itemData.name);
       if (existing) {
         existing.qty += itemData.qty;
-        existing.price = itemData.price; // Update with latest specified price
+        existing.price = itemData.price;
       } else {
         billItems.push({ id: Date.now(), ...itemData });
       }
       renderBillTable();
     }
 
+    window.addManualItemModal = function() {
+      document.getElementById('manual-name').value = '';
+      document.getElementById('manual-qty').value = '1';
+      document.getElementById('manual-price').value = '0.00';
+      document.getElementById('manual-modal').classList.remove('hidden');
+    }
+
+    window.closeManualModal = function() {
+      document.getElementById('manual-modal').classList.add('hidden');
+    }
+
+    window.submitManualItem = function() {
+      const name = document.getElementById('manual-name').value.trim();
+      const qty = parseInt(document.getElementById('manual-qty').value) || 1;
+      const price = parseFloat(document.getElementById('manual-price').value) || 0;
+
+      if (!name) {
+        alert("Please enter item name!");
+        return;
+      }
+
+      billItems.push({ id: Date.now(), name: name, qty: qty, price: price });
+      renderBillTable();
+      closeManualModal();
+    }
+
     function renderBillTable() {
       billItemsTable.innerHTML = '';
       if (billItems.length === 0) {
-        billItemsTable.innerHTML = `<tr id="empty-row"><td colspan="6" class="p-6 text-center text-slate-500">No items added yet. Scan & press "ADD TO BILL" on mobile!</td></tr>`;
+        billItemsTable.innerHTML = `<tr id="empty-row"><td colspan="6" class="p-6 text-center text-gray-500 font-sans">No items added yet. Scan via mobile or add manually!</td></tr>`;
         calculateTotals();
         return;
       }
 
       billItems.forEach((item, index) => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-900/40 transition';
+        tr.className = 'hover:bg-gray-100 transition';
         tr.innerHTML = `
-          <td class="p-2.5 text-slate-400">${index + 1}</td>
-          <td class="p-2.5 font-mono font-medium text-indigo-300">${item.name}</td>
-          <td class="p-2.5"><input type="number" min="1" value="${item.qty}" onchange="updateItem(${item.id}, 'qty', this.value)" class="w-16 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-white font-mono"></td>
-          <td class="p-2.5"><input type="number" step="0.01" min="0" value="${item.price.toFixed(2)}" onchange="updateItem(${item.id}, 'price', this.value)" class="w-20 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-white font-mono"></td>
-          <td class="p-2.5 font-mono text-emerald-400 font-medium">₹${(item.qty * item.price).toFixed(2)}</td>
-          <td class="p-2.5 text-center"><button onclick="removeItem(${item.id})" class="text-slate-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+          <td class="py-2 px-1 text-gray-600">${index + 1}</td>
+          <td class="py-2 px-1">
+            <input type="text" value="${item.name}" onchange="updateItem(${item.id}, 'name', this.value)" class="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 text-black font-medium font-sans focus:outline-none focus:border-black">
+          </td>
+          <td class="py-2 px-1"><input type="number" min="1" value="${item.qty}" onchange="updateItem(${item.id}, 'qty', this.value)" class="w-14 bg-gray-50 border border-gray-300 rounded px-1.5 py-1 text-black font-mono"></td>
+          <td class="py-2 px-1"><input type="number" step="0.01" min="0" value="${item.price.toFixed(2)}" onchange="updateItem(${item.id}, 'price', this.value)" class="w-18 bg-gray-50 border border-gray-300 rounded px-1.5 py-1 text-black font-mono"></td>
+          <td class="py-2 px-1 font-mono text-black font-bold">₹${(item.qty * item.price).toFixed(2)}</td>
+          <td class="py-2 px-1 text-center no-print"><button onclick="removeItem(${item.id})" class="text-gray-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
         `;
         billItemsTable.appendChild(tr);
       });
@@ -368,7 +434,9 @@
     window.updateItem = function(id, field, val) {
       const item = billItems.find(i => i.id === id);
       if (item) {
-        item[field] = field === 'qty' ? parseInt(val) || 1 : parseFloat(val) || 0;
+        if (field === 'qty') item[field] = parseInt(val) || 1;
+        else if (field === 'price') item[field] = parseFloat(val) || 0;
+        else item[field] = val;
         renderBillTable();
       }
     };
@@ -392,18 +460,52 @@
       subtotalVal.textContent = `₹${subtotal.toFixed(2)}`;
       discountVal.textContent = `-₹${discountAmount.toFixed(2)}`;
       grandTotalVal.textContent = `₹${grandTotal.toFixed(2)}`;
+
+      document.getElementById('print-subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById('print-discount').textContent = `-₹${discountAmount.toFixed(2)}`;
+      document.getElementById('print-grandtotal').textContent = `₹${grandTotal.toFixed(2)}`;
     }
 
     discountInput.addEventListener('input', calculateTotals);
 
+    // Copy Bill Text Functionality
+    window.copyBillText = function() {
+      if (billItems.length === 0) {
+        alert("Bill is empty!");
+        return;
+      }
+      let subtotal = billItems.reduce((acc, item) => acc + (item.qty * item.price), 0);
+      let discountPct = parseFloat(discountInput.value) || 0;
+      let discountAmount = (subtotal * discountPct) / 100;
+      let grandTotal = subtotal - discountAmount;
+
+      let text = "--- TAX INVOICE RECEIPT ---\n";
+      text += `Date: ${new Date().toLocaleString()}\n`;
+      text += "----------------------------------------\n";
+      billItems.forEach((item, idx) => {
+        text += `${idx + 1}. ${item.name} x ${item.qty} = ₹${(item.qty * item.price).toFixed(2)}\n`;
+      });
+      text += "----------------------------------------\n";
+      text += `Subtotal: ₹${subtotal.toFixed(2)}\n`;
+      text += `Discount (${discountPct}%): -₹${discountAmount.toFixed(2)}\n`;
+      text += `GRAND TOTAL: ₹${grandTotal.toFixed(2)}\n`;
+      text += "----------------------------------------";
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Bill text copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy text!");
+      });
+    }
+
     document.getElementById('btn-download-bill').addEventListener('click', () => {
       if (billItems.length === 0) return alert("Bill is empty!");
       html2pdf().set({
-        margin: 10,
+        margin: 5,
         filename: `Invoice_${Date.now()}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF: { unit: 'mm', format: [80, 200], orientation: 'portrait' } // Thermal receipt roll format width
       }).from(document.getElementById('printable-bill-area')).save();
     });
 
