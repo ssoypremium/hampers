@@ -3,41 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CamSync Studio - Ultra HD Photo Transfer</title>
+  <title>SlideSync Remote with Auto-Clear</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- PeerJS for WebRTC Peer-to-Peer Connection -->
+  <!-- PeerJS for WebRTC -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
-  <!-- QRCode.js for QR Code Generation -->
+  <!-- QRCode.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-  <!-- HTML5-QRCode for In-App QR Code Scanner -->
+  <!-- HTML5-QRCode Scanner -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    body { background-color: #020617; color: #f8fafc; font-family: sans-serif; }
+    body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
     #reader video { border-radius: 0.75rem; object-fit: cover; width: 100% !important; }
-    #camera-preview { border-radius: 0.75rem; object-fit: cover; width: 100%; height: 100%; }
-    .mirror { transform: scaleX(-1); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-start p-3 sm:p-5 antialiased">
 
   <!-- Header -->
-  <header class="w-full max-w-4xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
+  <header id="app-header" class="w-full max-w-4xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
     <div class="flex items-center gap-3">
       <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30 flex items-center justify-center">
-        <i data-lucide="camera" class="w-5 h-5"></i>
+        <i data-lucide="presentation" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base sm:text-lg font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-teal-300 bg-clip-text text-transparent">CamSync Studio (HD Pro)</h1>
-        <p class="text-[11px] text-slate-400">Ultra-HD Photo Sync & Manual Download Station</p>
+        <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-indigo-400 to-teal-300 bg-clip-text text-transparent">SlideSync Remote</h1>
+        <p class="text-[11px] text-slate-400">P2P Wireless Presentation Deck</p>
       </div>
     </div>
     <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
@@ -52,17 +50,17 @@
     <!-- STEP 1: Pairing QR Code Card -->
     <div id="pairing-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center">
       <h2 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
-        <i data-lucide="qr-code" class="w-5 h-5 text-indigo-400"></i> Pair Devices
+        <i data-lucide="qr-code" class="w-5 h-5 text-indigo-400"></i> Connect PC & Mobile
       </h2>
       <p class="text-xs text-slate-400 mb-5 max-w-sm leading-relaxed">
-        PC par ye page khula rakhein. Mobile se "Scan PC QR Code" dabakar PC screen ka QR code scan karein.
+        PC par is page ko khula rakhein. Mobile se "Scan PC QR Code" daba kar QR scan karein.
       </p>
 
       <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[200px] min-w-[200px] flex items-center justify-center">
         <div id="qrcode"></div>
         <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
           <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
-          <span class="text-xs">Generating Peer ID...</span>
+          <span class="text-xs">Generating Session ID...</span>
         </div>
       </div>
 
@@ -73,70 +71,75 @@
       </div>
     </div>
 
-    <!-- STEP 2: Mobile Camera Interface -->
-    <div id="mobile-cam-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-3">
+    <!-- STEP 2: Mobile Remote Control View (Connected Mobile) -->
+    <div id="mobile-remote-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <span class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
-          <i data-lucide="smartphone" class="w-4 h-4"></i> Mobile HD Camera Control
+          <i data-lucide="smartphone" class="w-4 h-4"></i> Mobile Deck Controller
         </span>
-        <button id="btn-switch-cam" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs rounded-lg flex items-center gap-1 text-slate-300">
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Switch Cam
+        <span id="mobile-slide-count" class="text-xs text-slate-400 font-mono">0 / 0 Slides</span>
+      </div>
+
+      <!-- File Uploader Button -->
+      <div class="flex flex-col gap-2">
+        <label for="image-input" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition shadow-md">
+          <i data-lucide="images" class="w-4 h-4"></i> Select Presentation Images
+        </label>
+        <input type="file" id="image-input" accept="image/*" multiple class="hidden">
+      </div>
+
+      <!-- Mobile Slide Live Preview Box -->
+      <div class="relative w-full h-[200px] bg-black rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden">
+        <div id="mobile-preview-placeholder" class="text-xs text-slate-600 flex flex-col items-center gap-1">
+          <i data-lucide="image" class="w-8 h-8 opacity-40"></i>
+          <span>No slide selected</span>
+        </div>
+        <img id="mobile-preview-img" class="w-full h-full object-contain hidden" alt="Slide Preview">
+      </div>
+
+      <!-- Slide Controls (Prev / Next Buttons) -->
+      <div class="grid grid-cols-2 gap-3">
+        <button id="btn-prev-slide" class="py-5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-white rounded-xl border border-slate-700 flex flex-col items-center justify-center gap-1 shadow-lg disabled:opacity-40" disabled>
+          <i data-lucide="chevron-left" class="w-6 h-6 text-indigo-400"></i>
+          <span class="text-[11px] font-bold">PREVIOUS</span>
+        </button>
+
+        <button id="btn-next-slide" class="py-5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-white rounded-xl border border-slate-700 flex flex-col items-center justify-center gap-1 shadow-lg disabled:opacity-40" disabled>
+          <i data-lucide="chevron-right" class="w-6 h-6 text-indigo-400"></i>
+          <span class="text-[11px] font-bold">NEXT</span>
         </button>
       </div>
 
-      <div class="relative w-full h-[380px] bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
-        <video id="camera-preview" autoplay playsinline></video>
-        <div id="cam-error" class="hidden absolute inset-0 bg-slate-950 p-4 text-center text-rose-400 flex flex-col items-center justify-center gap-2">
-          <i data-lucide="alert-triangle" class="w-8 h-8"></i>
-          <p class="text-xs">Please allow camera permissions in browser settings.</p>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-        <span class="text-[11px] text-slate-400">Apply Filter:</span>
-        <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
-          <button data-filter="none" class="filter-btn px-3 py-1 bg-indigo-600 rounded-lg whitespace-nowrap">Normal HD</button>
-          <button data-filter="vintage" class="filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap">Vintage</button>
-          <button data-filter="bw" class="filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap">B&amp;W</button>
-          <button data-filter="warm" class="filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap">Warm</button>
-          <button data-filter="cool" class="filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap">Cool</button>
-        </div>
-      </div>
-
-      <button id="btn-capture-photo" class="py-3.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
-        <i data-lucide="aperture" class="w-5 h-5"></i> CAPTURE HD PHOTO &amp; SEND
+      <!-- Fullscreen Remote Trigger -->
+      <button id="btn-toggle-pc-fullscreen" class="w-full py-2.5 bg-slate-800 border border-slate-700 text-slate-300 rounded-xl text-xs font-medium flex items-center justify-center gap-2">
+        <i data-lucide="maximize" class="w-4 h-4 text-teal-400"></i> Toggle Fullscreen on PC
       </button>
     </div>
 
-    <!-- STEP 3: PC Gallery Station with Manual Download Options -->
-    <div id="pc-dashboard-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
-          <i data-lucide="monitor" class="w-4 h-4"></i> PC HD Gallery (Manual Download Option)
-        </span>
+    <!-- STEP 3: PC Presentation Viewer (Connected PC - NO CONTROLS HERE) -->
+    <div id="pc-viewer-section" class="bg-black border border-slate-800 rounded-2xl p-2 shadow-2xl hidden flex flex-col items-center justify-center relative min-h-[500px] overflow-hidden">
+      <div id="pc-placeholder" class="flex flex-col items-center justify-center text-slate-600 p-8 text-center">
+        <i data-lucide="presentation" class="w-16 h-16 mb-3 opacity-30"></i>
+        <p class="text-sm font-medium text-slate-400">Connected! Select images from mobile to start presentation.</p>
       </div>
-
-      <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 min-h-[250px]">
-        <div id="gallery-empty" class="col-span-full flex flex-col items-center justify-center p-8 text-slate-600 text-center">
-          <i data-lucide="image" class="w-10 h-10 mb-2 opacity-30"></i>
-          <p class="text-xs">No photos received yet. Click photos from mobile!</p>
-        </div>
-      </div>
+      
+      <!-- Slide Image Tag -->
+      <img id="presentation-slide" class="max-h-[80vh] w-auto max-w-full object-contain rounded-lg hidden" alt="Presentation Slide">
     </div>
 
-    <!-- Status Log -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex flex-col">
-      <h3 class="text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
+    <!-- Activity Log -->
+    <div id="log-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex flex-col">
+      <h3 class="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1.5">
         <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i> Session Log
       </h3>
-      <div id="activity-log" class="space-y-1 max-h-[70px] overflow-y-auto text-[11px] text-slate-500 font-mono">
-        <div>Ready for WebRTC peer connection.</div>
+      <div id="activity-log" class="space-y-1 max-h-[60px] overflow-y-auto text-[11px] text-slate-500 font-mono">
+        <div>Ready for peer connection.</div>
       </div>
     </div>
 
   </main>
 
-  <!-- MODAL: Scanner -->
+  <!-- MODAL: QR Scanner -->
   <div id="scanner-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-sm w-full flex flex-col gap-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -153,18 +156,21 @@
     </div>
   </div>
 
-  <canvas id="hidden-canvas" class="hidden"></canvas>
-
   <script>
     let peer = null, conn = null, myPeerId = null, html5QrcodeScanner = null;
-    let currentStream = null, facingMode = "environment", currentFilterCSS = "none";
     let isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    let slidesList = [];
+    let currentSlideIndex = 0;
 
     const statusBadge = document.getElementById('status-badge'), statusText = document.getElementById('status-text');
-    const pairingSection = document.getElementById('pairing-section'), mobileCamSection = document.getElementById('mobile-cam-section'), pcDashboardSection = document.getElementById('pc-dashboard-section');
+    const pairingSection = document.getElementById('pairing-section'), mobileRemoteSection = document.getElementById('mobile-remote-section'), pcViewerSection = document.getElementById('pc-viewer-section');
     const qrContainer = document.getElementById('qrcode'), qrLoader = document.getElementById('qr-loader');
-    const videoPreview = document.getElementById('camera-preview'), activityLog = document.getElementById('activity-log');
-    const galleryContainer = document.getElementById('gallery-container'), galleryEmpty = document.getElementById('gallery-empty');
+    const activityLog = document.getElementById('activity-log');
+    const presentationSlide = document.getElementById('presentation-slide'), pcPlaceholder = document.getElementById('pc-placeholder');
+    const mobileSlideCount = document.getElementById('mobile-slide-count');
+    const mobilePreviewImg = document.getElementById('mobile-preview-img'), mobilePreviewPlaceholder = document.getElementById('mobile-preview-placeholder');
+    const btnPrev = document.getElementById('btn-prev-slide'), btnNext = document.getElementById('btn-next-slide');
 
     lucide.createIcons();
 
@@ -180,6 +186,9 @@
       if (state === 'connected') {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
+      } else {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
       }
     }
 
@@ -206,7 +215,7 @@
       peer.on('connection', (c) => setupConnection(c));
       peer.on('error', (err) => {
         console.error(err);
-        updateStatus('error', 'Peer Error');
+        updateStatus('error', 'Peer Connection Error');
       });
     }
 
@@ -229,171 +238,139 @@
 
         const targetFromUrl = new URLSearchParams(window.location.search).get('connect');
         if (isMobile || targetFromUrl) {
-          mobileCamSection.classList.remove('hidden');
-          startCamera();
+          mobileRemoteSection.classList.remove('hidden');
         } else {
-          pcDashboardSection.classList.remove('hidden');
+          pcViewerSection.classList.remove('hidden');
         }
       });
 
       conn.on('data', (data) => {
-        if (data && data.type === 'photo') {
-          addPhotoToGalleryPC(data.imageData);
+        if (!data) return;
+        
+        if (data.type === 'slide-change') {
+          displaySlideOnPC(data.imageData);
+        } else if (data.type === 'clear-slide') {
+          clearSlideOnPC();
+        } else if (data.type === 'toggle-fullscreen') {
+          togglePCFullscreen();
         }
       });
 
       conn.on('close', () => {
-        updateStatus('disconnected', 'Disconnected');
-        addLog('Connection closed.');
-        stopCamera();
+        handleDisconnection();
       });
     }
 
-    // HD Quality Camera Initialization
-    async function startCamera() {
-      stopCamera();
-      try {
-        // Request Maximum Possible HD / 4K Camera Resolution
-        const constraints = {
-          video: {
-            facingMode: facingMode,
-            width: { ideal: 3840, min: 1920 },
-            height: { ideal: 2160, min: 1080 },
-            frameRate: { ideal: 30, max: 60 }
-          }
-        };
+    function handleDisconnection() {
+      updateStatus('disconnected', 'Disconnected');
+      addLog('Connection closed.');
 
-        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoPreview.srcObject = currentStream;
+      // Clear PC Slide View and show placeholder
+      presentationSlide.classList.add('hidden');
+      presentationSlide.src = '';
+      pcPlaceholder.classList.remove('hidden');
 
-        if (facingMode === 'user') {
-          videoPreview.classList.add('mirror');
-        } else {
-          videoPreview.classList.remove('mirror');
-        }
-
-        document.getElementById('cam-error').classList.add('hidden');
-        addLog('HD Camera stream initialized.');
-      } catch (err) {
-        // Fallback for devices not supporting 4K/Full-HD constraints directly
-        try {
-          currentStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: facingMode }
-          });
-          videoPreview.srcObject = currentStream;
-          document.getElementById('cam-error').classList.add('hidden');
-          addLog('Standard Camera stream loaded.');
-        } catch(fallbackErr) {
-          document.getElementById('cam-error').classList.remove('hidden');
-          addLog('Camera access permission error.');
-        }
-      }
+      // Show QR code pairing section again if needed, or reload state
+      pairingSection.classList.remove('hidden');
+      mobileRemoteSection.classList.add('hidden');
+      pcViewerSection.classList.add('hidden');
     }
 
-    function stopCamera() {
-      if (currentStream) {
-        currentStream.getTracks().forEach(t => t.stop());
-        currentStream = null;
-      }
-    }
+    document.getElementById('image-input').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
 
-    document.getElementById('btn-switch-cam').addEventListener('click', () => {
-      facingMode = (facingMode === "environment") ? "user" : "environment";
-      startCamera();
+      slidesList = [];
+      currentSlideIndex = 0;
+      addLog(`Loading ${files.length} presentation slides...`);
+
+      for (let file of files) {
+        const dataUrl = await readFileAsDataURL(file);
+        slidesList.push(dataUrl);
+      }
+
+      updateMobileRemoteUI();
+      sendCurrentSlideToPC();
     });
 
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.className = 'filter-btn px-3 py-1 bg-slate-800 rounded-lg whitespace-nowrap');
-        e.currentTarget.className = 'filter-btn px-3 py-1 bg-indigo-600 rounded-lg whitespace-nowrap';
-
-        const f = e.currentTarget.getAttribute('data-filter');
-        if (f === 'vintage') currentFilterCSS = 'sepia(0.6) contrast(1.2) brightness(0.9)';
-        else if (f === 'bw') currentFilterCSS = 'grayscale(1) contrast(1.5)';
-        else if (f === 'warm') currentFilterCSS = 'sepia(0.3) saturate(1.4)';
-        else if (f === 'cool') currentFilterCSS = 'hue-rotate(30deg) saturate(1.2)';
-        else currentFilterCSS = 'none';
-
-        videoPreview.style.filter = currentFilterCSS;
+    function readFileAsDataURL(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
       });
-    });
+    }
 
-    // HD Capture Logic
-    document.getElementById('btn-capture-photo').addEventListener('click', () => {
-      if (!videoPreview.srcObject) return;
+    function updateMobileRemoteUI() {
+      if (slidesList.length > 0) {
+        mobileSlideCount.textContent = `${currentSlideIndex + 1} / ${slidesList.length} Slides`;
+        btnPrev.disabled = (currentSlideIndex === 0);
+        btnNext.disabled = (currentSlideIndex === slidesList.length - 1);
 
-      const canvas = document.getElementById('hidden-canvas');
-      const ctx = canvas.getContext('2d', { alpha: false }); // Optimization for crisp pixel rendering
-
-      // Capture native full sensor resolution instead of display resolution
-      canvas.width = videoPreview.videoWidth || 1920;
-      canvas.height = videoPreview.videoHeight || 1080;
-
-      if (facingMode === 'user') {
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
-      }
-
-      ctx.filter = currentFilterCSS;
-      ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
-
-      // Export as High-Quality 100% Compressed JPEG
-      const imageData = canvas.toDataURL('image/jpeg', 1.0);
-
-      if (conn && conn.open) {
-        conn.send({ type: 'photo', imageData: imageData });
-        addLog(`HD Photo (${canvas.width}x${canvas.height}) sent to PC!`);
+        mobilePreviewPlaceholder.classList.add('hidden');
+        mobilePreviewImg.src = slidesList[currentSlideIndex];
+        mobilePreviewImg.classList.remove('hidden');
       } else {
-        addLog('Error: Connection not active.');
+        mobileSlideCount.textContent = `0 / 0 Slides`;
+        btnPrev.disabled = true;
+        btnNext.disabled = true;
+        mobilePreviewImg.classList.add('hidden');
+        mobilePreviewPlaceholder.classList.remove('hidden');
+      }
+    }
+
+    function sendCurrentSlideToPC() {
+      if (slidesList.length > 0 && conn && conn.open) {
+        conn.send({
+          type: 'slide-change',
+          imageData: slidesList[currentSlideIndex]
+        });
+        addLog(`Sent slide ${currentSlideIndex + 1} to PC`);
+      }
+    }
+
+    btnNext.addEventListener('click', () => {
+      if (currentSlideIndex < slidesList.length - 1) {
+        currentSlideIndex++;
+        updateMobileRemoteUI();
+        sendCurrentSlideToPC();
       }
     });
 
-    // Add HD Photo to PC Gallery with Manual Download Button
-    function addPhotoToGalleryPC(imageData) {
-      if (galleryEmpty) galleryEmpty.style.display = 'none';
+    btnPrev.addEventListener('click', () => {
+      if (currentSlideIndex > 0) {
+        currentSlideIndex--;
+        updateMobileRemoteUI();
+        sendCurrentSlideToPC();
+      }
+    });
 
-      const card = document.createElement('div');
-      card.className = 'bg-slate-950 border border-slate-800 rounded-xl overflow-hidden flex flex-col shadow-md';
+    document.getElementById('btn-toggle-pc-fullscreen').addEventListener('click', () => {
+      if (conn && conn.open) {
+        conn.send({ type: 'toggle-fullscreen' });
+      }
+    });
 
-      const imgWrapper = document.createElement('div');
-      imgWrapper.className = 'relative aspect-video w-full bg-slate-900 overflow-hidden';
-      imgWrapper.innerHTML = `<img src="${imageData}" class="w-full h-full object-cover">`;
+    function displaySlideOnPC(imageData) {
+      pcPlaceholder.classList.add('hidden');
+      presentationSlide.src = imageData;
+      presentationSlide.classList.remove('hidden');
+      addLog('Slide updated on PC viewer.');
+    }
 
-      const actionArea = document.createElement('div');
-      actionArea.className = 'p-2.5 flex items-center justify-between gap-2 bg-slate-900/50 border-t border-slate-800';
+    function clearSlideOnPC() {
+      presentationSlide.classList.add('hidden');
+      presentationSlide.src = '';
+      pcPlaceholder.classList.remove('hidden');
+      addLog('PC slide cleared.');
+    }
 
-      const timeLabel = document.createElement('span');
-      timeLabel.className = 'text-[10px] text-slate-400';
-      timeLabel.textContent = new Date().toLocaleTimeString();
-
-      const btnGroup = document.createElement('div');
-      btnGroup.className = 'flex items-center gap-1.5';
-
-      // Download Button
-      const downloadBtn = document.createElement('a');
-      downloadBtn.href = imageData;
-      downloadBtn.download = `CamSync_HD_${Date.now()}.jpg`;
-      downloadBtn.className = 'px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium flex items-center gap-1 transition';
-      downloadBtn.innerHTML = `<i data-lucide="download" class="w-3.5 h-3.5"></i> Download HD`;
-
-      // Delete Preview Button
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'p-1 bg-slate-800 hover:bg-rose-600/20 hover:text-rose-400 text-slate-400 rounded-lg text-xs transition';
-      deleteBtn.innerHTML = `<i data-lucide="trash-2" class="w-3.5 h-3.5"></i>`;
-      deleteBtn.onclick = () => card.remove();
-
-      btnGroup.appendChild(downloadBtn);
-      btnGroup.appendChild(deleteBtn);
-
-      actionArea.appendChild(timeLabel);
-      actionArea.appendChild(btnGroup);
-
-      card.appendChild(imgWrapper);
-      card.appendChild(actionArea);
-
-      galleryContainer.prepend(card);
-      lucide.createIcons();
-      addLog('HD Photo received in PC Gallery.');
+    function togglePCFullscreen() {
+      if (!document.fullscreenElement) {
+        pcViewerSection.requestFullscreen().catch(err => console.log(err));
+      } else {
+        document.exitFullscreen();
+      }
     }
 
     document.getElementById('btn-open-scanner').addEventListener('click', () => {
