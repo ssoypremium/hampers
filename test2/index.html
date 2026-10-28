@@ -365,7 +365,7 @@
 
       const decrypted = decryptData(rawText);
       if (decrypted) {
-        itemData.name = `${decrypted.name} (${decrypted.desc || ''})`;
+        itemData.name = decrypted.desc ? `${decrypted.name} (${decrypted.desc})` : decrypted.name;
         itemData.qty = parseInt(decrypted.qty) || 1;
         itemData.price = parseFloat(decrypted.price) || 0.00;
       }
