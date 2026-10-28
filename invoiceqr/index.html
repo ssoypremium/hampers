@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O2 QR Code Generator - Max Density A4 Sheet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background-color: #020617; color: #f8fafc; font-family: system-ui, sans-serif; }
+    .qr-card {
+      border: 1px dashed #64748b;
+      padding: 4px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    @media print {
+      body { background-color: #ffffff !important; color: #000000 !important; padding: 0 !important; }
+      .no-print { display: none !important; }
+      #a4-print-area {
+        background: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        width: 100% !important;
+      }
+      .qr-grid-layout {
+        display: grid !important;
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+      }
+      .qr-card {
+        border: 1px dashed #000000 !important;
+        padding: 3px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen p-3 sm:p-5 flex flex-col items-center">
+
+  <header class="w-full max-w-5xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3 no-print">
+    <div>
+      <h1 class="text-lg font-bold bg-gradient-to-r from-indigo-400 to-teal-300 bg-clip-text text-transparent">
+        O2 QR Code Generator
+      </h1>
+      <p class="text-xs text-slate-400">High-Density A4 Printable Sheet (Only QR & Cut Lines)</p>
+    </div>
+    <button onclick="window.print()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 shadow-lg transition">
+      <i data-lucide="printer" class="w-4 h-4"></i> Print A4 Sheet
+    </button>
+  </header>
+
+  <main class="w-full max-w-5xl flex flex-col gap-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-2xl no-print">
+      <h2 class="text-xs font-bold text-slate-200 mb-3 flex items-center gap-2">
+        <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Add Item Details
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div class="sm:col-span-2">
+          <label class="text-[11px] text-slate-400">Item Description / Name:</label>
+          <input type="text" id="item-name" placeholder="e.g. Hair Oil" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 mt-1">
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400">Quantity (QR Count):</label>
+          <input type="number" id="item-qty" value="1" min="1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 mt-1 font-mono">
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400">Rate / Price (₹):</label>
+          <input type="number" id="item-price" step="0.01" value="0.00" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 mt-1 font-mono">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-3">
+        <button onclick="clearAllQRs()" class="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear All
+        </button>
+        <button onclick="generateQRCodes()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-lg transition">
+          <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> Add & Generate
+        </button>
+      </div>
+    </div>
+
+    <div id="a4-print-area" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl min-h-[500px]">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-4 no-print">
+        <span class="text-xs font-semibold text-slate-300">A4 Printable Sheet Layout</span>
+        <span id="total-count-badge" class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Total QRs: 0</span>
+      </div>
+
+      <div id="qr-grid" class="qr-grid-layout grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-2 justify-center">
+        <div id="empty-msg" class="col-span-full py-16 text-center text-slate-500 text-xs">
+          No QR codes generated yet. Add an item above!
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const SECRET_KEY = "CAM_SYNC_SECRET_BILLING_KEY";
+    let qrItemsList = [];
+
+    lucide.createIcons();
+
+    function encryptData(obj) {
+      const jsonString = JSON.stringify(obj);
+      let encrypted = '';
+      for (let i = 0; i < jsonString.length; i++) {
+        encrypted += String.fromCharCode(jsonString.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
+      }
+      return "ENC:" + btoa(encrypted);
+    }
+
+    function generateQRCodes() {
+      const name = document.getElementById('item-name').value.trim();
+      const qty = parseInt(document.getElementById('item-qty').value) || 1;
+      const price = parseFloat(document.getElementById('item-price').value) || 0;
+
+      if (!name) {
+        alert("Please enter Item Description/Name!");
+        return;
+      }
+
+      const payloadObj = {
+        name: name,
+        qty: 1,
+        price: price,
+        rate: price
+      };
+
+      const encryptedPayload = encryptData(payloadObj);
+
+      for (let i = 0; i < qty; i++) {
+        qrItemsList.push({
+          id: Date.now() + Math.random(),
+          payload: encryptedPayload
+        });
+      }
+
+      renderQRGrid();
+
+      document.getElementById('item-name').value = '';
+      document.getElementById('item-qty').value = '1';
+      document.getElementById('item-price').value = '0.00';
+    }
+
+    function renderQRGrid() {
+      const grid = document.getElementById('qr-grid');
+      grid.innerHTML = '';
+
+      if (qrItemsList.length === 0) {
+        grid.innerHTML = `<div id="empty-msg" class="col-span-full py-16 text-center text-slate-500 text-xs">No QR codes generated yet. Add an item above!</div>`;
+        document.getElementById('total-count-badge').textContent = `Total QRs: 0`;
+        return;
+      }
+
+      document.getElementById('total-count-badge').textContent = `Total QRs: ${qrItemsList.length}`;
+
+      qrItemsList.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "qr-card rounded flex items-center justify-center relative";
+        
+        const qrContainerId = `qrcode-${index}`;
+
+        card.innerHTML = `
+          <button onclick="removeSingleQR(${index})" class="no-print absolute -top-2 -right-2 text-rose-500 hover:text-rose-700 bg-slate-900 rounded-full p-0.5">
+            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+          </button>
+          <div id="${qrContainerId}" class="p-0.5"></div>
+        `;
+
+        grid.appendChild(card);
+
+        new QRCode(document.getElementById(qrContainerId), {
+          text: item.payload,
+          width: 80,
+          height: 80,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      });
+
+      lucide.createIcons();
+    }
+
+    function removeSingleQR(index) {
+      qrItemsList.splice(index, 1);
+      renderQRGrid();
+    }
+
+    function clearAllQRs() {
+      qrItemsList = [];
+      renderQRGrid();
+    }
+  </script>
+</body>
+</html>
