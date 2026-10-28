@@ -2,376 +2,134 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SlideSync Remote with Preview</title>
-
-  <!-- Tailwind CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encrypted QR A4 Label Generator</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- PeerJS for WebRTC -->
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-
-  <!-- QRCode.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-  <!-- HTML5-QRCode Scanner -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
-    body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
-    #reader video { border-radius: 0.75rem; object-fit: cover; width: 100% !important; }
+    body { background-color: #020617; color: #f8fafc; font-family: system-ui, sans-serif; }
+    
+    /* A4 Print & Border Styles */
+    @media print {
+      body * { visibility: hidden; }
+      #printable-sheet, #printable-sheet * { visibility: visible; }
+      #printable-sheet { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 8mm; }
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start p-3 sm:p-5 antialiased">
+<body class="min-h-screen flex flex-col items-center justify-start p-4 antialiased">
 
-  <!-- Header -->
-  <header id="app-header" class="w-full max-w-4xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
-    <div class="flex items-center gap-3">
-      <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30 flex items-center justify-center">
-        <i data-lucide="presentation" class="w-5 h-5"></i>
+  <!-- Control Form (Screen Only) -->
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xl w-full flex flex-col gap-4 shadow-2xl mb-8 no-print">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+      <h2 class="text-base font-bold text-white flex items-center gap-2">
+        <i data-lucide="lock" class="w-5 h-5 text-indigo-400"></i> Encrypted A4 QR Sheet Studio
+      </h2>
+      <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-500/30">Secure Encrypted Data</span>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div>
+        <label class="text-xs text-slate-400">Item Name:</label>
+        <input type="text" id="item-name" value="Wireless Mouse" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
       </div>
       <div>
-        <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-indigo-400 to-teal-300 bg-clip-text text-transparent">SlideSync Remote</h1>
-        <p class="text-[11px] text-slate-400">P2P Wireless Presentation Deck</p>
+        <label class="text-xs text-slate-400">Declaration / Desc:</label>
+        <input type="text" id="item-desc" value="Ergonomic 2.4G" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400">Hidden Price (₹):</label>
+        <input type="number" id="item-price" value="499.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400">Default Qty per Scan:</label>
+        <input type="number" id="item-qty" value="1" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
       </div>
     </div>
-    <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
-      <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-      <span id="status-text">Initializing...</span>
-    </div>
-  </header>
+    
+    <div class="flex gap-2">
+      <button onclick="generateA4Sheet()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg transition">
+        Generate Encrypted Grid
+      </button>
 
-  <!-- Main Content Area -->
-  <main class="w-full max-w-4xl flex flex-col gap-4">
-
-    <!-- STEP 1: Pairing QR Code Card -->
-    <div id="pairing-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center">
-      <h2 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
-        <i data-lucide="qr-code" class="w-5 h-5 text-indigo-400"></i> Connect PC & Mobile
-      </h2>
-      <p class="text-xs text-slate-400 mb-5 max-w-sm leading-relaxed">
-        PC par is page ko khula rakhein. Mobile se "Scan PC QR Code" daba kar QR scan karein.
-      </p>
-
-      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[200px] min-w-[200px] flex items-center justify-center">
-        <div id="qrcode"></div>
-        <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
-          <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
-          <span class="text-xs">Generating Session ID...</span>
-        </div>
-      </div>
-
-      <div class="w-full max-w-xs flex flex-col gap-2">
-        <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25">
-          <i data-lucide="camera" class="w-4 h-4"></i> Scan PC QR Code
-        </button>
-      </div>
-    </div>
-
-    <!-- STEP 2: Mobile Remote Control View (Connected Mobile) -->
-    <div id="mobile-remote-section" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl hidden flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <span class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
-          <i data-lucide="smartphone" class="w-4 h-4"></i> Mobile Deck Controller
-        </span>
-        <span id="mobile-slide-count" class="text-xs text-slate-400 font-mono">0 / 0 Slides</span>
-      </div>
-
-      <!-- File Uploader Button -->
-      <div class="flex flex-col gap-2">
-        <label for="image-input" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition shadow-md">
-          <i data-lucide="images" class="w-4 h-4"></i> Select Presentation Images
-        </label>
-        <input type="file" id="image-input" accept="image/*" multiple class="hidden">
-      </div>
-
-      <!-- Mobile Slide Live Preview Box -->
-      <div class="relative w-full h-[200px] bg-black rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden">
-        <div id="mobile-preview-placeholder" class="text-xs text-slate-600 flex flex-col items-center gap-1">
-          <i data-lucide="image" class="w-8 h-8 opacity-40"></i>
-          <span>No slide selected</span>
-        </div>
-        <img id="mobile-preview-img" class="w-full h-full object-contain hidden" alt="Slide Preview">
-      </div>
-
-      <!-- Slide Controls (Prev / Next Buttons) -->
-      <div class="grid grid-cols-2 gap-3">
-        <button id="btn-prev-slide" class="py-5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-white rounded-xl border border-slate-700 flex flex-col items-center justify-center gap-1 shadow-lg disabled:opacity-40" disabled>
-          <i data-lucide="chevron-left" class="w-6 h-6 text-indigo-400"></i>
-          <span class="text-[11px] font-bold">PREVIOUS</span>
-        </button>
-
-        <button id="btn-next-slide" class="py-5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-white rounded-xl border border-slate-700 flex flex-col items-center justify-center gap-1 shadow-lg disabled:opacity-40" disabled>
-          <i data-lucide="chevron-right" class="w-6 h-6 text-indigo-400"></i>
-          <span class="text-[11px] font-bold">NEXT</span>
-        </button>
-      </div>
-
-      <!-- Fullscreen Remote Trigger -->
-      <button id="btn-toggle-pc-fullscreen" class="w-full py-2.5 bg-slate-800 border border-slate-700 text-slate-300 rounded-xl text-xs font-medium flex items-center justify-center gap-2">
-        <i data-lucide="maximize" class="w-4 h-4 text-teal-400"></i> Toggle Fullscreen on PC
+      <button onclick="window.print()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-lg transition">
+        <i data-lucide="printer" class="w-4 h-4"></i> Print / Save A4 (PDF)
       </button>
     </div>
+  </div>
 
-    <!-- STEP 3: PC Presentation Viewer (Connected PC - NO CONTROLS HERE) -->
-    <div id="pc-viewer-section" class="bg-black border border-slate-800 rounded-2xl p-2 shadow-2xl hidden flex flex-col items-center justify-center relative min-h-[500px] overflow-hidden">
-      <div id="pc-placeholder" class="flex flex-col items-center justify-center text-slate-600 p-8 text-center">
-        <i data-lucide="presentation" class="w-16 h-16 mb-3 opacity-30"></i>
-        <p class="text-sm font-medium text-slate-400">Connected! Select images from mobile to start presentation.</p>
-      </div>
-      
-      <!-- Slide Image Tag -->
-      <img id="presentation-slide" class="max-h-[80vh] w-auto max-w-full object-contain rounded-lg hidden" alt="Presentation Slide">
+  <!-- Printable A4 Sheet Grid Container -->
+  <div id="printable-sheet" class="bg-white p-4 rounded-lg shadow-2xl w-[210mm] min-h-[297mm] flex flex-col text-black">
+    <div class="text-center mb-3 border-b border-gray-300 pb-2">
+      <h3 id="sheet-title" class="text-sm font-bold tracking-widest text-gray-800">ENCRYPTED PRODUCT LABELS</h3>
+      <p class="text-[10px] text-gray-500">Cut-Border Grid (45mm x 30mm) - Scannable via ScanBilling App Only</p>
     </div>
 
-    <!-- Activity Log -->
-    <div id="log-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex flex-col">
-      <h3 class="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1.5">
-        <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i> Session Log
-      </h3>
-      <div id="activity-log" class="space-y-1 max-h-[60px] overflow-y-auto text-[11px] text-slate-500 font-mono">
-        <div>Ready for peer connection.</div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- MODAL: QR Scanner -->
-  <div id="scanner-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-sm w-full flex flex-col gap-3">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i> Scan PC Screen QR
-        </h3>
-        <button id="btn-close-scanner" class="text-slate-400 hover:text-white">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-      <div class="overflow-hidden rounded-xl bg-black min-h-[200px]">
-        <div id="reader" class="w-full"></div>
-      </div>
+    <!-- Grid Layout with Cut Borders -->
+    <div class="grid grid-cols-4 gap-2 flex-1 justify-items-center">
+      <!-- Dynamic Labels Injected Here -->
     </div>
   </div>
 
   <script>
-    let peer = null, conn = null, myPeerId = null, html5QrcodeScanner = null;
-    let isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    // Presentation State
-    let slidesList = [];
-    let currentSlideIndex = 0;
-
-    const statusBadge = document.getElementById('status-badge'), statusText = document.getElementById('status-text');
-    const pairingSection = document.getElementById('pairing-section'), mobileRemoteSection = document.getElementById('mobile-remote-section'), pcViewerSection = document.getElementById('pc-viewer-section');
-    const qrContainer = document.getElementById('qrcode'), qrLoader = document.getElementById('qr-loader');
-    const activityLog = document.getElementById('activity-log');
-    const presentationSlide = document.getElementById('presentation-slide'), pcPlaceholder = document.getElementById('pc-placeholder');
-    const mobileSlideCount = document.getElementById('mobile-slide-count');
-    const mobilePreviewImg = document.getElementById('mobile-preview-img'), mobilePreviewPlaceholder = document.getElementById('mobile-preview-placeholder');
-    const btnPrev = document.getElementById('btn-prev-slide'), btnNext = document.getElementById('btn-next-slide');
-
     lucide.createIcons();
 
-    function addLog(msg) {
-      const item = document.createElement('div');
-      item.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-      activityLog.appendChild(item);
-      activityLog.scrollTop = activityLog.scrollHeight;
-    }
+    // Simple XOR Cipher for Encrypting QR Payload
+    const SECRET_KEY = "CAM_SYNC_SECRET_BILLING_KEY";
 
-    function updateStatus(state, msg) {
-      statusText.textContent = msg;
-      if (state === 'connected') {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
-        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
+    function encryptData(text) {
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
       }
+      return "ENC:" + btoa(result);
     }
 
-    function initPeer() {
-      peer = new Peer({ debug: 1 });
+    function generateA4Sheet() {
+      const name = document.getElementById('item-name').value;
+      const desc = document.getElementById('item-desc').value;
+      const price = parseFloat(document.getElementById('item-price').value) || 0;
+      const qty = parseInt(document.getElementById('item-qty').value) || 1;
 
-      peer.on('open', (id) => {
-        myPeerId = id;
-        qrLoader.classList.add('hidden');
+      const rawJson = JSON.stringify({ name, desc, price, qty });
+      const encryptedPayload = encryptData(rawJson);
+
+      const gridContainer = document.querySelector('#printable-sheet .grid');
+      gridContainer.innerHTML = ''; 
+
+      document.getElementById('sheet-title').textContent = (name.toUpperCase() || "PRODUCT") + " - ENCRYPTED LABELS";
+
+      // Create 24 Labels for Full A4 Page Fill with Cut Border
+      for (let i = 0; i < 24; i++) {
+        const labelBox = document.createElement('div');
+        // Border applied for easy cutting
+        labelBox.className = "w-[45mm] h-[32mm] border-2 border-dashed border-gray-400 p-1.5 flex flex-col items-center justify-between bg-white rounded-sm box-border relative";
         
-        const pairingUrl = `${window.location.origin}${window.location.pathname}?connect=${id}`;
-        qrContainer.innerHTML = '';
-        new QRCode(qrContainer, { text: pairingUrl, width: 175, height: 175 });
+        labelBox.innerHTML = `
+          <div class="text-[9px] font-bold text-gray-800 truncate w-full text-center leading-tight">${name}</div>
+          <div class="qr-placeholder w-[22mm] h-[22mm] flex items-center justify-center my-0.5"></div>
+          <div class="text-[7.5px] font-mono text-gray-500 truncate w-full text-center">${desc}</div>
+        `;
 
-        updateStatus('waiting', 'Ready for Connection');
-        addLog('Generated connection ID.');
+        gridContainer.appendChild(labelBox);
 
-        const targetFromUrl = new URLSearchParams(window.location.search).get('connect');
-        if (targetFromUrl) {
-          connectToPeer(targetFromUrl);
-        }
-      });
-
-      peer.on('connection', (c) => setupConnection(c));
-      peer.on('error', (err) => {
-        console.error(err);
-        updateStatus('error', 'Peer Connection Error');
-      });
-    }
-
-    function connectToPeer(targetId) {
-      if (!targetId || targetId === myPeerId) return;
-      updateStatus('connecting', 'Connecting...');
-      addLog(`Connecting to PC endpoint...`);
-      const outgoingConn = peer.connect(targetId, { reliable: true });
-      setupConnection(outgoingConn);
-    }
-
-    function setupConnection(connection) {
-      conn = connection;
-
-      conn.on('open', () => {
-        updateStatus('connected', 'Paired & Connected');
-        addLog('Device connected successfully!');
-
-        pairingSection.classList.add('hidden');
-
-        const targetFromUrl = new URLSearchParams(window.location.search).get('connect');
-        if (isMobile || targetFromUrl) {
-          mobileRemoteSection.classList.remove('hidden');
-        } else {
-          pcViewerSection.classList.remove('hidden');
-        }
-      });
-
-      conn.on('data', (data) => {
-        if (!data) return;
-        
-        if (data.type === 'slide-change') {
-          displaySlideOnPC(data.imageData);
-        } else if (data.type === 'toggle-fullscreen') {
-          togglePCFullscreen();
-        }
-      });
-
-      conn.on('close', () => {
-        updateStatus('disconnected', 'Disconnected');
-        addLog('Connection closed.');
-      });
-    }
-
-    // Handle Mobile Image Selection
-    document.getElementById('image-input').addEventListener('change', async (e) => {
-      const files = Array.from(e.target.files);
-      if (files.length === 0) return;
-
-      slidesList = [];
-      currentSlideIndex = 0;
-      addLog(`Loading ${files.length} presentation slides...`);
-
-      for (let file of files) {
-        const dataUrl = await readFileAsDataURL(file);
-        slidesList.push(dataUrl);
-      }
-
-      updateMobileRemoteUI();
-      sendCurrentSlideToPC();
-    });
-
-    function readFileAsDataURL(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function updateMobileRemoteUI() {
-      if (slidesList.length > 0) {
-        mobileSlideCount.textContent = `${currentSlideIndex + 1} / ${slidesList.length} Slides`;
-        btnPrev.disabled = (currentSlideIndex === 0);
-        btnNext.disabled = (currentSlideIndex === slidesList.length - 1);
-
-        // Update mobile preview thumbnail
-        mobilePreviewPlaceholder.classList.add('hidden');
-        mobilePreviewImg.src = slidesList[currentSlideIndex];
-        mobilePreviewImg.classList.remove('hidden');
-      } else {
-        mobileSlideCount.textContent = `0 / 0 Slides`;
-        btnPrev.disabled = true;
-        btnNext.disabled = true;
-        mobilePreviewImg.classList.add('hidden');
-        mobilePreviewPlaceholder.classList.remove('hidden');
-      }
-    }
-
-    function sendCurrentSlideToPC() {
-      if (slidesList.length > 0 && conn && conn.open) {
-        conn.send({
-          type: 'slide-change',
-          imageData: slidesList[currentSlideIndex]
+        const qrPlace = labelBox.querySelector('.qr-placeholder');
+        new QRCode(qrPlace, {
+          text: encryptedPayload,
+          width: 80,
+          height: 80,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
         });
-        addLog(`Sent slide ${currentSlideIndex + 1} to PC`);
       }
+      lucide.createIcons();
     }
 
-    btnNext.addEventListener('click', () => {
-      if (currentSlideIndex < slidesList.length - 1) {
-        currentSlideIndex++;
-        updateMobileRemoteUI();
-        sendCurrentSlideToPC();
-      }
-    });
-
-    btnPrev.addEventListener('click', () => {
-      if (currentSlideIndex > 0) {
-        currentSlideIndex--;
-        updateMobileRemoteUI();
-        sendCurrentSlideToPC();
-      }
-    });
-
-    document.getElementById('btn-toggle-pc-fullscreen').addEventListener('click', () => {
-      if (conn && conn.open) {
-        conn.send({ type: 'toggle-fullscreen' });
-      }
-    });
-
-    function displaySlideOnPC(imageData) {
-      pcPlaceholder.classList.add('hidden');
-      presentationSlide.src = imageData;
-      presentationSlide.classList.remove('hidden');
-      addLog('Slide updated on PC viewer.');
-    }
-
-    function togglePCFullscreen() {
-      if (!document.fullscreenElement) {
-        pcViewerSection.requestFullscreen().catch(err => console.log(err));
-      } else {
-        document.exitFullscreen();
-      }
-    }
-
-    document.getElementById('btn-open-scanner').addEventListener('click', () => {
-      document.getElementById('scanner-modal').classList.remove('hidden');
-      if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
-      
-      html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 180 }, (text) => {
-        document.getElementById('scanner-modal').classList.add('hidden');
-        if (html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
-        
-        let targetPeerId = text;
-        if (text.includes('connect=')) {
-          try { targetPeerId = new URL(text).searchParams.get('connect'); } catch(e){}
-        }
-        connectToPeer(targetPeerId);
-      }).catch(() => addLog('Scanner access denied.'));
-    });
-
-    document.getElementById('btn-close-scanner').addEventListener('click', () => {
-      document.getElementById('scanner-modal').classList.add('hidden');
-      if (html5QrcodeScanner && html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
-    });
-
-    window.addEventListener('load', initPeer);
+    window.onload = generateA4Sheet;
   </script>
 </body>
 </html>
