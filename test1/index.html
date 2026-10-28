@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CamSync Studio - Remote Camera to PC Transfer8</title>
+  <title>CamSync Studio - PC Photo Capture</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,7 +12,7 @@
   <!-- PeerJS for WebRTC Peer-to-Peer Connection -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
-  <!-- QRCode.js for Pair QR Code Generation -->
+  <!-- QRCode.js for QR Code Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <!-- HTML5-QRCode for In-App QR Code Scanner -->
@@ -23,344 +23,216 @@
 
   <style>
     /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #090d16;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #334155;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
 
-    /* Video & Canvas Filter Render Settings */
-    .filter-preview {
-      transition: filter 0.15s ease-in-out;
-    }
-
-    /* Flash Overlay Animation */
-    @keyframes cameraFlash {
-      0% { opacity: 0.95; background-color: #ffffff; }
-      100% { opacity: 0; background-color: transparent; }
-    }
-    .flash-anim {
-      animation: cameraFlash 0.45s ease-out forwards;
-    }
-
-    /* Pulse Glow for Shutter */
-    .pulse-glow {
-      box-shadow: 0 0 25px rgba(99, 102, 241, 0.45);
-    }
-
-    /* QR Scanner Video Styling */
-    #qr-reader video {
+    /* Scanner & Camera video styling */
+    #reader video, #camera-preview {
       border-radius: 0.75rem;
       object-fit: cover;
       width: 100% !important;
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-3 sm:p-5 antialiased">
 
-  <!-- Header Bar -->
-  <header class="w-full max-w-5xl mb-4 flex items-center justify-between border-b border-slate-800/80 pb-3">
+  <!-- Header -->
+  <header class="w-full max-w-4xl mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
     <div class="flex items-center gap-3">
       <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30 flex items-center justify-center">
-        <i data-lucide="camera" class="w-6 h-6"></i>
+        <i data-lucide="camera" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base sm:text-xl font-bold tracking-wide bg-gradient-to-r from-indigo-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">CamSync Studio</h1>
-        <p class="text-[11px] sm:text-xs text-slate-400">P2P Remote Phone Camera to PC Instant Auto-Download</p>
+        <h1 class="text-base sm:text-lg font-bold tracking-wide bg-gradient-to-r from-indigo-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">CamSync Studio33</h1>
+        <p class="text-[11px] text-slate-400">Direct Phone Camera to PC Sync</p>
       </div>
     </div>
 
-    <!-- Live Connection Badge -->
-    <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-900 text-slate-400 border border-slate-800 shadow-sm transition-all duration-300">
-      <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-      <span id="status-text">Initializing Tunnel...</span>
+    <!-- Connection Status Badge -->
+    <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700 shadow-sm transition-all duration-300">
+      <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+      <span id="status-text">Initializing...</span>
     </div>
   </header>
 
-  <!-- Main Application Container -->
-  <main class="w-full max-w-5xl flex-1 flex flex-col gap-5 justify-center">
+  <!-- Main Content Area -->
+  <main class="w-full max-w-4xl flex flex-col gap-4">
 
-    <!-- 1. LANDING / QR PAIRING CARD (Visible before connection) -->
-    <div id="view-pairing" class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-10 shadow-2xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-500 my-auto">
-      <div class="absolute -right-16 -top-16 w-56 h-56 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -left-16 -bottom-16 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 rounded-2xl flex items-center justify-center mb-4">
-        <i data-lucide="qr-code" class="w-6 h-6"></i>
-      </div>
-
-      <h2 class="text-xl sm:text-2xl font-bold text-slate-100 mb-2">Pair Phone Camera to PC</h2>
-      <p class="text-xs sm:text-sm text-slate-400 mb-6 max-w-md leading-relaxed">
-        Open this page on your PC, then scan the QR code below with your phone camera or use the scanner button below. Once paired, the QR code disappears automatically!
+    <!-- STEP 1: QR Pairing Screen (PC & Mobile Initial State) -->
+    <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-500">
+      <h2 class="text-xl font-bold text-slate-100 mb-1 flex items-center gap-2">
+        <i data-lucide="qr-code" class="w-5 h-5 text-indigo-400"></i> Pair Phone with PC
+      </h2>
+      <p class="text-xs text-slate-400 mb-5 max-w-sm leading-relaxed">
+        Open this URL on PC, then scan this QR code with your mobile phone to use your mobile camera and save photos straight to PC.
       </p>
 
-      <!-- QR Display Box -->
-      <div class="bg-white p-3.5 rounded-2xl shadow-2xl border-4 border-slate-800 mb-6 relative min-h-[200px] min-w-[200px] flex items-center justify-center">
+      <!-- QR Code Container -->
+      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[190px] min-w-[190px] flex items-center justify-center">
         <div id="qrcode"></div>
-        <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-xl">
+        <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
           <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
-          <span class="text-xs font-medium">Generating Peer ID...</span>
+          <span class="text-xs">Generating Connection ID...</span>
         </div>
       </div>
 
-      <!-- Pairing Actions -->
-      <div class="w-full max-w-xs sm:max-w-md flex flex-col sm:flex-row gap-3">
+      <!-- Action Buttons for Mobile Screen -->
+      <div class="w-full max-w-xs flex flex-col gap-2.5">
         <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25">
-          <i data-lucide="scan" class="w-4 h-4"></i>
-          Scan PC QR Code (Mobile)
+          <i data-lucide="camera" class="w-4 h-4"></i>
+          Scan PC QR Code
         </button>
 
-        <button id="btn-copy-link" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 rounded-xl text-xs font-medium transition flex items-center justify-center gap-2 border border-slate-700 shadow-md">
-          <i data-lucide="copy" class="w-4 h-4 text-indigo-400"></i>
+        <button id="btn-copy-link" class="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-300 rounded-xl text-xs font-medium transition flex items-center justify-center gap-2 border border-slate-700">
+          <i data-lucide="copy" class="w-4 h-4"></i>
           Copy Pairing Link
         </button>
       </div>
     </div>
 
-    <!-- 2. MOBILE CAMERA & PRO FILTERS STUDIO (Revealed on mobile phone when connected) -->
-    <div id="view-mobile-studio" class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-5 shadow-2xl flex flex-col gap-4 hidden">
-      
-      <!-- Camera Preview Box -->
-      <div class="relative w-full aspect-[3/4] sm:aspect-video bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-inner flex items-center justify-center group">
-        <!-- Live Stream Video -->
-        <video id="camera-video" autoplay playsinline muted class="w-full h-full object-cover filter-preview"></video>
-
-        <!-- Hidden Canvas for Capture Render -->
-        <canvas id="snapshot-canvas" class="hidden"></canvas>
-
-        <!-- Flash Effect Container -->
-        <div id="flash-overlay" class="absolute inset-0 pointer-events-none z-30 opacity-0"></div>
-
-        <!-- 3s Timer Countdown Overlay -->
-        <div id="countdown-overlay" class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm z-20 flex items-center justify-center text-7xl font-extrabold text-white hidden">
-          <span id="countdown-num" class="animate-ping">3</span>
-        </div>
-
-        <!-- Camera Top Control Floating Bar -->
-        <div class="absolute top-3 left-3 right-3 z-10 flex items-center justify-between">
-          <button id="btn-switch-cam" class="p-2 bg-slate-950/70 hover:bg-slate-900 border border-slate-700/80 rounded-xl text-slate-200 text-xs backdrop-blur-md transition flex items-center gap-1.5">
-            <i data-lucide="refresh-cw" class="w-4 h-4 text-indigo-400"></i>
-            <span>Flip Camera</span>
-          </button>
-
-          <button id="btn-toggle-timer" class="p-2 bg-slate-950/70 hover:bg-slate-900 border border-slate-700/80 rounded-xl text-slate-200 text-xs backdrop-blur-md transition flex items-center gap-1.5">
-            <i data-lucide="timer" class="w-4 h-4 text-amber-400"></i>
-            <span id="timer-label">Timer: Off</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Studio Filter Controls -->
-      <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-            <i data-lucide="sliders" class="w-3.5 h-3.5 text-cyan-400"></i> Live Pro Filters
-          </span>
-          <span id="active-filter-name" class="text-[11px] font-mono text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-md">Normal</span>
-        </div>
-
-        <!-- Filter Presets Horizontal Slider -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-thin">
-          <button data-filter="none" class="filter-preset-btn px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium whitespace-nowrap border border-indigo-500 shadow transition">Normal</button>
-          <button data-filter="vintage" class="filter-preset-btn px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium whitespace-nowrap border border-slate-700 transition">Vintage Film</button>
-          <button data-filter="bw" class="filter-preset-btn px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium whitespace-nowrap border border-slate-700 transition">B&W Contrast</button>
-          <button data-filter="warm" class="filter-preset-btn px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium whitespace-nowrap border border-slate-700 transition">Warm Sunset</button>
-          <button data-filter="cool" class="filter-preset-btn px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium whitespace-nowrap border border-slate-700 transition">Cool Studio</button>
-          <button data-filter="dramatic" class="filter-preset-btn px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium whitespace-nowrap border border-slate-700 transition">Dramatic Pop</button>
-        </div>
-
-        <!-- Manual Fine-tuning Sliders -->
-        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800/80 text-[11px]">
-          <div>
-            <label class="text-slate-400 block mb-1">Brightness</label>
-            <input id="slider-bright" type="range" min="50" max="150" value="100" class="w-full accent-indigo-500 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-slate-400 block mb-1">Contrast</label>
-            <input id="slider-contrast" type="range" min="50" max="175" value="100" class="w-full accent-indigo-500 cursor-pointer">
-          </div>
-          <div>
-            <label class="text-slate-400 block mb-1">Saturate</label>
-            <input id="slider-saturate" type="range" min="0" max="200" value="100" class="w-full accent-indigo-500 cursor-pointer">
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Shutter Button -->
-      <div class="flex items-center justify-center pt-1">
-        <button id="btn-shutter" class="w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-1 shadow-xl hover:scale-105 active:scale-95 transition-transform duration-200 flex items-center justify-center pulse-glow">
-          <div class="w-full h-full rounded-full border-4 border-slate-950 bg-white flex items-center justify-center">
-            <i data-lucide="aperture" class="w-8 h-8 text-indigo-600"></i>
-          </div>
+    <!-- STEP 2: MOBILE CAMERA UI (Shows on Phone after Pairing) -->
+    <div id="mobile-cam-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl flex flex-col gap-4 hidden">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <span class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
+          <i data-lucide="smartphone" class="w-4 h-4"></i> Mobile Camera Studio
+        </span>
+        <button id="btn-switch-cam" class="px-3 py-1 bg-slate-800 border border-slate-700 text-xs rounded-lg flex items-center gap-1 hover:bg-slate-700">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Flip Cam
         </button>
       </div>
-    </div>
 
-    <!-- 3. PC RECEIVER DASHBOARD & PHOTO GALLERY (Revealed on PC when paired) -->
-    <div id="view-pc-dashboard" class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl flex flex-col gap-5 hidden">
-      
-      <!-- Station Banner Header -->
-      <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-        <div class="flex items-center gap-3">
-          <div class="p-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg">
-            <i data-lucide="monitor-down" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-bold text-slate-100">Live PC Sync Receiver</h3>
-            <p class="text-[11px] text-slate-400">Photos clicked on your phone arrive in real-time and save directly to your PC.</p>
-          </div>
-        </div>
-
-        <!-- Controls: Auto-Download Toggle & Download All -->
-        <div class="flex items-center gap-3">
-          <!-- Auto-Save Toggle -->
-          <label class="flex items-center gap-2 cursor-pointer bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
-            <input id="toggle-autodownload" type="checkbox" checked class="w-4 h-4 accent-indigo-500 rounded cursor-pointer">
-            <span class="text-xs font-medium text-slate-300">Auto Save to PC</span>
-          </label>
-
-          <!-- Download All Button -->
-          <button id="btn-download-all" class="py-1.5 px-3 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-md">
-            <i data-lucide="download-cloud" class="w-4 h-4"></i>
-            Download All (<span id="photo-count-badge">0</span>)
-          </button>
+      <!-- Live Video View -->
+      <div class="relative w-full h-[380px] bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+        <video id="camera-preview" autoplay playsinline class="w-full h-full object-cover transition-all duration-300"></video>
+        
+        <!-- Camera Error Msg -->
+        <div id="cam-permission-error" class="hidden absolute inset-0 bg-slate-950/90 text-rose-400 p-4 flex-col items-center justify-center text-center gap-2">
+          <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+          <p class="text-xs font-medium">Camera access blocked. Please allow Camera permission in your mobile browser settings.</p>
         </div>
       </div>
 
-      <!-- Photo Gallery Grid -->
-      <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[350px]">
-        <!-- Empty Placeholder Gallery State -->
-        <div id="empty-gallery" class="col-span-full h-80 flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-800 rounded-xl bg-slate-950/40 p-6 text-center">
-          <div class="p-4 bg-slate-900 rounded-full border border-slate-800 mb-3">
-            <i data-lucide="image" class="w-10 h-10 opacity-30 text-indigo-400"></i>
-          </div>
-          <h4 class="text-sm font-semibold text-slate-300 mb-1">No Photos Received Yet</h4>
-          <p class="text-xs text-slate-500 max-w-xs leading-relaxed">Tap the shutter button on your connected phone. Photos will sync and download to your computer automatically!</p>
+      <!-- Filters Selection -->
+      <div class="flex flex-col gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+        <span class="text-[11px] text-slate-400 font-medium">Camera Filters:</span>
+        <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
+          <button data-filter="none" class="filter-btn px-3 py-1 bg-indigo-600 rounded-lg whitespace-nowrap">Normal</button>
+          <button data-filter="vintage" class="filter-btn px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg whitespace-nowrap">Vintage</button>
+          <button data-filter="bw" class="filter-btn px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg whitespace-nowrap">B&W</button>
+          <button data-filter="warm" class="filter-btn px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg whitespace-nowrap">Warm</button>
+          <button data-filter="cool" class="filter-btn px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg whitespace-nowrap">Cool</button>
+        </div>
+      </div>
+
+      <!-- Capture Button -->
+      <button id="btn-capture-photo" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-lg flex items-center justify-center gap-2 active:scale-[0.98]">
+        <i data-lucide="aperture" class="w-5 h-5"></i> Click & Send Photo to PC
+      </button>
+    </div>
+
+    <!-- STEP 3: PC RECEIVER DASHBOARD (Shows on PC after Pairing) -->
+    <div id="pc-dashboard-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-2xl flex flex-col gap-4 hidden">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+          <i data-lucide="monitor" class="w-4 h-4"></i> PC Receiver Station (Auto-Download Active)
+        </span>
+        <span class="text-[11px] text-slate-400">Photos will automatically download here</span>
+      </div>
+
+      <!-- Photos Gallery Grid -->
+      <div id="gallery-container" class="grid grid-cols-2 sm:grid-cols-3 gap-3 min-h-[250px]">
+        <div id="no-photos" class="col-span-full flex flex-col items-center justify-center p-8 text-slate-500 text-center">
+          <i data-lucide="image" class="w-10 h-10 mb-2 opacity-30"></i>
+          <p class="text-xs">No photos received yet. Click photos from your phone!</p>
         </div>
       </div>
     </div>
 
-    <!-- Live Activity Console -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col min-h-[120px]">
-      <div class="flex items-center justify-between mb-2">
-        <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i>
-          Live Activity Console
-        </h3>
-        <button id="btn-clear-log" class="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
-          <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
-          Clear Console
-        </button>
-      </div>
-
-      <div id="activity-log" class="flex-1 space-y-1.5 overflow-y-auto max-h-[100px] text-[11px] font-mono text-slate-400 pr-1">
-        <div id="empty-log-msg" class="text-slate-600 italic">Ready. Waiting for P2P connection...</div>
+    <!-- Session Activity Logs -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col">
+      <h3 class="text-xs font-semibold text-slate-200 mb-2 flex items-center gap-1.5">
+        <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i> Status Log
+      </h3>
+      <div id="activity-log" class="space-y-1.5 max-h-[90px] overflow-y-auto text-[11px] text-slate-400">
+        <div>Ready for connection.</div>
       </div>
     </div>
 
   </main>
 
-  <!-- MODAL: Mobile QR Camera Scanner -->
+  <!-- MODAL: Camera Scanner -->
   <div id="scanner-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl flex flex-col gap-4 relative">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full flex flex-col gap-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="scan" class="w-4 h-4 text-indigo-400"></i>
-          Scan PC QR Code
+          <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i> Scan PC QR Code
         </h3>
-        <button id="btn-close-scanner" class="text-slate-400 hover:text-white transition p-1 rounded-lg hover:bg-slate-800">
+        <button id="btn-close-scanner" class="text-slate-400 hover:text-white transition">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-
-      <div class="overflow-hidden rounded-xl bg-slate-950 min-h-[220px] border border-slate-800 flex items-center justify-center relative">
-        <div id="qr-reader" class="w-full"></div>
+      <div class="overflow-hidden rounded-xl bg-slate-950 min-h-[220px]">
+        <div id="reader" class="w-full"></div>
       </div>
-
-      <p class="text-[11px] text-slate-400 text-center">Point your phone camera at the QR code displayed on the PC screen.</p>
     </div>
   </div>
 
-  <!-- JavaScript Application Logic -->
+  <!-- Hidden Canvas for Photo Processing -->
+  <canvas id="hidden-canvas" class="hidden"></canvas>
+
   <script>
-    // Global State
     let peer = null;
     let conn = null;
     let myPeerId = null;
-    let mediaStream = null;
     let html5QrcodeScanner = null;
-    let currentFacingMode = 'environment';
-    let isTimerEnabled = false;
-    let isCapturing = false;
 
-    // Filter Settings
-    let currentFilterPreset = 'none';
-    let filterBrightness = 100;
-    let filterContrast = 100;
-    let filterSaturate = 100;
+    // Mobile Camera Variables
+    let currentStream = null;
+    let facingMode = "environment"; // Default back camera
+    let currentFilterCSS = "none";
+    let isMobileDevice = false;
 
-    // PC Photo Collection
-    const photoGallery = [];
-
-    // DOM References
+    // DOM Elements
     const statusBadge = document.getElementById('status-badge');
-    const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('status-text');
-
-    const viewPairing = document.getElementById('view-pairing');
-    const viewMobileStudio = document.getElementById('view-mobile-studio');
-    const viewPcDashboard = document.getElementById('view-pc-dashboard');
-
+    const qrCard = document.getElementById('qr-card');
+    const mobileCamCard = document.getElementById('mobile-cam-card');
+    const pcDashboardCard = document.getElementById('pc-dashboard-card');
     const qrContainer = document.getElementById('qrcode');
     const qrLoader = document.getElementById('qr-loader');
-    const btnCopyLink = document.getElementById('btn-copy-link');
-    const btnOpenScanner = document.getElementById('btn-open-scanner');
-    const btnCloseScanner = document.getElementById('btn-close-scanner');
-    const scannerModal = document.getElementById('scanner-modal');
-
-    // Mobile Elements
-    const videoElem = document.getElementById('camera-video');
-    const canvasElem = document.getElementById('snapshot-canvas');
-    const flashOverlay = document.getElementById('flash-overlay');
-    const countdownOverlay = document.getElementById('countdown-overlay');
-    const countdownNum = document.getElementById('countdown-num');
-    const btnSwitchCam = document.getElementById('btn-switch-cam');
-    const btnToggleTimer = document.getElementById('btn-toggle-timer');
-    const timerLabel = document.getElementById('timer-label');
-    const btnShutter = document.getElementById('btn-shutter');
-    const activeFilterName = document.getElementById('active-filter-name');
-
-    // Sliders
-    const sliderBright = document.getElementById('slider-bright');
-    const sliderContrast = document.getElementById('slider-contrast');
-    const sliderSaturate = document.getElementById('slider-saturate');
-
-    // PC Dashboard Elements
-    const galleryContainer = document.getElementById('gallery-container');
-    const emptyGallery = document.getElementById('empty-gallery');
-    const toggleAutoDownload = document.getElementById('toggle-autodownload');
-    const btnDownloadAll = document.getElementById('btn-download-all');
-    const photoCountBadge = document.getElementById('photo-count-badge');
+    const videoPreview = document.getElementById('camera-preview');
     const activityLog = document.getElementById('activity-log');
-    const emptyLogMsg = document.getElementById('empty-log-msg');
+    const galleryContainer = document.getElementById('gallery-container');
+    const noPhotos = document.getElementById('no-photos');
 
-    // Initialize Icons
     lucide.createIcons();
 
-    // Parse URL for ?connect=PEER_ID
     const urlParams = new URLSearchParams(window.location.search);
-    const targetPeerIdFromUrl = urlParams.get('connect');
+    const targetFromUrl = urlParams.get('connect');
 
-    // PeerJS Setup
+    // Detect Mobile device
+    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      isMobileDevice = true;
+    }
+
+    function addLog(msg) {
+      const item = document.createElement('div');
+      item.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      activityLog.appendChild(item);
+      activityLog.scrollTop = activityLog.scrollHeight;
+    }
+
+    function updateStatus(state, msg) {
+      statusText.textContent = msg;
+      if (state === 'connected') {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+      } else {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
+      }
+    }
+
+    // Initialize PeerJS
     function initPeer() {
       peer = new Peer({ debug: 1 });
 
@@ -368,42 +240,32 @@
         myPeerId = id;
         qrLoader.classList.add('hidden');
 
-        const currentUrl = window.location.origin + window.location.pathname;
-        const connectUrl = `${currentUrl}?connect=${id}`;
-
+        const connectUrl = `${window.location.origin}${window.location.pathname}?connect=${id}`;
         qrContainer.innerHTML = '';
         new QRCode(qrContainer, {
           text: connectUrl,
-          width: 180,
-          height: 180,
+          width: 170,
+          height: 170,
           colorDark: "#090d16",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M
+          colorLight: "#ffffff"
         });
 
-        updateStatus('waiting', 'Ready for Pairing');
-        addLog(`Endpoint active. Peer ID: ${id}`);
+        updateStatus('waiting', 'Ready to Pair');
+        addLog('Generated connection ID');
 
-        if (targetPeerIdFromUrl) {
-          connectToPeer(targetPeerIdFromUrl);
+        if (targetFromUrl) {
+          connectToPeer(targetFromUrl);
         }
       });
 
       peer.on('connection', (incomingConn) => {
         setupConnection(incomingConn);
       });
-
-      peer.on('error', (err) => {
-        console.error('PeerJS error:', err);
-        updateStatus('error', 'Connection Error');
-        addLog(`Peer error: ${err.type}`);
-      });
     }
 
     function connectToPeer(targetId) {
       if (!targetId || targetId === myPeerId) return;
-      updateStatus('connecting', 'Pairing Devices...');
-      addLog(`Initiating connection to peer: ${targetId}`);
+      updateStatus('connecting', 'Connecting...');
       const outgoingConn = peer.connect(targetId, { reliable: true });
       setupConnection(outgoingConn);
     }
@@ -412,328 +274,147 @@
       conn = connection;
 
       conn.on('open', () => {
-        updateStatus('connected', 'Devices Connected');
-        addLog('P2P connection established!');
+        updateStatus('connected', 'Paired & Active');
+        addLog('Device connected successfully!');
 
-        // HIDE QR UI AUTOMATICALLY ON BOTH DEVICES
-        viewPairing.classList.add('hidden');
-        closeScannerModal();
+        qrCard.classList.add('hidden');
 
-        if (targetPeerIdFromUrl) {
-          // Connected as Mobile Phone
-          viewMobileStudio.classList.remove('hidden');
-          initCameraStream();
+        if (isMobileDevice || targetFromUrl) {
+          // Open Mobile Camera Interface
+          mobileCamCard.classList.remove('hidden');
+          startCamera();
         } else {
-          // Connected as PC Host
-          viewPcDashboard.classList.remove('hidden');
+          // Open PC Dashboard
+          pcDashboardCard.classList.remove('hidden');
         }
       });
 
       conn.on('data', (data) => {
-        if (typeof data === 'object' && data.type === 'photo') {
-          handleIncomingPhotoOnPC(data);
+        if (data.type === 'photo') {
+          saveReceivedPhotoOnPC(data.imageData);
         }
       });
 
       conn.on('close', () => {
-        updateStatus('waiting', 'Peer Disconnected');
-        addLog('Peer connection closed.');
-        if (mediaStream) {
-          mediaStream.getTracks().forEach(track => track.stop());
-        }
-        viewMobileStudio.classList.add('hidden');
-        viewPcDashboard.classList.add('hidden');
-        viewPairing.classList.remove('hidden');
+        updateStatus('waiting', 'Disconnected');
+        addLog('Device disconnected.');
+        stopCamera();
       });
     }
 
-    function updateStatus(state, msg) {
-      statusText.textContent = msg;
-      if (state === 'connected') {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
-        statusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400';
-      } else if (state === 'connecting') {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
-        statusDot.className = 'w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping';
-      } else {
-        statusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-900 text-slate-400 border border-slate-800';
-        statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
-      }
-    }
-
-    function addLog(msg) {
-      if (emptyLogMsg) emptyLogMsg.style.display = 'none';
-      const div = document.createElement('div');
-      div.className = 'flex items-center justify-between text-slate-300 py-0.5 border-b border-slate-900';
-      div.innerHTML = `
-        <span>${msg}</span>
-        <span class="text-[9px] text-slate-500 font-mono">${new Date().toLocaleTimeString()}</span>
-      `;
-      activityLog.appendChild(div);
-      activityLog.scrollTop = activityLog.scrollHeight;
-    }
-
-    // Camera Engine
-    async function initCameraStream() {
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-      }
-
+    // Camera Functions for Mobile Phone
+    async function startCamera() {
+      stopCamera();
       try {
         const constraints = {
-          video: {
-            facingMode: currentFacingMode,
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
-          },
-          audio: false
+          video: { facingMode: facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } }
         };
-
-        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoElem.srcObject = mediaStream;
-        addLog(`Camera active (${currentFacingMode} mode)`);
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoPreview.srcObject = currentStream;
+        document.getElementById('cam-permission-error').classList.add('hidden');
+        addLog('Camera started on mobile.');
       } catch (err) {
-        console.error('Camera stream access error:', err);
-        addLog('Error accessing camera.');
+        console.error('Camera access error:', err);
+        document.getElementById('cam-permission-error').classList.remove('hidden');
+        addLog('Camera permission error!');
       }
     }
 
-    function getCombinedFilterCSS() {
-      let filterCSS = `brightness(${filterBrightness}%) contrast(${filterContrast}%) saturate(${filterSaturate}%)`;
-      
-      switch (currentFilterPreset) {
-        case 'vintage':
-          filterCSS += ' sepia(50%) hue-rotate(-15deg)';
-          break;
-        case 'bw':
-          filterCSS += ' grayscale(100%) contrast(140%)';
-          break;
-        case 'warm':
-          filterCSS += ' sepia(25%) saturate(130%)';
-          break;
-        case 'cool':
-          filterCSS += ' hue-rotate(20deg) saturate(110%)';
-          break;
-        case 'dramatic':
-          filterCSS += ' contrast(150%) saturate(140%)';
-          break;
-      }
-      return filterCSS;
-    }
-
-    function applyFiltersToPreview() {
-      videoElem.style.filter = getCombinedFilterCSS();
-    }
-
-    function triggerShutterSequence() {
-      if (isCapturing) return;
-
-      if (isTimerEnabled) {
-        isCapturing = true;
-        countdownOverlay.classList.remove('hidden');
-        let count = 3;
-        countdownNum.textContent = count;
-
-        const interval = setInterval(() => {
-          count--;
-          if (count > 0) {
-            countdownNum.textContent = count;
-          } else {
-            clearInterval(interval);
-            countdownOverlay.classList.add('hidden');
-            captureAndSendPhoto();
-            isCapturing = false;
-          }
-        }, 1000);
-      } else {
-        captureAndSendPhoto();
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
       }
     }
 
-    function captureAndSendPhoto() {
-      if (!videoElem.videoWidth || !videoElem.videoHeight) return;
+    // Switch Camera Front/Back
+    document.getElementById('btn-switch-cam').addEventListener('click', () => {
+      facingMode = (facingMode === "environment") ? "user" : "environment";
+      startCamera();
+    });
 
-      // Flash Effect
-      flashOverlay.className = 'absolute inset-0 pointer-events-none z-30 flash-anim';
-      setTimeout(() => { flashOverlay.className = 'absolute inset-0 pointer-events-none z-30 opacity-0'; }, 450);
+    // Apply Filter Buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.className = 'filter-btn px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg whitespace-nowrap');
+        e.currentTarget.className = 'filter-btn px-3 py-1 bg-indigo-600 rounded-lg whitespace-nowrap';
 
-      // Render to Canvas with Filters
-      canvasElem.width = videoElem.videoWidth;
-      canvasElem.height = videoElem.videoHeight;
-      const ctx = canvasElem.getContext('2d');
+        const filterType = e.currentTarget.getAttribute('data-filter');
+        if (filterType === 'vintage') currentFilterCSS = 'sepia(0.6) contrast(1.2) brightness(0.9)';
+        else if (filterType === 'bw') currentFilterCSS = 'grayscale(1) contrast(1.5)';
+        else if (filterType === 'warm') currentFilterCSS = 'sepia(0.3) saturate(1.4)';
+        else if (filterType === 'cool') currentFilterCSS = 'hue-rotate(30deg) saturate(1.2)';
+        else currentFilterCSS = 'none';
 
-      ctx.filter = getCombinedFilterCSS();
-      ctx.drawImage(videoElem, 0, 0, canvasElem.width, canvasElem.height);
+        videoPreview.style.filter = currentFilterCSS;
+      });
+    });
 
-      const photoDataUrl = canvasElem.toDataURL('image/jpeg', 0.92);
+    // Capture & Send Photo to PC
+    document.getElementById('btn-capture-photo').addEventListener('click', () => {
+      if (!videoPreview.srcObject) return;
 
-      const payload = {
-        type: 'photo',
-        dataUrl: photoDataUrl,
-        timestamp: Date.now(),
-        fileName: `CamSync_${Date.now()}.jpg`
-      };
+      const canvas = document.getElementById('hidden-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = videoPreview.videoWidth || 1280;
+      canvas.height = videoPreview.videoHeight || 720;
+
+      // Apply Filter on Canvas
+      ctx.filter = currentFilterCSS;
+      ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+
+      const imageData = canvas.toDataURL('image/png');
 
       if (conn && conn.open) {
-        conn.send(payload);
-        addLog('Photo captured & sent to PC!');
+        conn.send({ type: 'photo', imageData: imageData });
+        addLog('Photo sent to PC!');
       } else {
-        addLog('Connection lost. Cannot send photo.');
+        addLog('Connection error: Cannot send photo.');
       }
+    });
+
+    // Save & Auto-Download Photo on PC
+    function saveReceivedPhotoOnPC(imageData) {
+      if (noPhotos) noPhotos.style.display = 'none';
+
+      // Auto Download File on PC
+      const downloadLink = document.createElement('a');
+      downloadLink.href = imageData;
+      downloadLink.download = `CamSync-Photo-${Date.now()}.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+
+      // Display in PC UI Gallery
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 aspect-video';
+      imgWrap.innerHTML = `<img src="${imageData}" class="w-full h-full object-cover">`;
+      galleryContainer.prepend(imgWrap);
+
+      addLog('Photo received & auto-downloaded on PC!');
     }
 
-    // PC Receiver & Auto-Download Engine
-    function handleIncomingPhotoOnPC(photoData) {
-      if (emptyGallery) emptyGallery.style.display = 'none';
-
-      photoGallery.unshift(photoData);
-      photoCountBadge.textContent = photoGallery.length;
-
-      const card = document.createElement('div');
-      card.className = 'bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col group transition hover:border-indigo-500/50';
-      card.innerHTML = `
-        <div class="relative aspect-video bg-slate-900 overflow-hidden">
-          <img src="${photoData.dataUrl}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" alt="Snapshot">
-          <span class="absolute bottom-2 right-2 bg-slate-950/80 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-mono text-slate-300">
-            ${new Date(photoData.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-          </span>
-        </div>
-        <div class="p-3 flex items-center justify-between gap-2 border-t border-slate-900">
-          <div class="truncate">
-            <p class="text-xs font-mono font-medium text-slate-200 truncate">${photoData.fileName}</p>
-          </div>
-          <button onclick="downloadSinglePhoto('${photoData.dataUrl}', '${photoData.fileName}')" class="p-2 bg-indigo-600/20 hover:bg-indigo-600 border border-indigo-500/30 text-indigo-300 hover:text-white rounded-lg transition flex items-center justify-center shrink-0">
-            <i data-lucide="download" class="w-4 h-4"></i>
-          </button>
-        </div>
-      `;
-
-      galleryContainer.insertBefore(card, galleryContainer.firstChild);
-      lucide.createIcons();
-
-      addLog(`Received photo: ${photoData.fileName}`);
-
-      // Auto Download to PC
-      if (toggleAutoDownload.checked) {
-        downloadSinglePhoto(photoData.dataUrl, photoData.fileName);
-      }
-    }
-
-    window.downloadSinglePhoto = function(dataUrl, fileName) {
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      addLog(`Saved to PC: ${fileName}`);
-    };
-
-    function downloadAllPhotos() {
-      if (photoGallery.length === 0) return;
-      photoGallery.forEach((photo, idx) => {
-        setTimeout(() => {
-          downloadSinglePhoto(photo.dataUrl, photo.fileName);
-        }, idx * 300);
-      });
-    }
-
-    // QR Code Scanner Handlers
-    function openScannerModal() {
-      scannerModal.classList.remove('hidden');
-      if (!html5QrcodeScanner) {
-        html5QrcodeScanner = new Html5Qrcode("qr-reader");
-      }
-      const config = { fps: 10, qrbox: { width: 180, height: 180 } };
-      html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess, () => {}).catch(() => {
-        addLog('Camera access error for scanner.');
-        closeScannerModal();
-      });
-    }
-
-    function closeScannerModal() {
-      if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
-        html5QrcodeScanner.stop().then(() => scannerModal.classList.add('hidden')).catch(() => scannerModal.classList.add('hidden'));
-      } else {
-        scannerModal.classList.add('hidden');
-      }
-    }
-
-    function onScanSuccess(decodedText) {
-      let targetId = decodedText;
-      try {
-        if (decodedText.includes('connect=')) {
-          const parsedUrl = new URL(decodedText);
-          targetId = parsedUrl.searchParams.get('connect') || decodedText;
+    // QR Scanner Modal Logic
+    document.getElementById('btn-open-scanner').addEventListener('click', () => {
+      document.getElementById('scanner-modal').classList.remove('hidden');
+      if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
+      html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 180 }, (text) => {
+        let scannedId = text;
+        if (text.includes('connect=')) {
+          scannedId = new URL(text).searchParams.get('connect') || text;
         }
-      } catch (e) {}
-
-      closeScannerModal();
-      connectToPeer(targetId);
-    }
-
-    // Event Registration
-    btnSwitchCam.addEventListener('click', () => {
-      currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
-      initCameraStream();
+        document.getElementById('scanner-modal').classList.add('hidden');
+        if (html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
+        connectToPeer(scannedId);
+      }).catch(() => addLog('Camera permission error for scanner.'));
     });
 
-    btnToggleTimer.addEventListener('click', () => {
-      isTimerEnabled = !isTimerEnabled;
-      if (isTimerEnabled) {
-        timerLabel.textContent = 'Timer: 3s';
-        btnToggleTimer.className = 'p-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 rounded-xl text-amber-300 text-xs backdrop-blur-md transition flex items-center gap-1.5';
-      } else {
-        timerLabel.textContent = 'Timer: Off';
-        btnToggleTimer.className = 'p-2 bg-slate-950/70 hover:bg-slate-900 border border-slate-700/80 rounded-xl text-slate-200 text-xs backdrop-blur-md transition flex items-center gap-1.5';
-      }
+    document.getElementById('btn-close-scanner').addEventListener('click', () => {
+      document.getElementById('scanner-modal').classList.add('hidden');
+      if (html5QrcodeScanner && html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
     });
 
-    document.querySelectorAll('.filter-preset-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.filter-preset-btn').forEach(b => {
-          b.className = 'filter-preset-btn px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium whitespace-nowrap border border-slate-700 transition';
-        });
-        e.currentTarget.className = 'filter-preset-btn px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium whitespace-nowrap border border-indigo-500 shadow transition';
-
-        currentFilterPreset = e.currentTarget.getAttribute('data-filter');
-        activeFilterName.textContent = e.currentTarget.textContent;
-        applyFiltersToPreview();
-      });
-    });
-
-    sliderBright.addEventListener('input', (e) => { filterBrightness = e.target.value; applyFiltersToPreview(); });
-    sliderContrast.addEventListener('input', (e) => { filterContrast = e.target.value; applyFiltersToPreview(); });
-    sliderSaturate.addEventListener('input', (e) => { filterSaturate = e.target.value; applyFiltersToPreview(); });
-
-    btnShutter.addEventListener('click', triggerShutterSequence);
-    btnDownloadAll.addEventListener('click', downloadAllPhotos);
-    btnOpenScanner.addEventListener('click', openScannerModal);
-    btnCloseScanner.addEventListener('click', closeScannerModal);
-
-    btnCopyLink.addEventListener('click', () => {
-      if (!myPeerId) return;
-      const currentUrl = window.location.origin + window.location.pathname;
-      const connectUrl = `${currentUrl}?connect=${myPeerId}`;
-
-      const el = document.createElement('textarea');
-      el.value = connectUrl;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-
-      addLog('Pairing link copied to clipboard.');
-    });
-
-    document.getElementById('btn-clear-log').addEventListener('click', () => {
-      activityLog.innerHTML = '';
-      addLog('Console log cleared.');
-    });
-
-    window.addEventListener('load', () => {
-      initPeer();
-    });
+    window.addEventListener('load', initPeer);
   </script>
 </body>
 </html>
