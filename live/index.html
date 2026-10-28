@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Broadcast</title>
+    <title>Live Streaming</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,78 +11,60 @@
             padding: 0;
         }
         body {
-            background-color: #000;
+            background-color: #0f0f0f;
             color: #fff;
             font-family: Arial, sans-serif;
-            height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            min-height: 100vh;
         }
-        .video-container {
+        .stream-container {
             position: relative;
             width: 100%;
-            height: 100vh;
-            background: #111;
+            max-width: 900px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
         }
         video {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
+            display: block;
         }
-        .controls {
+        .live-badge {
             position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-        }
-        button {
-            padding: 15px 35px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
+            top: 15px;
+            left: 15px;
             background-color: #e50914;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
-        }
-        button:disabled {
-            background-color: #555;
-            box-shadow: none;
+            color: #fff;
+            padding: 5px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            z-index: 5;
         }
     </style>
 </head>
 <body>
 
-    <div class="video-container">
-        <video id="preview" autoplay playsinline muted></video>
-        <div class="controls">
-            <button id="startBtn" onclick="startBroadcasting()">Start Broadcast</button>
-        </div>
+    <div class="stream-container">
+        <div class="live-badge">LIVE</div>
+        <!-- Autoplay, playsinline aur muted attributes se video bina click ke chalu ho jayega -->
+        <video id="remoteVideo" autoplay playsinline muted controls></video>
     </div>
 
     <script>
-        async function startBroadcasting() {
-            const btn = document.getElementById('startBtn');
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "user" },
-                    audio: true
-                });
-                document.getElementById('preview').srcObject = stream;
-                btn.innerText = "Broadcasting...";
-                btn.disabled = true;
-                
-                // WebRTC Signaling Code (Node.js / Socket.io) यहाँ कनेक्ट होगा
-            } catch (err) {
-                alert("कैमरा या माइक की अनुमति नहीं मिली!");
-                console.error(err);
-            }
-        }
+        const remoteVideo = document.getElementById('remoteVideo');
+
+        // पेज लोड होते ही लाइव स्ट्रीम ऑटो-प्ले होगी
+        window.addEventListener('DOMContentLoaded', () => {
+            remoteVideo.play().catch(err => {
+                console.log("Autoplay started muted:", err);
+            });
+            
+            // WebRTC Viewer Connection Logic यहाँ आएगा
+        });
     </script>
 </body>
 </html>
