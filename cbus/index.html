@@ -235,6 +235,11 @@
 
       conn.on('open', () => {
         updateStatus('connected', 'Connected');
+
+        // कनेक्ट होते ही मोबाइल/पीसी दोनों तरफ से QR Card तुरंत छुप जाएगा
+        if (qrCard) {
+          qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+        }
       });
 
       conn.on('data', (data) => {
@@ -397,7 +402,7 @@
     window.addEventListener('load', initPeer);
   </script>
 
-  <!-- Security Scripts (Allowing paste inside input fields) -->
+  <!-- Security Scripts -->
   <script>
     document.addEventListener('contextmenu', (e) => {
       if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
