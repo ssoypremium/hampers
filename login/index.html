@@ -1,118 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SSOY</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 flex items-center justify-center min-h-screen">
-    <div class="bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-700">
-        <h2 class="text-2xl font-bold mb-6 text-center text-white">Workshop Login</h2>
-        
-        <form onsubmit="handleLogin(event)" class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">User ID</label>
-                <div class="relative">
-                    <input type="text" id="username" placeholder="Enter User ID" required class="w-full p-3 pl-4 pr-11 py-2.5 text-sm rounded-xl bg-slate-900 border border-slate-600 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-            </div>
+<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
+  <div class="bg-slate-800 p-8 rounded-lg shadow-md w-96">
+    <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+    <form id="login-form">
+      <div class="mb-4">
+        <label for="email" class="block mb-2">Email</label>
+        <input type="email" id="email" class="w-full p-2 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label for="password" class="block mb-2">Password</label>
+        <input type="password" id="password" class="w-full p-2 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500" required>
+      </div>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded font-bold transition duration-200">Login</button>
+    </form>
+    <p id="error-message" class="text-red-500 mt-4 text-center hidden"></p>
+  </div>
 
-            <div>
-                <label class="block text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">Password</label>
-                <div class="relative">
-                    <input type="password" id="password" placeholder="Enter Password" required class="w-full p-3 pl-4 pr-11 py-2.5 text-sm rounded-xl bg-slate-900 border border-slate-600 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200" aria-label="Toggle password visibility">
-                        <i id="toggleIcon" class="fa fa-eye text-sm"></i>
-                    </button>
-                </div>
-            </div>
+  <script>
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            <button type="submit" id="submitBtn" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm rounded-xl transition duration-200 flex items-center justify-center space-x-2">
-                <span>Login</span>
-                <i class="fa fa-arrow-right text-xs"></i>
-            </button>
-        </form>
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
 
-        <div id="feedbackMessage" class="hidden mt-4 p-3 rounded-xl text-xs font-medium text-center transition-all duration-300"></div>
-    </div>
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
 
-    <!-- JavaScript Logic -->
-    <script>
-        // Supabase Initialization
-        const SUPABASE_URL = 'https://zzvxycdmltjiuvpcrwpu.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_RtiWpkWGPtg_tP3iZxz1FQ_RTJfmPnQ';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
 
-        // Toggle Password Show/Hide
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        }
-
-        // Form Submission and Validation
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            const usernameInput = document.getElementById('username').value.trim();
-            const passwordInput = document.getElementById('password').value.trim();
-            const feedback = document.getElementById('feedbackMessage');
-            const submitBtn = document.getElementById('submitBtn');
-
-            feedback.className = "hidden mt-4 p-3 rounded-xl text-xs font-medium text-center transition-all duration-300";
-
-            if (!usernameInput || !passwordInput) {
-                showFeedback("Please fill in all fields.", "error");
-                return;
-            }
-
-            try {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `<span>Checking...</span>`;
-
-                const { data, error } = await supabase
-                    .from('credentials')
-                    .select('*')
-                    .eq('username', usernameInput)
-                    .eq('password', passwordInput)
-                    .single();
-
-                if (error || !data) {
-                    showFeedback("Invalid Username or Password!", "error");
-                } else {
-                    showFeedback("Login successful! Redirecting...", "success");
-                    setTimeout(() => {
-                        window.location.href = "https://ssoy.in/back";
-                    }, 1500);
-                }
-            } catch (err) {
-                showFeedback("Connection error occurred.", "error");
-            } finally {
-                if (feedback.classList.contains('hidden')) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<span>Login</span><i class="fa fa-arrow-right text-xs"></i>`;
-                }
-            }
-        }
-
-        function showFeedback(message, type) {
-            const feedback = document.getElementById('feedbackMessage');
-            feedback.textContent = message;
-            feedback.className = "mt-4 p-3 rounded-xl text-xs font-medium text-center transition-all duration-300 block " + 
-                (type === 'success' ? "bg-emerald-500 text-white" : "bg-red-500 text-white");
-        }
-    </script>
+      if (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.classList.remove('hidden');
+      } else {
+        window.location.href = '/';
+      }
+    });
+  </script>
 </body>
 </html>
