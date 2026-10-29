@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSOY Ecosystem - All Projects Directory</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            yellow: '#FFEB3B',
+                            dark: '#0d0d0e',
+                            card: '#1C1C1E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0d0d0e;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            border-color: #FFEB3B;
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-[#FFEB3B] text-black px-4 py-6 mb-6 shadow-lg">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <div>
+                <span class="text-[10px] font-black tracking-widest uppercase bg-black text-white px-2 py-0.5 rounded">SSOY HUB</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">Ecosystem Directory</h1>
+            </div>
+            <span id="projectCount" class="text-xs font-bold bg-black text-white px-3 py-1.5 rounded-full">30+ Projects</span>
+        </div>
+    </header>
+
+    <div class="max-w-3xl mx-auto px-4">
+
+        <!-- Search Bar -->
+        <div class="relative mb-5">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Search any project, URL or tool (e.g. p2p, shop, invoice)..." 
+                class="w-full bg-[#1C1C1E] text-white pl-11 pr-4 py-3 rounded-xl border border-gray-800 focus:outline-none focus:border-[#FFEB3B] text-sm"
+            >
+        </div>
+
+        <!-- Category Filter Buttons -->
+        <div class="flex gap-2 overflow-x-auto pb-3 mb-5 text-xs">
+            <button onclick="filterCat('all')" class="cat-btn bg-[#FFEB3B] text-black font-bold px-3 py-1.5 rounded-lg whitespace-nowrap">All</button>
+            <button onclick="filterCat('p2p')" class="cat-btn bg-[#1C1C1E] text-gray-300 border border-gray-800 px-3 py-1.5 rounded-lg whitespace-nowrap">Peer-to-Peer</button>
+            <button onclick="filterCat('commerce')" class="cat-btn bg-[#1C1C1E] text-gray-300 border border-gray-800 px-3 py-1.5 rounded-lg whitespace-nowrap">Store & UI</button>
+            <button onclick="filterCat('tools')" class="cat-btn bg-[#1C1C1E] text-gray-300 border border-gray-800 px-3 py-1.5 rounded-lg whitespace-nowrap">Tools & Utils</button>
+            <button onclick="filterCat('media')" class="cat-btn bg-[#1C1C1E] text-gray-300 border border-gray-800 px-3 py-1.5 rounded-lg whitespace-nowrap">Media & Radio</button>
+        </div>
+
+        <!-- Projects Grid -->
+        <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+            <!-- 
+              ============================================================
+              FUTURE PROJECT ADDITION TEMPLATE:
+              Naye project ko add karne ke liye niche wale block ko copy karein 
+              aur data-category, data-keywords aur text change kar dein.
+              ============================================================
+              <a href="https://ssoy.in/your-path" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="tools" data-keywords="keyword1 keyword2">
+                  <div class="flex justify-between items-start mb-1">
+                      <span class="text-xs font-bold text-[#FFEB3B] font-mono">/your-path</span>
+                      <span class="text-[9px] bg-black text-gray-400 px-2 py-0.5 rounded border border-gray-800">TAG</span>
+                  </div>
+                  <h2 class="text-sm font-bold text-white">Project Title</h2>
+                  <p class="text-[11px] text-gray-400 mt-0.5">Project description here...</p>
+              </a>
+              ============================================================
+            -->
+
+            <!-- P2P Projects -->
+            <a href="https://ssoy.in/board" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p" data-keywords="board whiteboard peer draw">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/board</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Whiteboard</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Real-time collaborative peer-to-peer whiteboard.</p>
+            </a>
+
+            <a href="https://ssoy.in/hdcam" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p" data-keywords="hdcam camera mobile pc photo">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/hdcam</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">HD Camera Sync</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Mobile se photo click karo, instantly PC pe show hogi.</p>
+            </a>
+
+            <a href="https://ssoy.in/cbus" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p" data-keywords="cbus code programming transfer">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/cbus</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Code Bus</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Programming language code transfer tool.</p>
+            </a>
+
+            <a href="https://ssoy.in/chat" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p" data-keywords="chat message secure">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/chat</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Secure Chat</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Encrypted peer-to-peer chat portal.</p>
+            </a>
+
+            <a href="https://ssoy.in/server" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p tools" data-keywords="server token client data">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/server</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Secure Data Server</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Session token generate karta hai /client ke liye.</p>
+            </a>
+
+            <a href="https://ssoy.in/client" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p tools" data-keywords="client token receive data">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/client</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Data Client Receiver</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Session token se data receive karta hai.</p>
+            </a>
+
+            <a href="https://ssoy.in/crusher" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p tools" data-keywords="crusher code obfuscator html js">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/crusher</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Code Crusher</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">HTML/CSS/JS code ko non-readable banata hai.</p>
+            </a>
+
+            <a href="https://ssoy.in/encryption" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p tools" data-keywords="encryption secret key text">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/encryption</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Secret Encryption</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Encrypted key se text data share karein.</p>
+            </a>
+
+            <a href="https://ssoy.in/invoicescan" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p tools" data-keywords="invoicescan barcode scanner billing pc mobile">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/invoicescan</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Mobile Barcode Scanner</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Mobile ko PC billing scanner ki tarah use karein.</p>
+            </a>
+
+            <a href="https://ssoy.in/oven" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p media" data-keywords="oven voip voice call">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/oven</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Oven VoIP Caller</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">VoIP voice calling platform.</p>
+            </a>
+
+            <a href="https://ssoy.in/O2" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p media" data-keywords="o2 voip receiver call">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/O2</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">O2 Call Receiver</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">/oven calls receive karne ka platform.</p>
+            </a>
+
+            <a href="https://ssoy.in/phone1" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p media" data-keywords="phone1 walkie talkie voip">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/phone1</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Walkie Talkie App</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Same page VoIP walkie talkie app.</p>
+            </a>
+
+            <a href="https://ssoy.in/projector" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p tools" data-keywords="projector mobile pc presentation">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/projector</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Web Projector</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Mobile se pics ko PC par presentation chalayein.</p>
+            </a>
+
+            <a href="https://ssoy.in/share" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p tools" data-keywords="share file sharing transfer">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/share</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Secure File Share</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Direct secure file sharing platform.</p>
+            </a>
+
+            <a href="https://ssoy.in/wifi" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="p2p tools" data-keywords="wifi file text sharing network">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/wifi</span>
+                    <span class="text-[9px] bg-black text-[#FFEB3B] px-2 py-0.5 rounded border border-yellow-500/30">P2P</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Wi-Fi Data Sharing</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Same page file & text sharing.</p>
+            </a>
+
+            <!-- Store & Commerce Projects -->
+            <a href="https://ssoy.in/sciencecraft" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="science craft school projects robotics">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/sciencecraft</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">STORE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Science Craft Store</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">School projects, robotics & microcontroller store.</p>
+            </a>
+
+            <a href="https://ssoy.in/shop" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="shop electronics whatsapp order">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/shop</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">STORE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Electronics WhatsApp Shop</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Order seedha owner ke WhatsApp pe jaata hai.</p>
+            </a>
+
+            <a href="https://ssoy.in/fiton" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="fiton fitness product store">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/fiton</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">STORE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">FitOn Fitness Store</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Fitness product dummy store layout.</p>
+            </a>
+
+            <a href="https://ssoy.in/meditation" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="meditation candles wellness">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/meditation</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">STORE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Meditation Candles</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Meditation candles online selling platform.</p>
+            </a>
+
+            <a href="https://ssoy.in/oyo" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="oyo hotel booking design">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/oyo</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">STORE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Hotel Booking Platform</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Online hotel booking UI design.</p>
+            </a>
+
+            <a href="https://ssoy.in/packaging" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="packaging boxes product business">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/packaging</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">STORE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Packaging Solution</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Product packaging boxes selling platform.</p>
+            </a>
+
+            <a href="https://ssoy.in/insurance" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="insurance health webpage">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/insurance</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">STORE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Health Insurance Portal</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Health insurance webpage dummy design.</p>
+            </a>
+
+            <a href="https://ssoy.in/template1" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="template designer plaza fashion">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/template1</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">TEMPLATE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Designer Plaza Outlet</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Designer clothing outlet template.</p>
+            </a>
+
+            <a href="https://ssoy.in/template2" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="template plus size outlet fashion">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/template2</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">TEMPLATE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Plus Size Outlet</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Plus size products sale outlet template.</p>
+            </a>
+
+            <a href="https://ssoy.in/template3" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="commerce" data-keywords="template ssoy store design">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/template3</span>
+                    <span class="text-[9px] bg-black text-gray-300 px-2 py-0.5 rounded border border-gray-700">TEMPLATE</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">SSOY Outlet Template</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Online SSOY sale outlet dummy project.</p>
+            </a>
+
+            <!-- Tools & Utilities -->
+            <a href="https://ssoy.in/365" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="tools" data-keywords="365 day tracker analytics time year">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/365</span>
+                    <span class="text-[9px] bg-black text-blue-400 px-2 py-0.5 rounded border border-blue-900">UTILITY</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Day Tracker 365</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Time & year analytics tracker.</p>
+            </a>
+
+            <a href="https://ssoy.in/apk" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="tools" data-keywords="apk whatsapp automation link generator">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/apk</span>
+                    <span class="text-[9px] bg-black text-blue-400 px-2 py-0.5 rounded border border-blue-900">UTILITY</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">WhatsApp Automation</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Pre-filled link generator & automation.</p>
+            </a>
+
+            <a href="https://ssoy.in/invoice" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="tools" data-keywords="invoice qr barcode generator">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/invoice</span>
+                    <span class="text-[9px] bg-black text-blue-400 px-2 py-0.5 rounded border border-blue-900">UTILITY</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">QR Barcode Generator</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Online QR generator for /invoicescan.</p>
+            </a>
+
+            <a href="https://ssoy.in/login" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="tools" data-keywords="login page portal authentication">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/login</span>
+                    <span class="text-[9px] bg-black text-blue-400 px-2 py-0.5 rounded border border-blue-900">UTILITY</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Login Page Template</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Reusable login page for projects.</p>
+            </a>
+
+            <!-- Media & Content -->
+            <a href="https://ssoy.in/learn" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="media" data-keywords="learn hindi ebook education reader">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/learn</span>
+                    <span class="text-[9px] bg-black text-purple-400 px-2 py-0.5 rounded border border-purple-900">CONTENT</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Hindi eBook Platform</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Online Hindi ebook reading platform.</p>
+            </a>
+
+            <a href="https://ssoy.in/relax" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="media" data-keywords="relax sahajyoga radio bhajan audio">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/relax</span>
+                    <span class="text-[9px] bg-black text-purple-400 px-2 py-0.5 rounded border border-purple-900">MEDIA</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Sahajyoga Radio</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">Bhajan radio streaming instantly.</p>
+            </a>
+
+            <a href="https://ssoy.in/back" target="_blank" class="project-card block p-3.5 rounded-xl bg-[#1C1C1E] border border-gray-800 card-hover" data-category="tools" data-keywords="back maintenance board soon">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-bold text-[#FFEB3B] font-mono">/back</span>
+                    <span class="text-[9px] bg-black text-gray-400 px-2 py-0.5 rounded border border-gray-800">STATUS</span>
+                </div>
+                <h2 class="text-sm font-bold text-white">Maintenance Board</h2>
+                <p class="text-[11px] text-gray-400 mt-0.5">'We will be back soon' notice board.</p>
+            </a>
+
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="hidden text-center py-10 text-gray-400 text-xs">
+            No matching project found.
+        </div>
+
+    </div>
+
+    <!-- Script -->
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const projectCards = document.querySelectorAll('.project-card');
+        const noResults = document.getElementById('noResults');
+        let currentCat = 'all';
+
+        function filterProjects() {
+            const query = searchInput.value.toLowerCase().trim();
+            let count = 0;
+
+            projectCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const keywords = card.getAttribute('data-keywords').toLowerCase();
+                const text = card.textContent.toLowerCase();
+
+                const matchesSearch = text.includes(query) || keywords.includes(query);
+                const matchesCat = currentCat === 'all' || category.includes(currentCat);
+
+                if (matchesSearch && matchesCat) {
+                    card.style.display = 'block';
+                    count++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            noResults.classList.toggle('hidden', count > 0);
+        }
+
+        function filterCat(cat) {
+            currentCat = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-[#FFEB3B]', 'text-black', 'font-bold');
+                btn.classList.add('bg-[#1C1C1E]', 'text-gray-300');
+            });
+            event.target.classList.remove('bg-[#1C1C1E]', 'text-gray-300');
+            event.target.classList.add('bg-[#FFEB3B]', 'text-black', 'font-bold');
+            filterProjects();
+        }
+
+        searchInput.addEventListener('input', filterProjects);
+    </script>
+</body>
+</html>
