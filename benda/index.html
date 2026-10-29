@@ -1,0 +1,32 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+serve(async (req) => {
+  const authHeader = req.headers.get("Authorization");
+  
+  if (!authHeader) {
+    return new Response(JSON.stringify({ error: "Missing authorization header" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const supabase = createClient(
+    Deno.env.get("https://gdgkzyrvmrlswpynbbkc.supabase.co") ?? "",
+    Deno.env.get("sb_publishable_Mh9jnzk5gh7xJ--ImjJ26w_rihB66Wr") ?? "",
+    { global: { headers: { Authorization: authHeader } } }
+  );
+
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  return new Response(JSON.stringify({ message: `Hello ${user.email}!` }), {
+    headers: { "Content-Type": "application/json" },
+  });
+});
