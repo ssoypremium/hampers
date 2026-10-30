@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
@@ -25,26 +25,20 @@
             padding: 0;
             overflow: hidden;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(180deg, #f4f8f3 0%, #e8f2e6 100%);
+            background: linear-gradient(180deg, #f3e8ff 0%, #e9d5ff 100%);
             color: #1a1a1a;
         }
 
-        /* Compact Green Card */
         .player-card {
             background: #ffffff;
-            border: 1px solid rgba(120, 184, 51, 0.25);
-            box-shadow: 0 12px 32px rgba(26, 26, 26, 0.08), 0 2px 6px rgba(120, 184, 51, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.25);
+            box-shadow: 0 12px 32px rgba(26, 26, 26, 0.08), 0 2px 6px rgba(147, 51, 234, 0.1);
             border-radius: 20px;
         }
 
-        /* Theme Green Colors */
-        .bg-lime-brand { background-color: #78b833; }
-        .text-lime-brand { color: #78b833; }
-        .border-lime-brand { border-color: #78b833; }
-
-        /* Rotating Disc */
+        /* Continuous Rotating Disc Animation */
         .rotating-disc {
-            animation: spin 12s linear infinite;
+            animation: spin 10s linear infinite;
             animation-play-state: paused;
         }
 
@@ -57,22 +51,20 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Custom Sliders */
+        /* Range Slider Styling */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
             background: transparent;
         }
 
-        input[type=range]:focus {
-            outline: none;
-        }
+        input[type=range]:focus { outline: none; }
 
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
             height: 5px;
             cursor: pointer;
-            background: #e2e8f0;
+            background: #e9d5ff;
             border-radius: 10px;
         }
 
@@ -80,7 +72,7 @@
             height: 14px;
             width: 14px;
             border-radius: 50%;
-            background: #78b833;
+            background: #9333ea;
             cursor: pointer;
             -webkit-appearance: none;
             margin-top: -4.5px;
@@ -92,7 +84,6 @@
             transform: scale(1.2);
         }
 
-        /* Canvas Beat Bar Style */
         #visualizer {
             width: 100%;
             height: 36px;
@@ -103,34 +94,29 @@
 
     <!-- Top Header Badge -->
     <div class="mt-1">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#78b833]/30 text-[11px] font-bold uppercase tracking-wider text-[#1a1a1a] shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-[#78b833] animate-ping"></span>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#9333ea]/30 text-[11px] font-bold uppercase tracking-wider text-[#1a1a1a] shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-[#9333ea] animate-ping"></span>
             Harleen's Personal Player
         </div>
     </div>
 
-    <!-- Main Compact Player Card -->
+    <!-- Main Player Card -->
     <div class="w-full max-w-[340px] my-auto">
         <div class="player-card p-4 sm:p-5 text-center relative overflow-hidden">
             
             <!-- Date Display -->
             <div class="text-[11px] font-semibold text-gray-500 mb-2 flex items-center justify-center gap-1" id="dateDisplay">
-                <i class="fa-regular fa-calendar text-[#78b833]"></i>
-                <span>लोड हो रहा है...</span>
+                <i class="fa-regular fa-calendar text-[#9333ea]"></i>
+                <span>Loading...</span>
             </div>
 
-            <!-- Rotating Disc Artwork -->
+            <!-- Rotating Center Image Artwork -->
             <div class="flex justify-center my-2">
-                <div class="relative p-1 rounded-full border-2 border-[#78b833]/30 bg-gradient-to-tr from-[#78b833]/10 to-white shadow-md">
-                    <div id="albumDisc" class="rotating-disc w-20 h-20 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center overflow-hidden relative shadow-inner">
-                        <!-- Disc Vinyl Groove Effects -->
-                        <div class="absolute inset-0 rounded-full border border-white/10 m-1 pointer-events-none"></div>
-                        <div class="absolute inset-0 rounded-full border border-white/10 m-3 pointer-events-none"></div>
-                        
-                        <!-- Center Avatar Image matching theme -->
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" 
-                             alt="Avatar" 
-                             class="w-10 h-10 rounded-full object-cover border border-white shadow">
+                <div class="relative p-1 rounded-full border-2 border-[#9333ea]/30 bg-gradient-to-tr from-[#9333ea]/10 to-white shadow-md">
+                    <div id="albumDisc" class="rotating-disc w-24 h-24 rounded-full border-2 border-white flex items-center justify-center overflow-hidden relative shadow-inner">
+                        <img src="https://ssoy.in/beat/Sandy.jpg" 
+                             alt="Sandy" 
+                             class="w-full h-full rounded-full object-cover">
                     </div>
                 </div>
             </div>
@@ -138,11 +124,11 @@
             <!-- Track Info -->
             <div class="mt-2 mb-1">
                 <div class="text-base font-bold text-[#1a1a1a] truncate" id="trackTitle">beat.mp3</div>
-                <div class="text-[11px] text-[#78b833] font-semibold">ssoy.in / Special Beat</div>
+                <div class="text-[11px] text-[#9333ea] font-semibold">ssoy.in / Special Playlist</div>
             </div>
 
             <!-- Beat Visualizer -->
-            <div class="my-2 bg-[#f4f8f3] px-2 py-1 rounded-lg border border-[#78b833]/20">
+            <div class="my-2 bg-[#f3e8ff]/50 px-2 py-1 rounded-lg border border-[#9333ea]/20">
                 <canvas id="visualizer"></canvas>
             </div>
 
@@ -156,86 +142,96 @@
             </div>
 
             <!-- Playback Controls -->
-            <div class="flex items-center justify-center gap-4 my-3">
-                <!-- Backward 10s -->
-                <button id="btnRewind" title="Rewind 10s" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#78b833]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
-                    <i class="fa-solid fa-rotate-left text-xs"></i>
+            <div class="flex items-center justify-center gap-3 my-3">
+                <!-- Previous Song -->
+                <button id="btnPrev" title="Previous Song" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#9333ea]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
+                    <i class="fa-solid fa-backward-step text-xs"></i>
                 </button>
 
                 <!-- Play / Pause -->
-                <button id="btnPlayPause" title="Play/Pause" class="w-12 h-12 rounded-full bg-[#78b833] hover:bg-[#68a22b] text-white text-lg flex items-center justify-center shadow-md active:scale-95 transition">
+                <button id="btnPlayPause" title="Play/Pause" class="w-12 h-12 rounded-full bg-[#9333ea] hover:bg-[#7e22ce] text-white text-lg flex items-center justify-center shadow-md active:scale-95 transition">
                     <i class="fa-solid fa-play ml-0.5" id="playIcon"></i>
                 </button>
 
-                <!-- Forward 10s -->
-                <button id="btnForward" title="Forward 10s" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#78b833]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
-                    <i class="fa-solid fa-rotate-right text-xs"></i>
+                <!-- Next Song -->
+                <button id="btnNext" title="Next Song" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#9333ea]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
+                    <i class="fa-solid fa-forward-step text-xs"></i>
                 </button>
             </div>
 
-            <!-- Volume Slider + Download Row -->
+            <!-- Volume Slider Row -->
             <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-100">
-                <!-- Volume Control -->
                 <div class="flex items-center gap-1.5 flex-1 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-200">
-                    <button id="btnMute" class="text-[#78b833] hover:text-[#1a1a1a] transition">
+                    <button id="btnMute" class="text-[#9333ea] hover:text-[#1a1a1a] transition">
                         <i class="fa-solid fa-volume-high text-xs" id="volumeIcon"></i>
                     </button>
                     <input type="range" id="volumeBar" value="80" min="0" max="100" step="1" class="w-full">
                 </div>
 
-                <!-- Download Button -->
+                <!--
                 <a id="btnDownload" 
                    href="https://ssoy.in/beat/beat.mp3" 
                    download="beat.mp3" 
                    target="_blank"
                    title="Download Song" 
-                   class="flex items-center gap-1.5 bg-[#1a1a1a] hover:bg-[#78b833] text-white text-xs px-3 py-1.5 rounded-lg font-medium transition shadow-sm">
+                   class="flex items-center gap-1.5 bg-[#1a1a1a] hover:bg-[#9333ea] text-white text-xs px-3 py-1.5 rounded-lg font-medium transition shadow-sm">
                     <i class="fa-solid fa-download text-[11px]"></i>
                     <span>Save</span>
                 </a>
+                -->
             </div>
 
             <!-- Hidden Audio Element -->
-            <audio id="audioPlayer" preload="metadata" crossOrigin="anonymous">
-                <source src="https://ssoy.in/beat/beat.mp3" type="audio/mpeg">
-                Aapka browser audio support nahi karta.
-            </audio>
+            <audio id="audioPlayer" preload="metadata" crossOrigin="anonymous"></audio>
         </div>
     </div>
 
-    <!-- Footer Marquee -->
-    <footer class="w-full max-w-[340px] bg-white border border-[#78b833]/30 py-1.5 px-3 rounded-lg text-xs text-[#1a1a1a] font-medium shadow-sm mb-1">
-        <marquee id="adMarquee" behavior="scroll" direction="left" scrollamount="4">
-            जय श्री माता जी! सहज ऑनलाइन रेडियो में आपका स्वागत है। सहज प्रचार-प्रसार के लिए बने इस रेडियो पर भजन और स्पीचेस लगातार चलते रहते हैं।
-        </marquee>
-    </footer>
-
     <script>
-        // Set Today's Hindi/English Date
+        // Set Today's English Date
         const dateElem = document.getElementById('dateDisplay');
         const today = new Date();
         const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-        dateElem.querySelector('span').innerText = today.toLocaleDateString('hi-IN', options);
+        dateElem.querySelector('span').innerText = today.toLocaleDateString('en-US', options);
+
+        // Multiple Songs Playlist
+        const playlist = [
+            { name: "beat.mp3", url: "https://ssoy.in/beat/beat.mp3" },
+            // Aap aur songs niche add kar sakte hain:
+            // { name: "Song 2", url: "https://ssoy.in/beat/song2.mp3" },
+            // { name: "Song 3", url: "https://ssoy.in/beat/song3.mp3" }
+        ];
+
+        let currentTrackIndex = 0;
 
         // Elements
         const audio = document.getElementById('audioPlayer');
         const btnPlayPause = document.getElementById('btnPlayPause');
         const playIcon = document.getElementById('playIcon');
         const albumDisc = document.getElementById('albumDisc');
+        const trackTitle = document.getElementById('trackTitle');
         const seekBar = document.getElementById('seekBar');
         const currentTimeElem = document.getElementById('currentTime');
         const totalDurationElem = document.getElementById('totalDuration');
         const volumeBar = document.getElementById('volumeBar');
         const btnMute = document.getElementById('btnMute');
         const volumeIcon = document.getElementById('volumeIcon');
-        const btnRewind = document.getElementById('btnRewind');
-        const btnForward = document.getElementById('btnForward');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
         const canvas = document.getElementById('visualizer');
         const canvasCtx = canvas.getContext('2d');
 
         let audioCtx, analyser, source, dataArray, bufferLength;
         let isAudioContextInit = false;
         let lastVolume = 0.8;
+
+        function loadTrack(index) {
+            audio.src = playlist[index].url;
+            trackTitle.innerText = playlist[index].name;
+            seekBar.value = 0;
+            currentTimeElem.innerText = "00:00";
+        }
+
+        loadTrack(currentTrackIndex);
 
         function resizeCanvas() {
             canvas.width = canvas.parentElement.clientWidth;
@@ -267,14 +263,12 @@
                 dataArray = new Uint8Array(bufferLength);
                 isAudioContextInit = true;
             } catch (e) {
-                console.log("Audio Context fallback initialized");
+                console.log("Audio Context fallback");
             }
         }
 
-        // Draw Beat Visualizer
         function drawVisualizer() {
             requestAnimationFrame(drawVisualizer);
-            
             const width = canvas.width;
             const height = canvas.height;
             canvasCtx.clearRect(0, 0, width, height);
@@ -289,7 +283,6 @@
 
             for (let i = 0; i < barCount; i++) {
                 let barHeight = 3;
-                
                 if (!audio.paused) {
                     if (isAudioContextInit && dataArray) {
                         const val = dataArray[i % bufferLength] || 0;
@@ -299,7 +292,7 @@
                     }
                 }
 
-                canvasCtx.fillStyle = '#78b833';
+                canvasCtx.fillStyle = '#9333ea';
                 canvasCtx.beginPath();
                 canvasCtx.roundRect(x, height - barHeight, barWidth, barHeight, [2, 2, 0, 0]);
                 canvasCtx.fill();
@@ -309,7 +302,6 @@
         }
         drawVisualizer();
 
-        // Play/Pause
         function togglePlay() {
             initAudioContext();
             if (audioCtx && audioCtx.state === 'suspended') {
@@ -330,7 +322,6 @@
 
         btnPlayPause.addEventListener('click', togglePlay);
 
-        // Seek & Duration
         audio.addEventListener('loadedmetadata', () => {
             seekBar.max = audio.duration;
             totalDurationElem.innerText = formatTime(audio.duration);
@@ -346,7 +337,6 @@
             audio.currentTime = seekBar.value;
         });
 
-        // Volume
         volumeBar.addEventListener('input', () => {
             audio.volume = volumeBar.value / 100;
             updateVolumeIcon(audio.volume);
@@ -374,16 +364,25 @@
             updateVolumeIcon(audio.volume);
         });
 
-        btnRewind.addEventListener('click', () => audio.currentTime = Math.max(0, audio.currentTime - 10));
-        btnForward.addEventListener('click', () => audio.currentTime = Math.min(audio.duration, audio.currentTime + 10));
-
-        audio.addEventListener('ended', () => {
-            playIcon.className = "fa-solid fa-play ml-0.5";
-            albumDisc.classList.remove('playing');
-            seekBar.value = 0;
+        // Next & Previous Track Handling
+        btnNext.addEventListener('click', () => {
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            loadTrack(currentTrackIndex);
+            togglePlay();
         });
 
-        // Disable Context Menu & Inspect
+        btnPrev.addEventListener('click', () => {
+            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentTrackIndex);
+            togglePlay();
+        });
+
+        // Auto play next song when current track ends
+        audio.addEventListener('ended', () => {
+            btnNext.click();
+        });
+
+        // Right Click & Developer Tools Disable
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.onkeydown = function (e) {
             if (e.keyCode === 123) return false;
