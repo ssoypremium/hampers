@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Snippets for Security</title>
+    <style>
+        :root {
+            --bg-body: #0d1117;
+            --bg-card: #161b22;
+            --border-card: #30363d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --success: #238636;
+            --text-code: #ff7b72;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .snippet-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            transition: border-color 0.2s ease;
+        }
+
+        .snippet-card:hover {
+            border-color: var(--accent);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .copy-btn {
+            background-color: #21262d;
+            border: 1px solid var(--border-card);
+            color: var(--text-primary);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--border-card);
+            border-color: #8b949e;
+        }
+
+        pre {
+            background-color: #0d1117;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid var(--border-card);
+        }
+
+        code {
+            color: var(--text-code);
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Code Snippet Library</h1>
+        <p class="subtitle">Code Snippets for Security</p>
+    </header>
+
+    <!-- No Bots Meta Tag -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">No Bots Meta Tag</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;meta name="robots" content="noindex, nofollow"&gt;</code></pre>
+    </div>
+
+    <!-- Security Script -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Security Script (Disable Right-Click &amp; Inspect)</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;script&gt;
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.onkeydown = function (e) {
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
+            return false;
+        }
+    };
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- Auto-Refresh Script -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Auto-Refresh Page Script</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;script&gt;
+    setTimeout(function(){
+        location.reload();
+    }, 30000); // 30 seconds
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- Dynamic Footer Year Script -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Dynamic Footer Year</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;p&gt;&amp;copy; &lt;span id="year"&gt;&lt;/span&gt; Your Company. All rights reserved.&lt;/p&gt;
+&lt;script&gt;
+    document.getElementById("year").innerText = new Date().getFullYear();
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Scroll to Top Button</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;button onclick="window.scrollTo({top: 0, behavior: 'smooth'});" style="position:fixed; bottom:20px; right:20px; padding:10px 15px;"&gt;Top&lt;/button&gt;</code></pre>
+    </div>
+
+    <!-- Show/Hide Password Toggle -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Show/Hide Password Toggle Script</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;input type="password" id="passwordField"&gt;
+&lt;input type="checkbox" onclick="let p = document.getElementById('passwordField'); p.type = p.type === 'password' ? 'text' : 'password';"&gt; Show Password</code></pre>
+    </div>
+
+</div>
+
+<script>
+    function copyToClipboard(button) {
+        const pre = button.parentElement.nextElementSibling;
+        const code = pre.querySelector('code');
+        navigator.clipboard.writeText(code.innerText).then(() => {
+            const originalText = button.innerText;
+            button.innerText = 'Copied!';
+            button.style.backgroundColor = 'var(--success)';
+            button.style.borderColor = 'var(--success)';
+            setTimeout(() => {
+                button.innerText = originalText;
+                button.style.backgroundColor = '';
+                button.style.borderColor = '';
+            }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
