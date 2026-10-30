@@ -25,14 +25,14 @@
             padding: 0;
             overflow: hidden;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(180deg, #f3e8ff 0%, #e9d5ff 100%);
+            background: linear-gradient(180deg, #f4f8f3 0%, #e8f2e6 100%);
             color: #1a1a1a;
         }
 
         .player-card {
             background: #ffffff;
-            border: 1px solid rgba(147, 51, 234, 0.25);
-            box-shadow: 0 12px 32px rgba(26, 26, 26, 0.08), 0 2px 6px rgba(147, 51, 234, 0.1);
+            border: 1px solid rgba(120, 184, 51, 0.25);
+            box-shadow: 0 12px 32px rgba(26, 26, 26, 0.08), 0 2px 6px rgba(120, 184, 51, 0.1);
             border-radius: 20px;
         }
 
@@ -64,7 +64,7 @@
             width: 100%;
             height: 5px;
             cursor: pointer;
-            background: #e9d5ff;
+            background: #e2e8f0;
             border-radius: 10px;
         }
 
@@ -72,7 +72,7 @@
             height: 14px;
             width: 14px;
             border-radius: 50%;
-            background: #9333ea;
+            background: #78b833;
             cursor: pointer;
             -webkit-appearance: none;
             margin-top: -4.5px;
@@ -94,8 +94,8 @@
 
     <!-- Top Header Badge -->
     <div class="mt-1">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#9333ea]/30 text-[11px] font-bold uppercase tracking-wider text-[#1a1a1a] shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-[#9333ea] animate-ping"></span>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#78b833]/30 text-[11px] font-bold uppercase tracking-wider text-[#1a1a1a] shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-[#78b833] animate-ping"></span>
             Harleen's Personal Player
         </div>
     </div>
@@ -106,17 +106,18 @@
             
             <!-- Date Display -->
             <div class="text-[11px] font-semibold text-gray-500 mb-2 flex items-center justify-center gap-1" id="dateDisplay">
-                <i class="fa-regular fa-calendar text-[#9333ea]"></i>
+                <i class="fa-regular fa-calendar text-[#78b833]"></i>
                 <span>Loading...</span>
             </div>
 
-            <!-- Rotating Center Image Artwork -->
+            <!-- Rotating Center Image Artwork (Sandy.jpg) -->
             <div class="flex justify-center my-2">
-                <div class="relative p-1 rounded-full border-2 border-[#9333ea]/30 bg-gradient-to-tr from-[#9333ea]/10 to-white shadow-md">
+                <div class="relative p-1 rounded-full border-2 border-[#78b833]/30 bg-gradient-to-tr from-[#78b833]/10 to-white shadow-md">
                     <div id="albumDisc" class="rotating-disc w-24 h-24 rounded-full border-2 border-white flex items-center justify-center overflow-hidden relative shadow-inner">
                         <img src="https://ssoy.in/beat/Sandy.jpg" 
                              alt="Sandy" 
-                             class="w-full h-full rounded-full object-cover">
+                             class="w-full h-full rounded-full object-cover"
+                             onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'">
                     </div>
                 </div>
             </div>
@@ -124,11 +125,11 @@
             <!-- Track Info -->
             <div class="mt-2 mb-1">
                 <div class="text-base font-bold text-[#1a1a1a] truncate" id="trackTitle">beat.mp3</div>
-                <div class="text-[11px] text-[#9333ea] font-semibold">ssoy.in / Special Playlist</div>
+                <div class="text-[11px] text-[#78b833] font-semibold">ssoy.in / Special Playlist</div>
             </div>
 
             <!-- Beat Visualizer -->
-            <div class="my-2 bg-[#f3e8ff]/50 px-2 py-1 rounded-lg border border-[#9333ea]/20">
+            <div class="my-2 bg-[#f4f8f3] px-2 py-1 rounded-lg border border-[#78b833]/20">
                 <canvas id="visualizer"></canvas>
             </div>
 
@@ -144,17 +145,17 @@
             <!-- Playback Controls -->
             <div class="flex items-center justify-center gap-3 my-3">
                 <!-- Previous Song -->
-                <button id="btnPrev" title="Previous Song" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#9333ea]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
+                <button id="btnPrev" title="Previous Song" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#78b833]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
                     <i class="fa-solid fa-backward-step text-xs"></i>
                 </button>
 
                 <!-- Play / Pause -->
-                <button id="btnPlayPause" title="Play/Pause" class="w-12 h-12 rounded-full bg-[#9333ea] hover:bg-[#7e22ce] text-white text-lg flex items-center justify-center shadow-md active:scale-95 transition">
+                <button id="btnPlayPause" title="Play/Pause" class="w-12 h-12 rounded-full bg-[#78b833] hover:bg-[#68a22b] text-white text-lg flex items-center justify-center shadow-md active:scale-95 transition">
                     <i class="fa-solid fa-play ml-0.5" id="playIcon"></i>
                 </button>
 
                 <!-- Next Song -->
-                <button id="btnNext" title="Next Song" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#9333ea]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
+                <button id="btnNext" title="Next Song" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#78b833]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
                     <i class="fa-solid fa-forward-step text-xs"></i>
                 </button>
             </div>
@@ -162,23 +163,11 @@
             <!-- Volume Slider Row -->
             <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-100">
                 <div class="flex items-center gap-1.5 flex-1 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-200">
-                    <button id="btnMute" class="text-[#9333ea] hover:text-[#1a1a1a] transition">
+                    <button id="btnMute" class="text-[#78b833] hover:text-[#1a1a1a] transition">
                         <i class="fa-solid fa-volume-high text-xs" id="volumeIcon"></i>
                     </button>
                     <input type="range" id="volumeBar" value="80" min="0" max="100" step="1" class="w-full">
                 </div>
-
-                <!--
-                <a id="btnDownload" 
-                   href="https://ssoy.in/beat/beat.mp3" 
-                   download="beat.mp3" 
-                   target="_blank"
-                   title="Download Song" 
-                   class="flex items-center gap-1.5 bg-[#1a1a1a] hover:bg-[#9333ea] text-white text-xs px-3 py-1.5 rounded-lg font-medium transition shadow-sm">
-                    <i class="fa-solid fa-download text-[11px]"></i>
-                    <span>Save</span>
-                </a>
-                -->
             </div>
 
             <!-- Hidden Audio Element -->
@@ -196,9 +185,8 @@
         // Multiple Songs Playlist
         const playlist = [
             { name: "beat.mp3", url: "https://ssoy.in/beat/beat.mp3" },
-            // Aap aur songs niche add kar sakte hain:
-            // { name: "Song 2", url: "https://ssoy.in/beat/song2.mp3" },
-            // { name: "Song 3", url: "https://ssoy.in/beat/song3.mp3" }
+            // Aap aur songs yahan add kar sakte hain:
+            // { name: "song2.mp3", url: "https://ssoy.in/beat/song2.mp3" }
         ];
 
         let currentTrackIndex = 0;
@@ -292,7 +280,7 @@
                     }
                 }
 
-                canvasCtx.fillStyle = '#9333ea';
+                canvasCtx.fillStyle = '#78b833';
                 canvasCtx.beginPath();
                 canvasCtx.roundRect(x, height - barHeight, barWidth, barHeight, [2, 2, 0, 0]);
                 canvasCtx.fill();
