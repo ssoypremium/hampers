@@ -2,8 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Viewport Meta Tag -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- No Bots Meta Tag -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Open Graph (OG) Tags -->
+    <meta property="og:title" content="Code Snippets for Security">
+    <meta property="og:description" content="A library of essential security and utility code snippets.">
+    <meta property="og:type" content="website">
+
     <title>Code Snippets for Security</title>
+    
     <style>
         :root {
             --bg-body: #0d1117;
@@ -33,7 +44,7 @@
         }
 
         .container {
-            max-width: 700px;
+            max-width: 750px;
             width: 100%;
         }
 
@@ -123,7 +134,27 @@
         <p class="subtitle">Code Snippets for Security</p>
     </header>
 
-    <!-- No Bots Meta Tag -->
+    <!-- 1. Viewport Meta Tag -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Viewport Meta Tag (Responsive Design)</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+    </div>
+
+    <!-- 2. Open Graph Meta Tags -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Open Graph (OG) Meta Tags</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;meta property="og:title" content="Your Title Here"&gt;
+&lt;meta property="og:description" content="Your Description Here"&gt;
+&lt;meta property="og:type" content="website"&gt;</code></pre>
+    </div>
+
+    <!-- 3. No Bots Meta Tag -->
     <div class="snippet-card">
         <div class="card-header">
             <span class="card-title">No Bots Meta Tag</span>
@@ -132,7 +163,7 @@
         <pre><code>&lt;meta name="robots" content="noindex, nofollow"&gt;</code></pre>
     </div>
 
-    <!-- Security Script -->
+    <!-- 4. Security Script -->
     <div class="snippet-card">
         <div class="card-header">
             <span class="card-title">Security Script (Disable Right-Click &amp; Inspect)</span>
@@ -148,7 +179,52 @@
 &lt;/script&gt;</code></pre>
     </div>
 
-    <!-- Auto-Refresh Script -->
+    <!-- 5. Prevent Text Selection & Copy -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Disable Text Selection &amp; Copying</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;style&gt;
+    body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+&lt;/style&gt;
+&lt;script&gt;
+    document.addEventListener('copy', (e) => e.preventDefault());
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- 6. Console Security Warning -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Console Security Warning Script</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;script&gt;
+    console.log("%cStop!", "color: red; font-size: 40px; font-weight: bold;");
+    console.log("%cThis is a browser feature intended for developers.", "font-size: 16px;");
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- 7. Mobile Device Detector -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Mobile Device Detection Script</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;script&gt;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+        console.log("User is on a Mobile Device");
+    }
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- 8. Auto-Refresh Script -->
     <div class="snippet-card">
         <div class="card-header">
             <span class="card-title">Auto-Refresh Page Script</span>
@@ -161,35 +237,133 @@
 &lt;/script&gt;</code></pre>
     </div>
 
-    <!-- Dynamic Footer Year Script -->
+    <!-- 9. Dynamic Footer Year Script -->
     <div class="snippet-card">
         <div class="card-header">
             <span class="card-title">Dynamic Footer Year</span>
             <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
         </div>
-        <pre><code>&lt;p&gt;&amp;copy; &lt;span id="year"&gt;&lt;/span&gt; Your Company. All rights reserved.&lt;/p&gt;
+        <pre><code>&lt;p&gt;&amp;copy; &lt;span id="year"&gt;&lt;/span&gt; Your Brand. All rights reserved.&lt;/p&gt;
 &lt;script&gt;
     document.getElementById("year").innerText = new Date().getFullYear();
 &lt;/script&gt;</code></pre>
     </div>
 
-    <!-- Scroll to Top Button -->
+    <!-- 10. Scroll to Top Button -->
     <div class="snippet-card">
         <div class="card-header">
             <span class="card-title">Scroll to Top Button</span>
             <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
         </div>
-        <pre><code>&lt;button onclick="window.scrollTo({top: 0, behavior: 'smooth'});" style="position:fixed; bottom:20px; right:20px; padding:10px 15px;"&gt;Top&lt;/button&gt;</code></pre>
+        <pre><code>&lt;button onclick="window.scrollTo({top: 0, behavior: 'smooth'});"&gt;Top&lt;/button&gt;</code></pre>
     </div>
 
-    <!-- Show/Hide Password Toggle -->
+    <!-- 11. Show/Hide Password Toggle -->
     <div class="snippet-card">
         <div class="card-header">
-            <span class="card-title">Show/Hide Password Toggle Script</span>
+            <span class="card-title">Show/Hide Password Toggle</span>
             <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
         </div>
-        <pre><code>&lt;input type="password" id="passwordField"&gt;
-&lt;input type="checkbox" onclick="let p = document.getElementById('passwordField'); p.type = p.type === 'password' ? 'text' : 'password';"&gt; Show Password</code></pre>
+        <pre><code>&lt;input type="password" id="passInput"&gt;
+&lt;input type="checkbox" onclick="let p = document.getElementById('passInput'); p.type = p.type === 'password' ? 'text' : 'password';"&gt; Show Password</code></pre>
+    </div>
+
+    <!-- 12. Contact Form Validation Script -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Contact Form Basic Validation</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;script&gt;
+    function validateForm(event) {
+        let email = document.getElementById('email').value;
+        if (!email.includes('@')) {
+            alert('Please enter a valid email.');
+            event.preventDefault();
+        }
+    }
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- 13. Active Navigation Link Highlighter -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Active Nav Link Highlighter</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;script&gt;
+    const currentLocation = location.href;
+    const menuItem = document.querySelectorAll('nav a');
+    menuItem.forEach(item => {
+        if(item.href === currentLocation){
+            item.classList.add("active");
+        }
+    });
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- 14. Dark Mode Toggle Script -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Dark Mode Toggle Script</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;button onclick="document.body.classList.toggle('dark-theme')"&gt;Toggle Theme&lt;/button&gt;</code></pre>
+    </div>
+
+    <!-- 15. Image Preloader Script -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Image Preloader Script</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;script&gt;
+    function preloadImages(...urls) {
+        urls.forEach(url => {
+            const img = new Image();
+            img.src = url;
+        });
+    }
+    // Usage: preloadImages('img1.jpg', 'img2.jpg');
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- 16. Go Back Button -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Go Back Button Script</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;button onclick="history.back()"&gt;Go Back&lt;/button&gt;</code></pre>
+    </div>
+
+    <!-- 17. Print Page Button -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Print Page Button</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;button onclick="window.print()"&gt;Print Page&lt;/button&gt;</code></pre>
+    </div>
+
+    <!-- 18. Loading Spinner Snippet -->
+    <div class="snippet-card">
+        <div class="card-header">
+            <span class="card-title">Loading Spinner HTML &amp; CSS</span>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+        <pre><code>&lt;div class="spinner"&gt;&lt;/div&gt;
+&lt;style&gt;
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #58a6ff;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+&lt;/style&gt;</code></pre>
     </div>
 
 </div>
