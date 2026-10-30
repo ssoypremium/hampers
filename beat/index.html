@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harleen's Personal Player</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #111827);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Player Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom Neon Glow Text */
+        .neon-text {
+            background: linear-gradient(135deg, #a855f7, #ec4899, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+        }
+
+        /* Custom Range Input Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #ec4899;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -5px;
+            box-shadow: 0 0 10px #ec4899;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        input[type=range]:hover::-webkit-slider-thumb {
+            transform: scale(1.2);
+            background: #f43f5e;
+        }
+
+        /* Spinning Album Art Frame */
+        .album-art {
+            position: relative;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
+            animation: rotateDisk 20s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .album-art.playing {
+            animation-play-state: running;
+        }
+
+        @keyframes rotateDisk {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Canvas Beat Bar Style */
+        #visualizer {
+            width: 100%;
+            height: 70px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6">
+
+    <!-- Top Spacer / Brand Badge -->
+    <div class="mt-2 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold tracking-widest uppercase text-pink-300 shadow-sm">
+            <i class="fa-solid fa-compact-disc animate-spin"></i> Official Audio Stream
+        </div>
+    </div>
+
+    <!-- Main Player Container -->
+    <div class="main-container w-full max-w-md my-auto">
+        <div class="player-card glass-card rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden">
+            
+            <!-- Glow Accents in Background -->
+            <div class="absolute -top-12 -left-12 w-32 h-32 bg-pink-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <!-- Title Header -->
+            <h1 class="text-2xl sm:text-3xl font-extrabold neon-text mb-1 tracking-wide">
+                Harleen's Personal Player
+            </h1>
+            <div class="text-xs text-slate-300 font-medium mb-6 tracking-wider" id="dateDisplay">
+                Loading date...
+            </div>
+
+            <!-- Vinyl / Album Visual Concept -->
+            <div class="flex justify-center my-4">
+                <div id="albumDisk" class="album-art w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white/20 bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 p-1 flex items-center justify-center">
+                    <div class="w-full h-full rounded-full bg-slate-900/90 flex items-center justify-center border border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center text-white shadow-inner">
+                            <i class="fa-solid fa-music text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Track Info -->
+            <div class="mt-4 mb-2">
+                <div class="text-lg font-bold text-white tracking-wide truncate" id="trackTitle">beat.mp3</div>
+                <div class="text-xs text-pink-400 font-medium mt-0.5">Ssoy Audio Beat Master</div>
+            </div>
+
+            <!-- Visualizer Beat Bars -->
+            <div class="my-4 bg-slate-950/40 p-2 rounded-2xl border border-white/5 shadow-inner">
+                <canvas id="visualizer"></canvas>
+            </div>
+
+            <!-- Audio Progress Bar & Timing -->
+            <div class="mt-4">
+                <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
+                <div class="flex justify-between text-xs text-slate-400 mt-1.5 font-mono">
+                    <span id="currentTime">00:00</span>
+                    <span id="totalDuration">00:00</span>
+                </div>
+            </div>
+
+            <!-- Main Controls -->
+            <div class="flex items-center justify-center gap-6 mt-6">
+                <!-- Backward 10s -->
+                <button id="btnRewind" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition flex items-center justify-center border border-white/10">
+                    <i class="fa-solid fa-rotate-left text-sm"></i>
+                </button>
+
+                <!-- Play / Pause -->
+                <button id="btnPlayPause" class="w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 active:scale-95 text-white shadow-lg shadow-pink-500/30 transition flex items-center justify-center text-xl border border-white/20">
+                    <i class="fa-solid fa-play ml-1" id="playIcon"></i>
+                </button>
+
+                <!-- Forward 10s -->
+                <button id="btnForward" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition flex items-center justify-center border border-white/10">
+                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Volume Control Bar -->
+            <div class="flex items-center gap-3 mt-6 px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                <button id="btnMute" class="text-slate-300 hover:text-pink-400 transition">
+                    <i class="fa-solid fa-volume-high text-sm" id="volumeIcon"></i>
+                </button>
+                <input type="range" id="volumeBar" value="80" min="0" max="100" step="1" class="accent-pink-500">
+            </div>
+
+            <!-- Hidden Audio Element (Custom UI prevents right-click download) -->
+            <audio id="audioPlayer" preload="metadata" crossOrigin="anonymous">
+                <source src="https://ssoy.in/beat/beat.mp3" type="audio/mpeg">
+                Aapka browser audio support nahi karta.
+            </audio>
+        </div>
+    </div>
+
+    <!-- Announcement Footer Marquee -->
+    <footer class="w-full max-w-xl bg-black/40 backdrop-blur-md border border-white/10 py-2.5 px-4 rounded-2xl mb-2 text-sm text-yellow-300 font-medium shadow-lg">
+        <marquee id="adMarquee" behavior="scroll" direction="left" scrollamount="5">
+            जय श्री माता जी! सहज ऑनलाइन रेडियो में आपका स्वागत है। सहज प्रचार-प्रसार के लिए बने इस रेडियो पर सहज ध्यान से जुड़े भजन और स्पीचेस चौबीस घंटे, तीन सौ पैंसठ दिन लगातार चलते रहते हैं। यह अभी ट्रायल पीरियड पर है और आने वाले समय में इसमें काफी सारे सुधार किए जाएंगे। हमें आपके सुझावों का इंतजार रहेगा।
+        </marquee>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Set Hindi Date
+        const dateElem = document.getElementById('dateDisplay');
+        const today = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateElem.innerText = today.toLocaleDateString('hi-IN', options);
+
+        // DOM Elements
+        const audio = document.getElementById('audioPlayer');
+        const btnPlayPause = document.getElementById('btnPlayPause');
+        const playIcon = document.getElementById('playIcon');
+        const albumDisk = document.getElementById('albumDisk');
+        const seekBar = document.getElementById('seekBar');
+        const currentTimeElem = document.getElementById('currentTime');
+        const totalDurationElem = document.getElementById('totalDuration');
+        const volumeBar = document.getElementById('volumeBar');
+        const btnMute = document.getElementById('btnMute');
+        const volumeIcon = document.getElementById('volumeIcon');
+        const btnRewind = document.getElementById('btnRewind');
+        const btnForward = document.getElementById('btnForward');
+        const canvas = document.getElementById('visualizer');
+        const canvasCtx = canvas.getContext('2d');
+
+        let audioCtx, analyser, source, dataArray, bufferLength;
+        let isAudioContextInit = false;
+        let lastVolume = 0.8;
+
+        // Resize Canvas dynamically
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Format Seconds to MM:SS
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "00:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // Initialize Web Audio API Analyser
+        function initAudioContext() {
+            if (isAudioContextInit) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64;
+                
+                source = audioCtx.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                isAudioContextInit = true;
+            } catch (e) {
+                console.log("Web Audio API not supported or cross-origin restricted fallback enabled:", e);
+            }
+        }
+
+        // Render Equalizer / Beat Bar
+        function drawVisualizer() {
+            requestAnimationFrame(drawVisualizer);
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            canvasCtx.clearRect(0, 0, width, height);
+
+            if (isAudioContextInit && !audio.paused) {
+                analyser.getByteFrequencyData(dataArray);
+            }
+
+            const barWidth = (width / 24) - 3;
+            let x = 2;
+
+            for (let i = 0; i < 24; i++) {
+                let barHeight = 6;
+                
+                if (!audio.paused) {
+                    if (isAudioContextInit && dataArray) {
+                        const value = dataArray[i % bufferLength] || 0;
+                        barHeight = Math.max(6, (value / 255) * height);
+                    } else {
+                        // Fallback simulated beat bar animation if WebAudio API is restricted
+                        barHeight = Math.max(6, Math.sin(Date.now() * 0.005 + i * 0.4) * (height / 2) + (height / 2.5));
+                    }
+                }
+
+                // Vibrant Gradient Bars
+                const gradient = canvasCtx.createLinearGradient(0, height, 0, 0);
+                gradient.addColorStop(0, '#ec4899');
+                gradient.addColorStop(0.5, '#a855f7');
+                gradient.addColorStop(1, '#3b82f6');
+
+                canvasCtx.fillStyle = gradient;
+                canvasCtx.beginPath();
+                canvasCtx.roundRect(x, height - barHeight, barWidth, barHeight, [4, 4, 0, 0]);
+                canvasCtx.fill();
+
+                x += barWidth + 3;
+            }
+        }
+        drawVisualizer();
+
+        // Play/Pause Toggle Logic
+        function togglePlay() {
+            initAudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (audio.paused) {
+                audio.play().then(() => {
+                    playIcon.className = "fa-solid fa-pause";
+                    albumDisk.classList.add('playing');
+                }).catch(err => {
+                    console.log("Playback error: ", err);
+                });
+            } else {
+                audio.pause();
+                playIcon.className = "fa-solid fa-play ml-1";
+                albumDisk.classList.remove('playing');
+            }
+        }
+
+        btnPlayPause.addEventListener('click', togglePlay);
+
+        // Update Duration and Time
+        audio.addEventListener('loadedmetadata', () => {
+            seekBar.max = audio.duration;
+            totalDurationElem.innerText = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            seekBar.value = audio.currentTime;
+            currentTimeElem.innerText = formatTime(audio.currentTime);
+            if (audio.duration) {
+                totalDurationElem.innerText = formatTime(audio.duration);
+            }
+        });
+
+        // Seek Bar Manipulation
+        seekBar.addEventListener('input', () => {
+            audio.currentTime = seekBar.value;
+        });
+
+        // Volume Adjustment
+        volumeBar.addEventListener('input', () => {
+            audio.volume = volumeBar.value / 100;
+            updateVolumeIcon(audio.volume);
+        });
+
+        function updateVolumeIcon(vol) {
+            if (vol === 0) {
+                volumeIcon.className = "fa-solid fa-volume-xmark text-red-400 text-sm";
+            } else if (vol < 0.5) {
+                volumeIcon.className = "fa-solid fa-volume-low text-sm";
+            } else {
+                volumeIcon.className = "fa-solid fa-volume-high text-sm";
+            }
+        }
+
+        // Mute / Unmute
+        btnMute.addEventListener('click', () => {
+            if (audio.volume > 0) {
+                lastVolume = audio.volume;
+                audio.volume = 0;
+                volumeBar.value = 0;
+            } else {
+                audio.volume = lastVolume || 0.8;
+                volumeBar.value = (lastVolume || 0.8) * 100;
+            }
+            updateVolumeIcon(audio.volume);
+        });
+
+        // Rewind 10 Sec
+        btnRewind.addEventListener('click', () => {
+            audio.currentTime = Math.max(0, audio.currentTime - 10);
+        });
+
+        // Forward 10 Sec
+        btnForward.addEventListener('click', () => {
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+        });
+
+        // Audio Track Ended
+        audio.addEventListener('ended', () => {
+            playIcon.className = "fa-solid fa-play ml-1";
+            albumDisk.classList.remove('playing');
+            seekBar.value = 0;
+        });
+
+        // Disable Right Click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Disable Inspect Shortcuts (F12, Ctrl+U, Ctrl+Shift+I, etc.)
+        document.onkeydown = function (e) {
+            if (e.keyCode === 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) return false; // Ctrl+Shift+I/C/J
+            if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+        };
+    </script>
+</body>
+</html>
