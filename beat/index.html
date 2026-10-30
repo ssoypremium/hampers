@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Harleen's Personal Player</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
         * {
             box-sizing: border-box;
@@ -18,44 +18,46 @@
             -webkit-user-select: none;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #111827);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
-            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(180deg, #f4f8f3 0%, #e8f2e6 100%);
+            color: #1a1a1a;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Compact Green Card */
+        .player-card {
+            background: #ffffff;
+            border: 1px solid rgba(120, 184, 51, 0.25);
+            box-shadow: 0 12px 32px rgba(26, 26, 26, 0.08), 0 2px 6px rgba(120, 184, 51, 0.1);
+            border-radius: 20px;
         }
 
-        /* Glassmorphism Player Card */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.05);
+        /* Theme Green Colors */
+        .bg-lime-brand { background-color: #78b833; }
+        .text-lime-brand { color: #78b833; }
+        .border-lime-brand { border-color: #78b833; }
+
+        /* Rotating Disc */
+        .rotating-disc {
+            animation: spin 12s linear infinite;
+            animation-play-state: paused;
         }
 
-        /* Custom Neon Glow Text */
-        .neon-text {
-            background: linear-gradient(135deg, #a855f7, #ec4899, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+        .rotating-disc.playing {
+            animation-play-state: running;
         }
 
-        /* Custom Range Input Styling */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Custom Sliders */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
@@ -68,138 +70,132 @@
 
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
-            height: 6px;
+            height: 5px;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.2);
+            background: #e2e8f0;
             border-radius: 10px;
-            transition: background 0.3s;
         }
 
         input[type=range]::-webkit-slider-thumb {
-            height: 16px;
-            width: 16px;
+            height: 14px;
+            width: 14px;
             border-radius: 50%;
-            background: #ec4899;
+            background: #78b833;
             cursor: pointer;
             -webkit-appearance: none;
-            margin-top: -5px;
-            box-shadow: 0 0 10px #ec4899;
-            transition: transform 0.2s, background 0.2s;
+            margin-top: -4.5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            transition: transform 0.15s ease;
         }
 
         input[type=range]:hover::-webkit-slider-thumb {
             transform: scale(1.2);
-            background: #f43f5e;
-        }
-
-        /* Spinning Album Art Frame */
-        .album-art {
-            position: relative;
-            box-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
-            animation: rotateDisk 20s linear infinite;
-            animation-play-state: paused;
-        }
-
-        .album-art.playing {
-            animation-play-state: running;
-        }
-
-        @keyframes rotateDisk {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
 
         /* Canvas Beat Bar Style */
         #visualizer {
             width: 100%;
-            height: 70px;
-            border-radius: 12px;
+            height: 36px;
         }
     </style>
 </head>
-<body class="p-4 sm:p-6">
+<body class="flex flex-col justify-between items-center p-3 h-screen">
 
-    <!-- Top Spacer / Brand Badge -->
-    <div class="mt-2 text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold tracking-widest uppercase text-pink-300 shadow-sm">
-            <i class="fa-solid fa-compact-disc animate-spin"></i> Official Audio Stream
+    <!-- Top Header Badge -->
+    <div class="mt-1">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#78b833]/30 text-[11px] font-bold uppercase tracking-wider text-[#1a1a1a] shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-[#78b833] animate-ping"></span>
+            Harleen's Personal Player
         </div>
     </div>
 
-    <!-- Main Player Container -->
-    <div class="main-container w-full max-w-md my-auto">
-        <div class="player-card glass-card rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden">
+    <!-- Main Compact Player Card -->
+    <div class="w-full max-w-[340px] my-auto">
+        <div class="player-card p-4 sm:p-5 text-center relative overflow-hidden">
             
-            <!-- Glow Accents in Background -->
-            <div class="absolute -top-12 -left-12 w-32 h-32 bg-pink-500/20 rounded-full blur-2xl pointer-events-none"></div>
-            <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
-
-            <!-- Title Header -->
-            <h1 class="text-2xl sm:text-3xl font-extrabold neon-text mb-1 tracking-wide">
-                Harleen's Personal Player
-            </h1>
-            <div class="text-xs text-slate-300 font-medium mb-6 tracking-wider" id="dateDisplay">
-                Loading date...
+            <!-- Date Display -->
+            <div class="text-[11px] font-semibold text-gray-500 mb-2 flex items-center justify-center gap-1" id="dateDisplay">
+                <i class="fa-regular fa-calendar text-[#78b833]"></i>
+                <span>लोड हो रहा है...</span>
             </div>
 
-            <!-- Vinyl / Album Visual Concept -->
-            <div class="flex justify-center my-4">
-                <div id="albumDisk" class="album-art w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white/20 bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 p-1 flex items-center justify-center">
-                    <div class="w-full h-full rounded-full bg-slate-900/90 flex items-center justify-center border border-white/10">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center text-white shadow-inner">
-                            <i class="fa-solid fa-music text-sm"></i>
-                        </div>
+            <!-- Rotating Disc Artwork -->
+            <div class="flex justify-center my-2">
+                <div class="relative p-1 rounded-full border-2 border-[#78b833]/30 bg-gradient-to-tr from-[#78b833]/10 to-white shadow-md">
+                    <div id="albumDisc" class="rotating-disc w-20 h-20 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center overflow-hidden relative shadow-inner">
+                        <!-- Disc Vinyl Groove Effects -->
+                        <div class="absolute inset-0 rounded-full border border-white/10 m-1 pointer-events-none"></div>
+                        <div class="absolute inset-0 rounded-full border border-white/10 m-3 pointer-events-none"></div>
+                        
+                        <!-- Center Avatar Image matching theme -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" 
+                             alt="Avatar" 
+                             class="w-10 h-10 rounded-full object-cover border border-white shadow">
                     </div>
                 </div>
             </div>
 
             <!-- Track Info -->
-            <div class="mt-4 mb-2">
-                <div class="text-lg font-bold text-white tracking-wide truncate" id="trackTitle">beat.mp3</div>
-                <div class="text-xs text-pink-400 font-medium mt-0.5">Ssoy Audio Beat Master</div>
+            <div class="mt-2 mb-1">
+                <div class="text-base font-bold text-[#1a1a1a] truncate" id="trackTitle">beat.mp3</div>
+                <div class="text-[11px] text-[#78b833] font-semibold">ssoy.in / Special Beat</div>
             </div>
 
-            <!-- Visualizer Beat Bars -->
-            <div class="my-4 bg-slate-950/40 p-2 rounded-2xl border border-white/5 shadow-inner">
+            <!-- Beat Visualizer -->
+            <div class="my-2 bg-[#f4f8f3] px-2 py-1 rounded-lg border border-[#78b833]/20">
                 <canvas id="visualizer"></canvas>
             </div>
 
             <!-- Audio Progress Bar & Timing -->
-            <div class="mt-4">
+            <div class="mt-2">
                 <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
-                <div class="flex justify-between text-xs text-slate-400 mt-1.5 font-mono">
+                <div class="flex justify-between text-[10px] text-gray-500 mt-1 font-mono font-medium">
                     <span id="currentTime">00:00</span>
                     <span id="totalDuration">00:00</span>
                 </div>
             </div>
 
-            <!-- Main Controls -->
-            <div class="flex items-center justify-center gap-6 mt-6">
+            <!-- Playback Controls -->
+            <div class="flex items-center justify-center gap-4 my-3">
                 <!-- Backward 10s -->
-                <button id="btnRewind" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition flex items-center justify-center border border-white/10">
-                    <i class="fa-solid fa-rotate-left text-sm"></i>
+                <button id="btnRewind" title="Rewind 10s" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#78b833]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
+                    <i class="fa-solid fa-rotate-left text-xs"></i>
                 </button>
 
                 <!-- Play / Pause -->
-                <button id="btnPlayPause" class="w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 active:scale-95 text-white shadow-lg shadow-pink-500/30 transition flex items-center justify-center text-xl border border-white/20">
-                    <i class="fa-solid fa-play ml-1" id="playIcon"></i>
+                <button id="btnPlayPause" title="Play/Pause" class="w-12 h-12 rounded-full bg-[#78b833] hover:bg-[#68a22b] text-white text-lg flex items-center justify-center shadow-md active:scale-95 transition">
+                    <i class="fa-solid fa-play ml-0.5" id="playIcon"></i>
                 </button>
 
                 <!-- Forward 10s -->
-                <button id="btnForward" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition flex items-center justify-center border border-white/10">
-                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                <button id="btnForward" title="Forward 10s" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#78b833]/20 text-[#1a1a1a] transition flex items-center justify-center border border-gray-200">
+                    <i class="fa-solid fa-rotate-right text-xs"></i>
                 </button>
             </div>
 
-            <!-- Volume Control Bar -->
-            <div class="flex items-center gap-3 mt-6 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-                <button id="btnMute" class="text-slate-300 hover:text-pink-400 transition">
-                    <i class="fa-solid fa-volume-high text-sm" id="volumeIcon"></i>
-                </button>
-                <input type="range" id="volumeBar" value="80" min="0" max="100" step="1" class="accent-pink-500">
+            <!-- Volume Slider + Download Row -->
+            <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-100">
+                <!-- Volume Control -->
+                <div class="flex items-center gap-1.5 flex-1 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-200">
+                    <button id="btnMute" class="text-[#78b833] hover:text-[#1a1a1a] transition">
+                        <i class="fa-solid fa-volume-high text-xs" id="volumeIcon"></i>
+                    </button>
+                    <input type="range" id="volumeBar" value="80" min="0" max="100" step="1" class="w-full">
+                </div>
+
+                <!-- Download Button -->
+                <a id="btnDownload" 
+                   href="https://ssoy.in/beat/beat.mp3" 
+                   download="beat.mp3" 
+                   target="_blank"
+                   title="Download Song" 
+                   class="flex items-center gap-1.5 bg-[#1a1a1a] hover:bg-[#78b833] text-white text-xs px-3 py-1.5 rounded-lg font-medium transition shadow-sm">
+                    <i class="fa-solid fa-download text-[11px]"></i>
+                    <span>Save</span>
+                </a>
             </div>
 
-            <!-- Hidden Audio Element (Custom UI prevents right-click download) -->
+            <!-- Hidden Audio Element -->
             <audio id="audioPlayer" preload="metadata" crossOrigin="anonymous">
                 <source src="https://ssoy.in/beat/beat.mp3" type="audio/mpeg">
                 Aapka browser audio support nahi karta.
@@ -207,26 +203,25 @@
         </div>
     </div>
 
-    <!-- Announcement Footer Marquee -->
-    <footer class="w-full max-w-xl bg-black/40 backdrop-blur-md border border-white/10 py-2.5 px-4 rounded-2xl mb-2 text-sm text-yellow-300 font-medium shadow-lg">
-        <marquee id="adMarquee" behavior="scroll" direction="left" scrollamount="5">
-            जय श्री माता जी! सहज ऑनलाइन रेडियो में आपका स्वागत है। सहज प्रचार-प्रसार के लिए बने इस रेडियो पर सहज ध्यान से जुड़े भजन और स्पीचेस चौबीस घंटे, तीन सौ पैंसठ दिन लगातार चलते रहते हैं। यह अभी ट्रायल पीरियड पर है और आने वाले समय में इसमें काफी सारे सुधार किए जाएंगे। हमें आपके सुझावों का इंतजार रहेगा।
+    <!-- Footer Marquee -->
+    <footer class="w-full max-w-[340px] bg-white border border-[#78b833]/30 py-1.5 px-3 rounded-lg text-xs text-[#1a1a1a] font-medium shadow-sm mb-1">
+        <marquee id="adMarquee" behavior="scroll" direction="left" scrollamount="4">
+            जय श्री माता जी! सहज ऑनलाइन रेडियो में आपका स्वागत है। सहज प्रचार-प्रसार के लिए बने इस रेडियो पर भजन और स्पीचेस लगातार चलते रहते हैं।
         </marquee>
     </footer>
 
-    <!-- JavaScript Logic -->
     <script>
-        // Set Hindi Date
+        // Set Today's Hindi/English Date
         const dateElem = document.getElementById('dateDisplay');
         const today = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateElem.innerText = today.toLocaleDateString('hi-IN', options);
+        const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+        dateElem.querySelector('span').innerText = today.toLocaleDateString('hi-IN', options);
 
-        // DOM Elements
+        // Elements
         const audio = document.getElementById('audioPlayer');
         const btnPlayPause = document.getElementById('btnPlayPause');
         const playIcon = document.getElementById('playIcon');
-        const albumDisk = document.getElementById('albumDisk');
+        const albumDisc = document.getElementById('albumDisc');
         const seekBar = document.getElementById('seekBar');
         const currentTimeElem = document.getElementById('currentTime');
         const totalDurationElem = document.getElementById('totalDuration');
@@ -242,7 +237,6 @@
         let isAudioContextInit = false;
         let lastVolume = 0.8;
 
-        // Resize Canvas dynamically
         function resizeCanvas() {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
@@ -250,7 +244,6 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Format Seconds to MM:SS
         function formatTime(seconds) {
             if (isNaN(seconds)) return "00:00";
             const mins = Math.floor(seconds / 60);
@@ -258,7 +251,6 @@
             return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        // Initialize Web Audio API Analyser
         function initAudioContext() {
             if (isAudioContextInit) return;
             try {
@@ -275,11 +267,11 @@
                 dataArray = new Uint8Array(bufferLength);
                 isAudioContextInit = true;
             } catch (e) {
-                console.log("Web Audio API not supported or cross-origin restricted fallback enabled:", e);
+                console.log("Audio Context fallback initialized");
             }
         }
 
-        // Render Equalizer / Beat Bar
+        // Draw Beat Visualizer
         function drawVisualizer() {
             requestAnimationFrame(drawVisualizer);
             
@@ -287,43 +279,37 @@
             const height = canvas.height;
             canvasCtx.clearRect(0, 0, width, height);
 
-            if (isAudioContextInit && !audio.paused) {
+            if (isAudioContextInit && !audio.paused && dataArray) {
                 analyser.getByteFrequencyData(dataArray);
             }
 
-            const barWidth = (width / 24) - 3;
-            let x = 2;
+            const barCount = 20;
+            const barWidth = (width / barCount) - 2;
+            let x = 1;
 
-            for (let i = 0; i < 24; i++) {
-                let barHeight = 6;
+            for (let i = 0; i < barCount; i++) {
+                let barHeight = 3;
                 
                 if (!audio.paused) {
                     if (isAudioContextInit && dataArray) {
-                        const value = dataArray[i % bufferLength] || 0;
-                        barHeight = Math.max(6, (value / 255) * height);
+                        const val = dataArray[i % bufferLength] || 0;
+                        barHeight = Math.max(3, (val / 255) * height);
                     } else {
-                        // Fallback simulated beat bar animation if WebAudio API is restricted
-                        barHeight = Math.max(6, Math.sin(Date.now() * 0.005 + i * 0.4) * (height / 2) + (height / 2.5));
+                        barHeight = Math.max(3, Math.sin(Date.now() * 0.008 + i * 0.5) * (height / 2) + (height / 2.2));
                     }
                 }
 
-                // Vibrant Gradient Bars
-                const gradient = canvasCtx.createLinearGradient(0, height, 0, 0);
-                gradient.addColorStop(0, '#ec4899');
-                gradient.addColorStop(0.5, '#a855f7');
-                gradient.addColorStop(1, '#3b82f6');
-
-                canvasCtx.fillStyle = gradient;
+                canvasCtx.fillStyle = '#78b833';
                 canvasCtx.beginPath();
-                canvasCtx.roundRect(x, height - barHeight, barWidth, barHeight, [4, 4, 0, 0]);
+                canvasCtx.roundRect(x, height - barHeight, barWidth, barHeight, [2, 2, 0, 0]);
                 canvasCtx.fill();
 
-                x += barWidth + 3;
+                x += barWidth + 2;
             }
         }
         drawVisualizer();
 
-        // Play/Pause Toggle Logic
+        // Play/Pause
         function togglePlay() {
             initAudioContext();
             if (audioCtx && audioCtx.state === 'suspended') {
@@ -333,20 +319,18 @@
             if (audio.paused) {
                 audio.play().then(() => {
                     playIcon.className = "fa-solid fa-pause";
-                    albumDisk.classList.add('playing');
-                }).catch(err => {
-                    console.log("Playback error: ", err);
-                });
+                    albumDisc.classList.add('playing');
+                }).catch(err => console.log(err));
             } else {
                 audio.pause();
-                playIcon.className = "fa-solid fa-play ml-1";
-                albumDisk.classList.remove('playing');
+                playIcon.className = "fa-solid fa-play ml-0.5";
+                albumDisc.classList.remove('playing');
             }
         }
 
         btnPlayPause.addEventListener('click', togglePlay);
 
-        // Update Duration and Time
+        // Seek & Duration
         audio.addEventListener('loadedmetadata', () => {
             seekBar.max = audio.duration;
             totalDurationElem.innerText = formatTime(audio.duration);
@@ -355,17 +339,14 @@
         audio.addEventListener('timeupdate', () => {
             seekBar.value = audio.currentTime;
             currentTimeElem.innerText = formatTime(audio.currentTime);
-            if (audio.duration) {
-                totalDurationElem.innerText = formatTime(audio.duration);
-            }
+            if (audio.duration) totalDurationElem.innerText = formatTime(audio.duration);
         });
 
-        // Seek Bar Manipulation
         seekBar.addEventListener('input', () => {
             audio.currentTime = seekBar.value;
         });
 
-        // Volume Adjustment
+        // Volume
         volumeBar.addEventListener('input', () => {
             audio.volume = volumeBar.value / 100;
             updateVolumeIcon(audio.volume);
@@ -373,15 +354,14 @@
 
         function updateVolumeIcon(vol) {
             if (vol === 0) {
-                volumeIcon.className = "fa-solid fa-volume-xmark text-red-400 text-sm";
+                volumeIcon.className = "fa-solid fa-volume-xmark text-red-500 text-xs";
             } else if (vol < 0.5) {
-                volumeIcon.className = "fa-solid fa-volume-low text-sm";
+                volumeIcon.className = "fa-solid fa-volume-low text-xs";
             } else {
-                volumeIcon.className = "fa-solid fa-volume-high text-sm";
+                volumeIcon.className = "fa-solid fa-volume-high text-xs";
             }
         }
 
-        // Mute / Unmute
         btnMute.addEventListener('click', () => {
             if (audio.volume > 0) {
                 lastVolume = audio.volume;
@@ -394,31 +374,21 @@
             updateVolumeIcon(audio.volume);
         });
 
-        // Rewind 10 Sec
-        btnRewind.addEventListener('click', () => {
-            audio.currentTime = Math.max(0, audio.currentTime - 10);
-        });
+        btnRewind.addEventListener('click', () => audio.currentTime = Math.max(0, audio.currentTime - 10));
+        btnForward.addEventListener('click', () => audio.currentTime = Math.min(audio.duration, audio.currentTime + 10));
 
-        // Forward 10 Sec
-        btnForward.addEventListener('click', () => {
-            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
-        });
-
-        // Audio Track Ended
         audio.addEventListener('ended', () => {
-            playIcon.className = "fa-solid fa-play ml-1";
-            albumDisk.classList.remove('playing');
+            playIcon.className = "fa-solid fa-play ml-0.5";
+            albumDisc.classList.remove('playing');
             seekBar.value = 0;
         });
 
-        // Disable Right Click
+        // Disable Context Menu & Inspect
         document.addEventListener('contextmenu', (e) => e.preventDefault());
-
-        // Disable Inspect Shortcuts (F12, Ctrl+U, Ctrl+Shift+I, etc.)
         document.onkeydown = function (e) {
-            if (e.keyCode === 123) return false; // F12
-            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) return false; // Ctrl+Shift+I/C/J
-            if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+            if (e.keyCode === 123) return false;
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) return false;
+            if (e.ctrlKey && e.keyCode === 85) return false;
         };
     </script>
 </body>
