@@ -2,302 +2,614 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="robots" content="noindex, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O2 Secure Encryptor & Tunnel</title>
-  
+  <title>O2 Share</title>
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- PeerJS for P2P connection -->
+
+  <!-- PeerJS for WebRTC Peer-to-Peer Connection -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <!-- QRCode.js -->
+
+  <!-- QRCode.js for QR Code Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <!-- HTML5-QRCode Scanner -->
+
+  <!-- HTML5-QRCode for In-App QR Code Scanner -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
-    #reader video { border-radius: 0.75rem; object-fit: cover; width: 100% !important; }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    /* Drag and drop highlight */
+    .drag-over {
+      border-color: #6366f1 !important;
+      background-color: rgba(99, 102, 241, 0.1) !important;
+    }
+    /* Scanner video styling */
+    #reader video {
+      border-radius: 0.75rem;
+      object-fit: cover;
+      width: 100% !important;
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-4 md:p-6 antialiased">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-start p-4 md:p-6 antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- Header -->
-  <header class="w-full max-w-xl mb-6 flex items-center justify-between border-b border-slate-800 pb-4">
+  <header class="w-full max-w-md mb-6 flex items-center justify-between border-b border-slate-800 pb-4">
     <div class="flex items-center gap-3">
-      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">        
-        <i data-lucide="shield-check" class="w-5 h-5"></i>
+      <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+        <i data-lucide="bot" class="w-5 h-5"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Encryptor Hub</h1>
-        <p class="text-[11px] text-slate-400">Secure Tunnel & Cipher Station</p>
+        <h1 class="text-base font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">O2 Share</h1>
+        <p class="text-[11px] text-slate-400">Secure Private Tunnels</p>
       </div>
     </div>
 
-    <!-- Status Badge -->
+    <!-- Connection Status Badge -->
     <div id="status-badge" class="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
       <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
       <span id="status-text">Initializing...</span>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="w-full max-w-xl flex flex-col gap-5">
+  <!-- Main Content Container -->
+  <main class="w-full max-w-md flex flex-col gap-6">
 
-    <!-- QR Handshake Card (Auto hides on connect) -->
-    <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col items-center text-center relative transition-all duration-300">
-      <h2 class="text-lg font-bold text-slate-100 mb-1">Pair Devices</h2>
-      <p class="text-xs text-slate-400 mb-4">Scan this QR code from mobile/PC to establish a secure tunnel.</p>
-      
-      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-4 relative min-h-[160px] min-w-[160px] flex items-center justify-center">
+    <!-- QR Handshake Card -->
+    <div id="qr-card" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
+      <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+
+      <h2 class="text-xl font-bold text-slate-100 mb-1">Pair Devices</h2>
+      <p class="text-xs text-slate-400 mb-5 max-w-xs leading-relaxed">
+        Scan this QR code from another device or use the built-in camera scanner below.
+      </p>
+
+      <!-- QR Code Box -->
+      <div class="bg-white p-3 rounded-xl shadow-2xl border-4 border-slate-800 mb-5 relative min-h-[190px] min-w-[190px] flex items-center justify-center">
         <div id="qrcode"></div>
         <div id="qr-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-slate-400 rounded-lg">
-          <i data-lucide="loader-2" class="w-7 h-7 animate-spin text-indigo-400 mb-2"></i>
-          <span class="text-xs">Generating...</span>
+          <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-indigo-400 mb-2"></i>
+          <span class="text-xs">Generating ID...</span>
         </div>
       </div>
 
-      <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2">
-        <i data-lucide="qr-code" class="w-4 h-4"></i> Scan QR Code with Camera
+      <!-- Scan QR Code Button -->
+      <button id="btn-open-scanner" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+        <i data-lucide="qr-code" class="w-4 h-4"></i>
+        Scan QR Code with Camera
       </button>
     </div>
 
-    <!-- Secret Key Configuration Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2">
-      <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-        <i data-lucide="key" class="w-4 h-4 text-amber-400"></i> Set Encryption Secret Key
-      </label>
-      <input type="text" id="secret-key-input" value="MY_SECURE_SECRET_2026" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-indigo-500" placeholder="Enter secret key...">
-      <p class="text-[10px] text-slate-500">Yeh key encryption algorithm ko badal degi. Dono devices par key same honi chahiye.</p>
+    <!-- File Upload Section -->
+    <div id="drop-zone" class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 bg-slate-900/40 hover:bg-slate-900/70 rounded-2xl p-5 text-center transition-all cursor-pointer flex flex-col items-center justify-center min-h-[130px] relative group">
+      <input type="file" id="file-input" multiple class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+      <div class="w-9 h-9 rounded-full bg-indigo-600/10 text-indigo-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+        <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+      </div>
+      <h3 class="text-xs font-semibold text-slate-200 mb-1">Drop files here or click to browse</h3>
+      <p class="text-[10px] text-slate-500">Supports documents, photos, videos & any file</p>
     </div>
 
-    <!-- Text Input / Paste Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col gap-3">
+    <!-- Text / Code Input Section (NEW) -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3">
       <div class="flex items-center justify-between">
-        <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> Input Data (Type or Paste)
+        <label for="code-input" class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+          <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i>
+          Paste Text or Code
         </label>
-        <button id="btn-paste" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 rounded-lg transition flex items-center gap-1 border border-slate-700">
+        <button id="btn-paste-clipboard" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 rounded-lg transition flex items-center gap-1 border border-slate-700">
           <i data-lucide="clipboard" class="w-3 h-3"></i> Paste
         </button>
       </div>
 
-      <textarea id="text-input" rows="4" placeholder="Yaha text ya JSON data likhein ya paste karein..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 font-mono focus:outline-none focus:border-indigo-500 resize-y"></textarea>
+      <textarea id="code-input" rows="3" placeholder="Type or paste your text/code here..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 font-mono focus:outline-none focus:border-indigo-500 resize-y"></textarea>
 
-      <!-- Action Buttons: Encrypt & Decrypt -->
-      <div class="grid grid-cols-2 gap-2">
-        <button onclick="handleEncrypt()" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20">
-          <i data-lucide="lock" class="w-4 h-4"></i> Encrypt Data
-        </button>
-        <button onclick="handleDecrypt()" class="py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-600/20">
-          <i data-lucide="unlock" class="w-4 h-4"></i> Decrypt Data
-        </button>
-      </div>
-    </div>
-
-    <!-- Output / Result Section -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="file-output" class="w-4 h-4 text-indigo-400"></i> Output Result
-        </span>
-        <button onclick="copyOutput()" id="btn-copy" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[11px] font-medium transition flex items-center gap-1">
-          <i data-lucide="copy" class="w-3 h-3"></i> Copy Output
-        </button>
-      </div>
-
-      <pre id="output-box" class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs font-mono text-emerald-400 min-h-[90px] max-h-48 overflow-y-auto whitespace-pre-wrap break-all">Result yaha show hoga...</pre>
-
-      <button onclick="sendToPeer()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg">
-        <i data-lucide="send" class="w-4 h-4"></i> Send Output to Connected Peer
+      <button id="btn-send-code" class="w-full py-2 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+        <i data-lucide="send" class="w-3.5 h-3.5"></i>
+        Send Text / Code
       </button>
     </div>
 
-    <!-- Received Activity Log -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col min-h-[160px]">
-      <div class="flex items-center justify-between mb-3">
+    <!-- Transfer Activity Section -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col min-h-[200px]">
+      <div class="flex items-center justify-between mb-4">
         <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="inbox" class="w-4 h-4 text-teal-400"></i> Peer Received Logs
+          <i data-lucide="arrow-up-down" class="w-4 h-4 text-cyan-400"></i>
+          Transfer Activity
         </h3>
-        <button onclick="clearLogs()" class="text-xs text-slate-500 hover:text-slate-300 transition">Clear</button>
+        <button id="btn-clear-history" class="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          Clear
+        </button>
       </div>
-      <div id="logs-list" class="flex-1 space-y-2 overflow-y-auto max-h-40">
-        <p class="text-xs text-slate-600 text-center py-4">No data received yet.</p>
+
+      <!-- Activity Log List -->
+      <div id="transfer-list" class="flex-1 space-y-3 overflow-y-auto max-h-[280px] pr-1">
+        <div id="empty-state" class="h-full min-h-[120px] flex flex-col items-center justify-center text-slate-600 text-center">
+          <i data-lucide="inbox" class="w-8 h-8 mb-2 opacity-40"></i>
+          <p class="text-xs">No activity yet.</p>
+        </div>
       </div>
     </div>
 
   </main>
 
-  <!-- Scanner Modal -->
+  <!-- MODAL: Camera Scanner -->
   <div id="scanner-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl flex flex-col gap-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl flex flex-col gap-4 relative">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-          <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i> Scan QR Code
+          <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i>
+          Scan QR Code
         </h3>
-        <button id="btn-close-scanner" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="btn-close-scanner" class="text-slate-400 hover:text-white transition p-1 rounded-lg hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
-      <div class="overflow-hidden rounded-xl bg-slate-950 min-h-[220px] border border-slate-800 flex items-center justify-center">
+
+      <div class="overflow-hidden rounded-xl bg-slate-950 min-h-[220px] border border-slate-800 flex items-center justify-center relative">
         <div id="reader" class="w-full"></div>
       </div>
+
+      <p class="text-[11px] text-slate-400 text-center">Point your camera at the QR code displayed on the other device.</p>
     </div>
   </div>
 
-  <!-- Script Logic -->
+  <!-- JavaScript Logic -->
   <script>
-    let peer = null, conn = null, myPeerId = null, html5QrcodeScanner = null;
+    const CHUNK_SIZE = 1048576; // 1MB Chunk size for WebRTC transfer
+    let peer = null;
+    let conn = null;
+    let myPeerId = null;
+    let html5QrcodeScanner = null;
 
+    // UI Selectors
     const statusBadge = document.getElementById('status-badge');
     const statusText = document.getElementById('status-text');
     const qrCard = document.getElementById('qr-card');
     const qrContainer = document.getElementById('qrcode');
     const qrLoader = document.getElementById('qr-loader');
-    const textInput = document.getElementById('text-input');
-    const secretKeyInput = document.getElementById('secret-key-input');
-    const outputBox = document.getElementById('output-box');
-    const logsList = document.getElementById('logs-list');
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const codeInput = document.getElementById('code-input');
+    const btnSendCode = document.getElementById('btn-send-code');
+    const btnPasteClipboard = document.getElementById('btn-paste-clipboard');
+    const transferList = document.getElementById('transfer-list');
+    const emptyState = document.getElementById('empty-state');
+    const btnClearHistory = document.getElementById('btn-clear-history');
+    const btnOpenScanner = document.getElementById('btn-open-scanner');
+    const btnCloseScanner = document.getElementById('btn-close-scanner');
     const scannerModal = document.getElementById('scanner-modal');
 
+    // Initialize Lucide Icons
     lucide.createIcons();
 
+    // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const targetFromUrl = urlParams.get('connect');
 
     function initPeer() {
       peer = new Peer({ debug: 1 });
+
       peer.on('open', (id) => {
         myPeerId = id;
         qrLoader.classList.add('hidden');
-        const connectUrl = `${window.location.origin}${window.location.pathname}?connect=${id}`;
+
+        const currentUrl = window.location.origin + window.location.pathname;
+        const connectUrl = `${currentUrl}?connect=${id}`;
         
         qrContainer.innerHTML = '';
-        new QRCode(qrContainer, { text: connectUrl, width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
+        new QRCode(qrContainer, {
+          text: connectUrl,
+          width: 170,
+          height: 170,
+          colorDark: "#0f172a",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
         updateStatus('waiting', 'Ready');
-        if (targetFromUrl) connectToPeer(targetFromUrl);
+
+        if (targetFromUrl) {
+          connectToPeer(targetFromUrl);
+        }
       });
 
-      peer.on('connection', (incomingConn) => setupConnection(incomingConn));
-      peer.on('error', () => updateStatus('error', 'Error'));
+      peer.on('connection', (incomingConn) => {
+        setupConnection(incomingConn);
+      });
+
+      peer.on('error', (err) => {
+        console.error('PeerJS Error:', err);
+        updateStatus('error', 'Connection Error');
+      });
     }
 
     function connectToPeer(targetId) {
       if (!targetId || targetId === myPeerId) return;
       updateStatus('connecting', 'Connecting...');
-      setupConnection(peer.connect(targetId, { reliable: true }));
+      const outgoingConn = peer.connect(targetId, { reliable: true });
+      setupConnection(outgoingConn);
     }
 
     function setupConnection(connection) {
       conn = connection;
+
       conn.on('open', () => {
         updateStatus('connected', 'Connected');
-        // Connection establish hote hi QR card turant gayab ho jayega
-        if (qrCard) qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+        addActivityLog('Connected to peer successfully.');
       });
 
+      const incomingFiles = {}; // Store multiple incoming files by fileId
+
       conn.on('data', (data) => {
-        if (data && data.type === 'payload') {
-          appendLog(data.content);
+        if (typeof data === 'object') {
+          if (data.type === 'file-start') {
+            incomingFiles[data.fileId] = {
+              name: data.name,
+              size: data.size,
+              mime: data.mime,
+              receivedSize: 0,
+              chunks: [],
+              elementId: createTransferCard(data.name, data.size, 'download')
+            };
+          } else if (data.type === 'file-chunk') {
+            const fileObj = incomingFiles[data.fileId];
+            if (!fileObj) return;
+
+            fileObj.chunks.push(data.chunk);
+            fileObj.receivedSize += data.chunk.byteLength;
+
+            const progress = Math.min(100, Math.round((fileObj.receivedSize / fileObj.size) * 100));
+            updateCardProgress(fileObj.elementId, progress);
+
+            if (fileObj.receivedSize >= fileObj.size) {
+              const blob = new Blob(fileObj.chunks, { type: fileObj.mime });
+              const downloadUrl = URL.createObjectURL(blob);
+              finalizeDownloadCard(fileObj.elementId, downloadUrl, fileObj.name);
+              delete incomingFiles[data.fileId];
+            }
+          } else if (data.type === 'text-message') {
+            renderTextMessage(data.content, 'received');
+          }
         }
       });
 
-      conn.on('close', () => updateStatus('waiting', 'Disconnected'));
+      conn.on('close', () => {
+        updateStatus('waiting', 'Disconnected');
+        addActivityLog('Disconnected from peer.');
+      });
     }
 
-    function updateStatus(state, msg) {
-      statusText.textContent = msg;
+    // Send Text / Code Function
+    function sendTextContent() {
+      const text = codeInput.value.trim();
+      if (!text) return;
+
+      if (!conn || !conn.open) {
+        alert('Please connect to a peer first by scanning their QR code.');
+        return;
+      }
+
+      conn.send({ type: 'text-message', content: text });
+      renderTextMessage(text, 'sent');
+      codeInput.value = '';
+    }
+
+    function renderTextMessage(contentText, direction) {
+      if (emptyState) emptyState.style.display = 'none';
+      const isSent = direction === 'sent';
+      const cardId = 'text-card-' + Math.random().toString(36).substr(2, 9);
+
+      const card = document.createElement('div');
+      card.className = `p-3 rounded-xl border text-xs flex flex-col gap-2 ${
+        isSent 
+          ? 'bg-indigo-950/30 border-indigo-800/40 text-indigo-100' 
+          : 'bg-slate-950 border-slate-800 text-slate-100'
+      }`;
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">${isSent ? 'Sent Text' : 'Received Text'}</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-slate-500">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            <button onclick="copySnippet('${cardId}')" id="btn-${cardId}" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md text-[11px] font-medium transition flex items-center gap-1">
+              <i data-lucide="copy" class="w-3 h-3"></i> Copy
+            </button>
+          </div>
+        </div>
+        <pre id="${cardId}" class="bg-slate-900 p-3 rounded-lg overflow-x-auto text-[11px] font-mono text-slate-300 select-all border border-slate-800/80 max-h-48 whitespace-pre-wrap break-all"><code>${escapeHtml(contentText)}</code></pre>
+      `;
+
+      transferList.appendChild(card);
+      lucide.createIcons();
+      transferList.scrollTop = transferList.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    window.copySnippet = function(cardId) {
+      const preEl = document.getElementById(cardId);
+      const btnEl = document.getElementById('btn-' + cardId);
+      const textToCopy = preEl.textContent;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        btnEl.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> Copied!`;
+        btnEl.className = 'px-2.5 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-md text-[11px] font-medium transition flex items-center gap-1';
+        lucide.createIcons();
+        setTimeout(() => {
+          btnEl.innerHTML = `<i data-lucide="copy" class="w-3 h-3"></i> Copy`;
+          btnEl.className = 'px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md text-[11px] font-medium transition flex items-center gap-1';
+          lucide.createIcons();
+        }, 2000);
+      });
+    };
+
+    function sendFiles(files) {
+      if (!files || files.length === 0) return;
+
+      if (!conn || !conn.open) {
+        alert('Please connect to a peer first by scanning their QR code.');
+        return;
+      }
+
+      Array.from(files).forEach((file, index) => {
+        const fileId = 'file_' + Date.now() + '_' + index + '_' + Math.random().toString(36).substr(2, 5);
+        const cardId = createTransferCard(file.name, file.size, 'upload');
+
+        conn.send({
+          type: 'file-start',
+          fileId: fileId,
+          name: file.name,
+          size: file.size,
+          mime: file.type || 'application/octet-stream'
+        });
+
+        const reader = new FileReader();
+        let offset = 0;
+
+        reader.onload = (e) => {
+          if (!conn || !conn.open) return;
+          conn.send({
+            type: 'file-chunk',
+            fileId: fileId,
+            chunk: e.target.result
+          });
+
+          offset += e.target.result.byteLength;
+          const progress = Math.min(100, Math.round((offset / file.size) * 100));
+          updateCardProgress(cardId, progress);
+
+          if (offset < file.size) {
+            readNextChunk();
+          } else {
+            finalizeUploadCard(cardId);
+          }
+        };
+
+        function readNextChunk() {
+          const slice = file.slice(offset, offset + CHUNK_SIZE);
+          reader.readAsArrayBuffer(slice);
+        }
+
+        readNextChunk();
+      });
+    }
+
+    function updateStatus(state, message) {
+      statusText.textContent = message;
       if (state === 'connected') {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
-        if (qrCard) qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+        
+        qrCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+      } else if (state === 'connecting') {
+        statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
+        statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-indigo-400 animate-ping';
       } else {
         statusBadge.className = 'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
         statusBadge.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+        
+        qrCard.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
       }
     }
 
-    // Encryption Function using Custom Secret Key
-    function handleEncrypt() {
-      const text = textInput.value.trim();
-      const secretKey = secretKeyInput.value.trim() || "DEFAULT_KEY";
-      if (!text) { alert("Please enter text to encrypt!"); return; }
-
-      let encrypted = '';
-      for (let i = 0; i < text.length; i++) {
-        encrypted += String.fromCharCode(text.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length));
-      }
-      const finalEncrypted = "ENC:" + btoa(encodeURIComponent(encrypted));
-      outputBox.textContent = finalEncrypted;
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
     }
 
-    // Decryption Function using Custom Secret Key
-    function handleDecrypt() {
-      const ciphertext = textInput.value.trim();
-      const secretKey = secretKeyInput.value.trim() || "DEFAULT_KEY";
-      if (!ciphertext) { alert("Please enter encrypted text!"); return; }
-
-      try {
-        if (!ciphertext.startsWith("ENC:")) {
-          outputBox.textContent = "Error: Not a valid encrypted text (Missing 'ENC:' prefix).";
-          return;
-        }
-        const raw = atob(ciphertext.replace("ENC:", ""));
-        const decoded = decodeURIComponent(raw);
-        let decrypted = '';
-        for (let i = 0; i < decoded.length; i++) {
-          decrypted += String.fromCharCode(decoded.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length));
-        }
-        outputBox.textContent = decrypted;
-      } catch (e) {
-        outputBox.textContent = "Decryption failed! Secret key galat ho sakti hai ya format invalid hai.";
-      }
+    function addActivityLog(text) {
+      if (emptyState) emptyState.style.display = 'none';
+      const item = document.createElement('div');
+      item.className = 'p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-xs text-slate-300 flex justify-between items-center';
+      item.innerHTML = `
+        <span>${text}</span>
+        <span class="text-[10px] text-slate-500">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      `;
+      transferList.appendChild(item);
+      transferList.scrollTop = transferList.scrollHeight;
     }
 
-    function copyOutput() {
-      const text = outputBox.textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        alert("Output copied to clipboard!");
-      });
+    function createTransferCard(fileName, fileSize, direction) {
+      if (emptyState) emptyState.style.display = 'none';
+      const cardId = 'card-' + Math.random().toString(36).substr(2, 9);
+      const isUpload = direction === 'upload';
+
+      const card = document.createElement('div');
+      card.id = cardId;
+      card.className = 'bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col gap-2';
+
+      card.innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="p-2 rounded-lg ${isUpload ? 'bg-indigo-500/10 text-indigo-400' : 'bg-cyan-500/10 text-cyan-400'} shrink-0">
+            <i data-lucide="${isUpload ? 'upload' : 'download'}" class="w-4 h-4"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-slate-200 truncate">${fileName}</p>
+            <p class="text-[10px] text-slate-500">${formatBytes(fileSize)}</p>
+          </div>
+          <div class="card-status text-xs font-mono font-medium text-slate-400">0%</div>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+          <div class="card-progress bg-indigo-500 h-full w-0 transition-all duration-150"></div>
+        </div>
+      `;
+
+      transferList.appendChild(card);
+      lucide.createIcons();
+      transferList.scrollTop = transferList.scrollHeight;
+      return cardId;
     }
 
-    function sendToPeer() {
-      const text = outputBox.textContent;
-      if (!conn || !conn.open) { alert("Peer connected nahi hai!"); return; }
-      conn.send({ type: 'payload', content: text });
-      alert("Output sent successfully to peer!");
+    function updateCardProgress(cardId, progress) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      card.querySelector('.card-progress').style.width = `${progress}%`;
+      card.querySelector('.card-status').textContent = `${progress}%`;
     }
 
-    function appendLog(content) {
-      logsList.innerHTML += `<div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-xs font-mono text-cyan-300 break-all">${content}</div>`;
+    function finalizeUploadCard(cardId) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      card.querySelector('.card-status').innerHTML = '<span class="text-emerald-400 flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> Sent</span>';
+      lucide.createIcons();
     }
 
-    function clearLogs() {
-      logsList.innerHTML = `<p class="text-xs text-slate-600 text-center py-4">No data received yet.</p>`;
+    function finalizeDownloadCard(cardId, downloadUrl, fileName) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      
+      const statusDiv = card.querySelector('.card-status');
+      statusDiv.innerHTML = `
+        <a href="${downloadUrl}" download="${fileName}" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[11px] font-medium transition flex items-center gap-1">
+          <i data-lucide="download" class="w-3 h-3"></i>
+          Save
+        </a>
+      `;
+      lucide.createIcons();
     }
 
-    document.getElementById('btn-paste').addEventListener('click', async () => {
-      try { textInput.value = await navigator.clipboard.readText(); } catch (e) { alert("Paste blocked"); }
-    });
-
-    document.getElementById('btn-open-scanner').addEventListener('click', () => {
+    // Scanner Modal Handlers
+    function openScanner() {
       scannerModal.classList.remove('hidden');
-      if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("reader");
-      html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 180 }, (text) => {
-        scannerModal.classList.add('hidden');
-        if (html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
-        let targetId = text.includes('connect=') ? new URL(text).searchParams.get('connect') : text;
-        connectToPeer(targetId);
+      if (!html5QrcodeScanner) {
+        html5QrcodeScanner = new Html5Qrcode("reader");
+      }
+      const config = { fps: 10, qrbox: { width: 180, height: 180 } };
+      html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess, () => {}).catch(err => {
+        alert("Camera access failed or permission denied.");
+        closeScanner();
       });
+    }
+
+    function closeScanner() {
+      if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
+        html5QrcodeScanner.stop().then(() => scannerModal.classList.add('hidden')).catch(() => scannerModal.classList.add('hidden'));
+      } else {
+        scannerModal.classList.add('hidden');
+      }
+    }
+
+    function onScanSuccess(decodedText) {
+      let scannedPeerId = decodedText;
+      try {
+        if (decodedText.includes('connect=')) {
+          const parsedUrl = new URL(decodedText);
+          scannedPeerId = parsedUrl.searchParams.get('connect') || decodedText;
+        }
+      } catch (e) {}
+
+      closeScanner();
+      connectToPeer(scannedPeerId);
+    }
+
+    // Event Listeners
+    fileInput.addEventListener('change', (e) => sendFiles(e.target.files));
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      }, false);
     });
 
-    document.getElementById('btn-close-scanner').addEventListener('click', () => {
-      scannerModal.classList.add('hidden');
-      if (html5QrcodeScanner && html5QrcodeScanner.isScanning) html5QrcodeScanner.stop();
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      sendFiles(dt.files);
+    });
+
+    // Text Send & Paste Handlers
+    btnSendCode.addEventListener('click', sendTextContent);
+    codeInput.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') sendTextContent();
+    });
+
+    btnPasteClipboard.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          codeInput.value = text;
+        }
+      } catch (err) {
+        alert('Clipboard permission denied. Please paste manually.');
+      }
+    });
+
+    btnOpenScanner.addEventListener('click', openScanner);
+    btnCloseScanner.addEventListener('click', closeScanner);
+
+    btnClearHistory.addEventListener('click', () => {
+      transferList.innerHTML = '';
+      transferList.appendChild(emptyState);
+      emptyState.style.display = 'flex';
     });
 
     window.addEventListener('load', initPeer);
+  </script>
+
+  <!-- Security Scripts -->
+  <script>
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    document.onkeydown = function (e) {
+        (e.keyCode == 123) && (e.preventDefault()); // F12
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+    };
   </script>
 </body>
 </html>
