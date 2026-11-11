@@ -1,0 +1,57 @@
+:root {
+  /* Neumorphic Soft UI Palette & Shadows */
+  --bg: #e0e5ec;
+  --card-bg: #e0e5ec;
+  --text-main: #334155;
+  --text-muted: #64748b;
+  --accent: #2563eb;
+  
+  /* Soft Shadows (Raised & Inset Effect) */
+  --neu-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5);
+  --neu-shadow-sm: 4px 4px 8px rgb(163,177,198,0.6), -4px -4px 8px rgba(255,255,255, 0.5);
+  --neu-inset: inset 3px 3px 6px rgb(163,177,198,0.6), inset -3px -3px 6px rgba(255,255,255, 0.5);
+  --neu-inset-deep: inset 5px 5px 10px rgb(163,177,198,0.7), inset -5px -5px 10px rgba(255,255,255, 0.7);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Raised Card / Box Style */
+.neu-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--neu-shadow);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+/* Clickable / Active Pressable Button Style */
+.neu-button {
+  background: var(--bg);
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--neu-shadow-sm);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.neu-button:active {
+  box-shadow: var(--neu-inset);
+}
+
+/* Inset Input / Search Bar Style */
+.neu-input {
+  background: var(--bg);
+  border: none;
+  border-radius: 14px;
+  box-shadow: var(--neu-inset);
+  color: var(--text-main);
+  outline: none;
+}
+
+.neu-input:focus {
+  box-shadow: var(--neu-inset-deep);
+}
